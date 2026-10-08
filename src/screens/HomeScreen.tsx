@@ -2,7 +2,7 @@ import { useState, type SyntheticEvent } from 'react'
 import { LINKEDIN_URL, MESSAGES, type Message } from '../content'
 import { track } from '../analytics'
 import { MESSAGES_PATH, navigate } from '../router'
-import { COPY_FAILED_HINT, useCopy } from '../useCopy'
+import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
 import { MessageBubble } from '../components/MessageBubble'
 import { WaitlistSection } from '../components/WaitlistSection'
 import { PdfButton, PDF_TIP } from '../components/PdfButton'
@@ -81,7 +81,8 @@ function trackFaqOpen(event: SyntheticEvent<HTMLDetailsElement>, question: strin
 }
 
 export function HomeScreen() {
-  const [downloaded, setDownloaded] = useState(false)
+  // Only the region next to the clicked PDF button shows the tip, so it is announced once.
+  const [downloadedFrom, setDownloadedFrom] = useState<'hero' | 'start-here' | null>(null)
   const welcome = MESSAGES[0]
   const { status, copy } = useCopy(welcome.id, welcome.text, 'home')
 
@@ -106,10 +107,10 @@ export function HomeScreen() {
           >
             Copiar as mensagens agora
           </a>
-          <PdfButton page="home" light onDownload={() => setDownloaded(true)} />
+          <PdfButton page="home" light onDownload={() => setDownloadedFrom('hero')} />
         </div>
         <p className="hero__note" role="status" aria-live="polite">
-          {downloaded ? PDF_TIP : 'Grátis e sem cadastro.'}
+          {downloadedFrom === 'hero' ? PDF_TIP : 'Grátis e sem cadastro.'}
         </p>
       </section>
 
@@ -211,10 +212,31 @@ export function HomeScreen() {
           >
             {status === 'copied' ? 'Copiada! Agora cola no WhatsApp' : 'Copiar a de boas-vindas'}
           </button>
-          <PdfButton page="home" onDownload={() => setDownloaded(true)} />
+          <PdfButton page="home" onDownload={() => setDownloadedFrom('start-here')} />
         </div>
         <p className="status-note" role="status" aria-live="polite">
-          {status === 'failed' ? COPY_FAILED_HINT : downloaded ? PDF_TIP : ''}
+          {status === 'failed' && copyFailedHint('abaixo')}
+          {status === 'copied' && <span className="visually-hidden">{COPIED_ANNOUNCEMENT}</span>}
+        </p>
+        {status === 'failed' && (
+          <div className="copy-fallback">
+            <MessageBubble text={welcome.text} />
+            <p className="copy-fallback__link">
+              Prefere copiar com as dicas do lado?{' '}
+              <a
+                href={`${MESSAGES_PATH}#${welcome.anchor}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  openMessages(welcome)
+                }}
+              >
+                Abrir a mensagem de boas-vindas
+              </a>
+            </p>
+          </div>
+        )}
+        <p className="status-note" role="status" aria-live="polite">
+          {downloadedFrom === 'start-here' ? PDF_TIP : ''}
         </p>
         <button type="button" className="text-button" onClick={() => openMessages()}>
           Ver as 3 mensagens com as dicas

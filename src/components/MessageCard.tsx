@@ -1,5 +1,5 @@
 import type { Message } from '../content'
-import { COPY_FAILED_HINT, useCopy } from '../useCopy'
+import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
 import { MessageBubble } from './MessageBubble'
 
 type Props = { message: Message; position: number; highlighted: boolean }
@@ -30,7 +30,8 @@ export function MessageCard({ message, position, highlighted }: Props) {
         </span>
       </div>
       <p className="status-note" role="status" aria-live="polite">
-        {status === 'failed' && COPY_FAILED_HINT}
+        {status === 'failed' && copyFailedHint('acima')}
+        {status === 'copied' && <span className="visually-hidden">{COPIED_ANNOUNCEMENT}</span>}
       </p>
 
       <aside className="tip">

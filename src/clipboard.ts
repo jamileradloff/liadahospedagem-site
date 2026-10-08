@@ -9,22 +9,30 @@ export async function copyText(text: string): Promise<boolean> {
   } catch {
     // fall through to the fallback
   }
+  return legacyCopy(text)
+}
+
+function legacyCopy(text: string): boolean {
+  const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
   const textarea = document.createElement('textarea')
   textarea.value = text
   textarea.setAttribute('readonly', '')
+  textarea.setAttribute('aria-hidden', 'true')
+  textarea.tabIndex = -1
   textarea.style.position = 'fixed'
   textarea.style.top = '0'
   textarea.style.opacity = '0'
-  document.body.appendChild(textarea)
-  textarea.focus()
-  textarea.select()
-  textarea.setSelectionRange(0, text.length)
-  let ok = false
   try {
-    ok = document.execCommand('copy')
+    document.body.appendChild(textarea)
+    textarea.focus()
+    textarea.select()
+    textarea.setSelectionRange(0, text.length)
+    return document.execCommand('copy')
   } catch {
-    ok = false
+    return false
+  } finally {
+    textarea.remove()
+    window.getSelection()?.removeAllRanges()
+    previousFocus?.focus({ preventScroll: true })
   }
-  textarea.remove()
-  return ok
 }

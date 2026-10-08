@@ -30,7 +30,8 @@ src/
   components/         Header, Footer, MessageBubble, MessageCard, PdfButton, WaitlistSection
   screens/            HomeScreen, MessagesScreen
   **/*.test.ts(x)     unit and component tests (Vitest + Testing Library, jsdom)
-e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility
+e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility, keyboard, zoom, motion
+validation/           repeatable validation scripts (see FRONTEND_VALIDATION.md); screenshots are generated, not committed
 pdf/                  source of the free PDF (see pdf/README.md)
 public/               the generated PDF and the social preview image
 ```
@@ -69,6 +70,17 @@ success test is skipped in WebKit. Add `--project=desktop-chromium` to run a sin
 
 The accessibility tests run axe against WCAG 2.2 AA rules. They don't replace checking with the keyboard and a
 screen reader.
+
+Two scripts in `validation/` go beyond the test suite (they build the site themselves, so run them from a clean tree):
+
+- `node validation/verify-builds.mjs` builds the analytics, no-key and preview variants and checks them: every event
+  and its properties (against a fake PostHog host, nothing is sent), the Tally link attribution, no cookies or
+  storage, the PDF being served, and the preview's in-memory routing.
+- `node validation/capture-screenshots.mjs` takes full-page screenshots of both routes at 320, 390, 768, 1024 and
+  1440 px (needs `npx vite preview --port 4173` running).
+
+PostHog drops events from browsers that look automated, so analytics tests must hide `navigator.webdriver` and the
+headless user agent, as `verify-builds.mjs` does.
 
 CI (`.github/workflows/ci.yml`) runs every check, both builds and the browser tests on each pull request and on
 pushes to `main`. A failed browser run uploads the Playwright report as an artifact.

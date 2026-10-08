@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
-import { gotoSettled } from './support'
+import { expectNoHorizontalOverflow, gotoSettled } from './support'
 
 const WIDTHS = [320, 390, 768, 1024, 1440]
 
@@ -24,14 +24,6 @@ const ROUTES: { path: string; controls: (page: Page) => Locator[] }[] = [
     ],
   },
 ]
-
-async function expectNoHorizontalOverflow(page: Page) {
-  const { scrollWidth, innerWidth } = await page.evaluate(() => ({
-    scrollWidth: document.documentElement.scrollWidth,
-    innerWidth: window.innerWidth,
-  }))
-  expect(scrollWidth, 'page is wider than the viewport').toBeLessThanOrEqual(innerWidth)
-}
 
 async function expectControlsReachable(page: Page, controls: Locator[]) {
   const width = page.viewportSize()?.width ?? 0

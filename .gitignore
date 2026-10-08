@@ -5,6 +5,7 @@ dist
 *.tsbuildinfo
 playwright-report
 test-results
+validation/screenshots
 .DS_Store
 caderninho/caderninho.html
 scripts/

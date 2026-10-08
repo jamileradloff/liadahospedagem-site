@@ -57,6 +57,8 @@ body {
   font-family: var(--font-body);
   font-size: 1.0625rem;
   line-height: 1.55;
+  /* A word that cannot fit (large text on a narrow phone) wraps instead of scrolling the page sideways. */
+  overflow-wrap: anywhere;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }

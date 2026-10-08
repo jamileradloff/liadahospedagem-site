@@ -1,0 +1,766 @@
+/* Lia brand: same colors and fonts as the PDF notebook. */
+:root {
+  --blue: #1f4e5f;
+  --cream: #f4ecdd;
+  --off-white: #fbf8f2;
+  --charcoal: #2b2b2b;
+  --terracotta: #c0643f;
+  --terracotta-light: #e08a62;
+  --wood: #b08a62;
+  --olive: #7d8460;
+  --line: #e3d8c4;
+  --text-muted: #5b564f;
+
+  --font-heading: 'Fraunces', Lora, Georgia, serif;
+  --font-body: 'DM Sans', Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-hand: 'Caveat', Kalam, 'Comic Sans MS', cursive;
+  --font-mono: 'DM Mono', 'Roboto Mono', ui-monospace, monospace;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 1rem;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+img {
+  max-width: 100%;
+}
+
+.page {
+  max-width: 35rem;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--blue);
+  line-height: 1.15;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(2rem, 8vw, 2.6rem);
+}
+
+h2 {
+  font-size: 1.6rem;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--blue);
+}
+
+:focus-visible {
+  outline: 3px solid var(--terracotta);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.handwritten {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: var(--terracotta);
+  margin: 0 0 0.5rem;
+}
+
+.handwritten--light {
+  color: var(--terracotta-light);
+}
+
+/* Header */
+.site-header {
+  padding: 1rem 0.25rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 1.45rem;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+/* The terracotta notebook from the PDF, drawn in CSS. */
+.notebook-icon {
+  width: 18px;
+  height: 24px;
+  border-radius: 2px 4px 4px 2px;
+  background: linear-gradient(90deg, #8f4426 0 4px, var(--terracotta) 4px);
+  position: relative;
+  flex: none;
+}
+
+.notebook-icon::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  width: 6px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--cream);
+}
+
+/* Buttons */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.7rem 1.4rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--terracotta);
+  color: #fff;
+  font: 700 1.1875rem/1.2 var(--font-body);
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background: #a9532f;
+}
+
+.button--large {
+  width: 100%;
+  min-height: 3.5rem;
+}
+
+.button--done,
+.button--done:hover {
+  background: var(--olive);
+}
+
+.button--outline {
+  background: transparent;
+  color: var(--blue);
+  box-shadow: inset 0 0 0 2px var(--blue);
+  margin-top: 1rem;
+}
+
+.button--outline:hover {
+  background: var(--off-white);
+}
+
+/* Hero: the same blue block as the PDF cover */
+.hero {
+  background: var(--blue);
+  color: var(--cream);
+  border-radius: 22px;
+  padding: 2rem 1.4rem 1.6rem;
+  margin-bottom: 2.5rem;
+}
+
+.hero h1 {
+  color: var(--cream);
+}
+
+.hero .handwritten {
+  color: var(--terracotta-light);
+}
+
+.hero__lead {
+  color: #dfe7e6;
+  margin-bottom: 1.6rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+
+.hero__note {
+  margin: 1rem 0 0;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: #c9d6d5;
+}
+
+/* Home screen sections */
+.section {
+  margin-bottom: 2.75rem;
+}
+
+.toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.toc li {
+  border-bottom: 1px solid var(--line);
+}
+
+.toc a {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  column-gap: 0.5rem;
+  padding: 1rem 0.25rem;
+  text-decoration: none;
+  color: var(--charcoal);
+}
+
+.toc li {
+  counter-increment: item;
+}
+
+.toc a::before {
+  content: counter(item);
+  grid-row: span 2;
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--terracotta);
+}
+
+.toc__title {
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.toc__subtitle {
+  color: var(--text-muted);
+}
+
+
+
+.faq-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq-item summary {
+  cursor: pointer;
+  padding: 0.9rem 0;
+  font-weight: 700;
+  color: var(--blue);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--terracotta);
+}
+
+.faq-item[open] summary::after {
+  content: '–';
+}
+
+.faq-item p {
+  color: var(--text-muted);
+}
+
+/* WhatsApp bubble */
+.bubble {
+  position: relative;
+  background: var(--blue);
+  color: var(--cream);
+  border-radius: 18px 18px 4px 18px;
+  padding: 1.1rem 1.1rem 1.6rem;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.bubble__text {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.placeholder {
+  color: var(--terracotta-light);
+  font-weight: 500;
+}
+
+.bubble__ticks {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.45rem;
+  font-size: 0.75rem;
+  color: #9fb8bd;
+  letter-spacing: -0.15em;
+}
+
+.bubble--truncated {
+  max-height: 15rem;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+}
+
+/* Messages screen */
+.messages-intro {
+  margin: 0.5rem 0 2rem;
+}
+
+.jump-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.jump-links a {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: var(--off-white);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--blue);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.message-card {
+  background: var(--off-white);
+  border-radius: 22px;
+  padding: 1.5rem 1.1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  scroll-margin-top: 1rem;
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow 0.4s ease;
+}
+
+.message-card--highlight {
+  box-shadow: 0 0 0 4px var(--terracotta-light);
+}
+
+.message-card__number {
+  margin: 0 0 0.25rem;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--terracotta);
+}
+
+.message-card__when {
+  color: var(--text-muted);
+}
+
+.message-card__when strong {
+  color: var(--charcoal);
+}
+
+.message-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+.message-card__actions .button {
+  flex: 1 1 15rem;
+}
+
+.shortcut {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.shortcut code {
+  font-family: var(--font-mono);
+  background: var(--cream);
+  color: var(--blue);
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+}
+
+.status-note {
+  min-height: 0;
+  margin: 0.5rem 0 0;
+  font-size: 0.9375rem;
+  color: #8f4426;
+}
+
+.status-note:empty {
+  margin: 0;
+}
+
+.tip {
+  margin-top: 1.25rem;
+  padding: 1rem 1.1rem;
+  border: 1.5px solid var(--terracotta-light);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.tip__title {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--terracotta);
+  margin: 0 0 0.4rem;
+}
+
+.tip p:last-child {
+  margin: 0;
+  font-size: 0.9875rem;
+}
+
+.steps ol {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.steps li {
+  margin-bottom: 0.9rem;
+  padding-left: 0.3rem;
+}
+
+.steps li::marker {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--terracotta);
+}
+
+/* Waitlist invite (Tally) */
+.waitlist {
+  background: var(--blue);
+  color: #dfe7e6;
+  border-radius: 22px;
+  padding: 2rem 1.4rem 1.6rem;
+  margin-bottom: 2rem;
+}
+
+.waitlist h2 {
+  color: var(--cream);
+  font-size: 1.9rem;
+}
+
+.waitlist__items {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.75rem;
+}
+
+.waitlist__items li {
+  position: relative;
+  padding-left: 1.75rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.9875rem;
+}
+
+.waitlist__items li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--terracotta-light);
+  font-weight: 700;
+}
+
+.waitlist__note {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 0.9375rem;
+}
+
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.site-footer a {
+  display: inline-block;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.site-footer p {
+  margin: 0 0 0.4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* Buttons, mirror, comparison and start-here */
+.button--full {
+  width: 100%;
+}
+
+/* PDF button on the blue hero: light outline, lighter than the primary button */
+.button--light {
+  color: var(--cream);
+  box-shadow: inset 0 0 0 2px rgba(244, 236, 221, 0.7);
+  margin-top: 0;
+}
+
+.button--light:hover {
+  background: rgba(244, 236, 221, 0.1);
+}
+
+.hero__actions .button--outline {
+  margin-top: 0;
+}
+
+.hero__actions {
+  gap: 0.75rem;
+}
+
+/* Mirror: her own words */
+.mirror {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mirror li {
+  padding: 0.7rem 0 0.7rem 1rem;
+  border-left: 3px solid var(--terracotta-light);
+  margin-bottom: 0.6rem;
+  background: linear-gradient(90deg, var(--off-white), transparent);
+  border-radius: 0 10px 10px 0;
+}
+
+/* Reframe */
+.reframe {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.7rem;
+  line-height: 1.2;
+  color: var(--blue);
+  margin-bottom: 1rem;
+}
+
+.comparison {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.comparison figure {
+  margin: 0;
+}
+
+.comparison figcaption {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: var(--terracotta);
+  margin-bottom: 0.4rem;
+}
+
+.bubble--before {
+  background: #e7e3dc;
+  color: #6b665f;
+  border-radius: 18px 18px 18px 4px;
+  padding-bottom: 1.1rem;
+  font-size: 0.95rem;
+}
+
+.bubble--before .bubble__text {
+  font-size: 0.95rem;
+}
+
+.example-note {
+  margin-top: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Who it is for / not for */
+.checklist {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.checklist li {
+  position: relative;
+  padding-left: 1.9rem;
+  margin-bottom: 0.6rem;
+}
+
+.checklist li::before {
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  font-weight: 700;
+}
+
+.checklist--yes li::before {
+  content: '✓';
+  color: var(--olive);
+}
+
+.checklist--no li {
+  color: var(--text-muted);
+}
+
+.checklist--no li::before {
+  content: '✕';
+  color: var(--terracotta);
+}
+
+
+/* Where to start */
+.start-here {
+  background: var(--off-white);
+  border: 1.5px solid var(--terracotta-light);
+  border-radius: 22px;
+  padding: 1.75rem 1.25rem 1.4rem;
+  margin-bottom: 2rem;
+}
+
+.start-here__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.text-button {
+  display: block;
+  margin: 0.75rem auto 0;
+  background: none;
+  border: 0;
+  padding: 0.4rem;
+  font: 500 1rem var(--font-body);
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.pdf-cta {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.pdf-cta p:first-child {
+  color: var(--text-muted);
+}
+
+/* Larger captions, contents and audience blocks */
+.comparison figcaption {
+  font-size: 1.7rem;
+}
+
+/* What is inside: a block with larger numbers */
+.contents {
+  background: var(--off-white);
+  border-radius: 22px;
+  padding: 1.6rem 1.25rem 0.5rem;
+}
+
+.contents .toc {
+  border-top: 0;
+}
+
+.contents .toc li:last-child {
+  border-bottom: 0;
+}
+
+.contents .toc a::before {
+  font-size: 2.1rem;
+}
+
+.contents .toc__title {
+  font-size: 1.125rem;
+}
+
+/* Who it is for / not for: two blocks with equal weight */
+.audience {
+  display: grid;
+  gap: 1rem;
+}
+
+.audience__block {
+  border-radius: 22px;
+  padding: 1.5rem 1.25rem 0.75rem;
+}
+
+.audience__block h2 {
+  font-size: 1.6rem;
+}
+
+.audience__block--yes {
+  background: var(--off-white);
+}
+
+.audience__block--no {
+  border: 1.5px solid var(--terracotta-light);
+}
+
+.audience .checklist li::before {
+  font-size: 1.15rem;
+}
+
+.checklist--no li {
+  color: var(--charcoal);
+}
+
+/* Assistant featured in the waitlist */
+.waitlist__items li.waitlist__featured {
+  background: rgba(244, 236, 221, 0.1);
+  border: 1px solid rgba(224, 138, 98, 0.55);
+  border-radius: 14px;
+  padding: 0.9rem 0.9rem 0.9rem 2.6rem;
+  margin-bottom: 1rem;
+  font-size: 1.0625rem;
+}
+
+.waitlist__items li.waitlist__featured::before {
+  left: 0.9rem;
+  top: 0.85rem;
+  font-size: 1.2rem;
+}
+
+.waitlist__featured strong {
+  color: var(--cream);
+}

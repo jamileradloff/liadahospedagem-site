@@ -83,6 +83,11 @@ a {
   border-radius: 6px;
 }
 
+/* Headings only receive focus programmatically, when a screen changes. */
+h1[tabindex='-1']:focus {
+  outline: none;
+}
+
 .handwritten {
   font-family: var(--font-hand);
   font-weight: 600;
@@ -691,6 +696,7 @@ a {
 
 .text-button {
   display: block;
+  width: fit-content;
   margin: 0.75rem auto 0;
   background: none;
   border: 0;

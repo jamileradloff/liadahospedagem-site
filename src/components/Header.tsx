@@ -1,19 +1,12 @@
-import { navigate } from '../router'
+import { Link } from './Link'
 
 export function Header() {
   return (
     <header className="site-header">
-      <a
-        className="brand"
-        href="/"
-        onClick={(e) => {
-          e.preventDefault()
-          navigate('/')
-        }}
-      >
+      <Link className="brand" to="/">
         <span className="notebook-icon" aria-hidden="true" />
         o Caderninho da Lia
-      </a>
+      </Link>
     </header>
   )
 }

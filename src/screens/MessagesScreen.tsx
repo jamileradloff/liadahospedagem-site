@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MESSAGES } from '../content'
-import { currentAnchor } from '../router'
+import { MESSAGES_PATH } from '../router'
+import { Link } from '../components/Link'
 import { MessageCard } from '../components/MessageCard'
 import { PdfButton, PDF_TIP } from '../components/PdfButton'
 import { WaitlistSection } from '../components/WaitlistSection'
@@ -12,36 +13,33 @@ const SETUP_STEPS = [
   'Para usar, abre a conversa, digita / e seleciona a resposta. Troca [nome do hóspede] pelo nome da pessoa, confere a mensagem e envia.',
 ]
 
-export function MessagesScreen() {
+type Props = { anchor: string; navigationKey: number }
+
+export function MessagesScreen({ anchor, navigationKey }: Props) {
   const [highlighted, setHighlighted] = useState<string | null>(null)
   const [downloaded, setDownloaded] = useState(false)
 
-  // Tapping "copy" in the PDF lands on the right message, with a short highlight.
+  // Landing on a message (from the PDF, the home page or a jump link) gives it a short highlight.
   useEffect(() => {
-    const anchor = currentAnchor()
+    setHighlighted(anchor || null)
     if (!anchor) return
-    const target = document.getElementById(anchor)
-    if (!target) return
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
-    setHighlighted(anchor)
     const timer = window.setTimeout(() => setHighlighted(null), 2200)
     return () => window.clearTimeout(timer)
-  }, [])
+  }, [anchor, navigationKey])
 
   return (
     <main>
       <section className="messages-intro">
-        <h1>Suas 3 mensagens</h1>
+        <h1 tabIndex={-1}>Suas 3 mensagens</h1>
         <p>
           Toca em “Copiar mensagem”, cola no WhatsApp e troca o que está entre [colchetes] pelos dados da sua
           hospedagem. Não sabe por onde começar? Comece pela de boas-vindas.
         </p>
         <nav className="jump-links" aria-label="Ir para a mensagem">
           {MESSAGES.map((m) => (
-            <a key={m.id} href={`#${m.anchor}`}>
+            <Link key={m.id} to={`${MESSAGES_PATH}#${m.anchor}`}>
               {m.title.replace(/[“”]/g, '')}
-            </a>
+            </Link>
           ))}
         </nav>
       </section>

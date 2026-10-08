@@ -10,6 +10,7 @@ export function MessageCard({ message, position, highlighted }: Props) {
   return (
     <article
       id={message.anchor}
+      tabIndex={-1}
       className={highlighted ? 'message-card message-card--highlight' : 'message-card'}
       aria-labelledby={`title-${message.id}`}
     >

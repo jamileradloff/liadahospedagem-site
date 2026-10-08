@@ -1,7 +1,8 @@
-import { useState, type SyntheticEvent } from 'react'
+import { useState, type ReactNode, type SyntheticEvent } from 'react'
 import { LINKEDIN_URL, MESSAGES, type Message } from '../content'
 import { track } from '../analytics'
-import { MESSAGES_PATH, navigate } from '../router'
+import { MESSAGES_PATH } from '../router'
+import { Link } from '../components/Link'
 import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
 import { MessageBubble } from '../components/MessageBubble'
 import { WaitlistSection } from '../components/WaitlistSection'
@@ -71,9 +72,15 @@ const FAQ = [
   },
 ]
 
-function openMessages(message?: Message) {
-  track('opened_messages', { from: 'home', message: message?.id ?? null })
-  navigate(`${MESSAGES_PATH}${message ? `#${message.anchor}` : ''}`)
+/** Link to the messages screen (optionally to one message) that records where the visitor came from. */
+function MessagesLink({ message, ...rest }: { message?: Message; className?: string; children: ReactNode }) {
+  return (
+    <Link
+      {...rest}
+      to={`${MESSAGES_PATH}${message ? `#${message.anchor}` : ''}`}
+      onClick={() => track('opened_messages', { from: 'home', message: message?.id ?? null })}
+    />
+  )
 }
 
 function trackFaqOpen(event: SyntheticEvent<HTMLDetailsElement>, question: string) {
@@ -91,22 +98,13 @@ export function HomeScreen() {
       {/* 1. Delivery: confirm the request and offer the shortest path */}
       <section className="hero">
         <p className="handwritten">Oi! Aqui está o que você pediu.</p>
-        <h1>3 mensagens prontas para você parar de digitar a mesma coisa todo dia</h1>
+        <h1 tabIndex={-1}>3 mensagens prontas para você parar de digitar a mesma coisa todo dia</h1>
         <p className="hero__lead">
           Boas-vindas, pedido de check-in cedo e lembrete de check-out. Copia, troca o que está entre colchetes e
           salva como atalho no WhatsApp. Em 10 minutos, tá feito.
         </p>
         <div className="hero__actions">
-          <a
-            className="button button--large"
-            href={MESSAGES_PATH}
-            onClick={(e) => {
-              e.preventDefault()
-              openMessages()
-            }}
-          >
-            Copiar as mensagens agora
-          </a>
+          <MessagesLink className="button button--large">Copiar as mensagens agora</MessagesLink>
           <PdfButton page="home" light onDownload={() => setDownloadedFrom('hero')} />
         </div>
         <p className="hero__note" role="status" aria-live="polite">
@@ -154,16 +152,10 @@ export function HomeScreen() {
         <ol className="toc">
           {MESSAGES.map((m) => (
             <li key={m.id}>
-              <a
-                href={`${MESSAGES_PATH}#${m.anchor}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  openMessages(m)
-                }}
-              >
+              <MessagesLink message={m}>
                 <span className="toc__title">{m.title}</span>
                 <span className="toc__subtitle">{m.subtitle}</span>
-              </a>
+              </MessagesLink>
             </li>
           ))}
         </ol>
@@ -223,24 +215,14 @@ export function HomeScreen() {
             <MessageBubble text={welcome.text} />
             <p className="copy-fallback__link">
               Prefere copiar com as dicas do lado?{' '}
-              <a
-                href={`${MESSAGES_PATH}#${welcome.anchor}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  openMessages(welcome)
-                }}
-              >
-                Abrir a mensagem de boas-vindas
-              </a>
+              <MessagesLink message={welcome}>Abrir a mensagem de boas-vindas</MessagesLink>
             </p>
           </div>
         )}
         <p className="status-note" role="status" aria-live="polite">
           {downloadedFrom === 'start-here' ? PDF_TIP : ''}
         </p>
-        <button type="button" className="text-button" onClick={() => openMessages()}>
-          Ver as 3 mensagens com as dicas
-        </button>
+        <MessagesLink className="text-button">Ver as 3 mensagens com as dicas</MessagesLink>
       </section>
 
       {/* 8. Bridge to the paid kit + Tally (only after delivery) */}

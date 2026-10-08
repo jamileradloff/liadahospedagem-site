@@ -28,13 +28,19 @@ export function MessagesScreen({ anchor, navigationKey }: Props) {
   }, [anchor, navigationKey])
 
   return (
-    <main>
+    <main className="messages-layout">
       <section className="messages-intro">
+        <Link className="back-link" to="/">
+          <span aria-hidden="true">←</span> Voltar para o início
+        </Link>
         <h1 tabIndex={-1}>Suas 3 mensagens</h1>
         <p>
           Toca em “Copiar mensagem”, cola no WhatsApp e troca o que está entre [colchetes] pelos dados da sua
           hospedagem. Não sabe por onde começar? Comece pela de boas-vindas.
         </p>
+      </section>
+
+      <div className="messages-body">
         <nav className="jump-links" aria-label="Ir para a mensagem">
           {MESSAGES.map((m) => (
             <Link key={m.id} to={`${MESSAGES_PATH}#${m.anchor}`}>
@@ -42,11 +48,13 @@ export function MessagesScreen({ anchor, navigationKey }: Props) {
             </Link>
           ))}
         </nav>
-      </section>
 
-      {MESSAGES.map((m, i) => (
-        <MessageCard key={m.id} message={m} position={i + 1} highlighted={highlighted === m.anchor} />
-      ))}
+        <div className="messages-list">
+          {MESSAGES.map((m, i) => (
+            <MessageCard key={m.id} message={m} position={i + 1} highlighted={highlighted === m.anchor} />
+          ))}
+        </div>
+      </div>
 
       <section className="section steps" aria-labelledby="steps-title">
         <h2 id="steps-title">Agora salva no WhatsApp Business</h2>

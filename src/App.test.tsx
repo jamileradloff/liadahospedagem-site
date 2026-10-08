@@ -96,6 +96,17 @@ describe('navigation', () => {
     expect(card(anchor)).toHaveClass('message-card--highlight')
   })
 
+  it('returns to the home page from the back link on the messages screen', async () => {
+    await renderAt('/mensagens#cedo')
+    const back = screen.getByRole('link', { name: 'Voltar para o início' })
+
+    expect(back).toHaveAttribute('href', '/')
+    await userEvent.click(back)
+
+    expect(window.location.pathname).toBe('/')
+    expect(screen.getByRole('heading', { level: 1, name: /3 mensagens prontas/ })).toHaveFocus()
+  })
+
   it('does not move focus on a plain page load', async () => {
     await renderAt('/mensagens')
 

@@ -45,6 +45,7 @@ const FOR_YOU = [
 const NOT_FOR_YOU = [
   'Tem uma equipe de atendimento e dezenas de imóveis.',
   'Procura um sistema que responda os hóspedes sozinho, sem você.',
+  'Quer uma resposta igual para todo hóspede, sem trocar uma palavra.',
 ]
 
 const FAQ = [
@@ -97,19 +98,25 @@ export function HomeScreen() {
     <main>
       {/* 1. Delivery: confirm the request and offer the shortest path */}
       <section className="hero">
-        <p className="handwritten">Oi! Aqui está o que você pediu.</p>
-        <h1 tabIndex={-1}>3 mensagens prontas para você parar de digitar a mesma coisa todo dia</h1>
-        <p className="hero__lead">
-          Boas-vindas, pedido de check-in cedo e lembrete de check-out. Copia, troca o que está entre colchetes e
-          salva como atalho no WhatsApp. Em 10 minutos, tá feito.
-        </p>
-        <div className="hero__actions">
-          <MessagesLink className="button button--large">Copiar as mensagens agora</MessagesLink>
-          <PdfButton page="home" light onDownload={() => setDownloadedFrom('hero')} />
+        <div className="hero__copy">
+          <p className="handwritten">Oi! Aqui está o que você pediu.</p>
+          <h1 tabIndex={-1}>3 mensagens prontas para você parar de digitar a mesma coisa todo dia</h1>
+          <p className="hero__lead">
+            Boas-vindas, pedido de check-in cedo e lembrete de check-out. Copia, troca o que está entre colchetes e
+            salva como atalho no WhatsApp. Em 10 minutos, tá feito.
+          </p>
+          <div className="hero__actions">
+            <MessagesLink className="button button--large">Copiar as mensagens agora</MessagesLink>
+            <PdfButton page="home" light onDownload={() => setDownloadedFrom('hero')} />
+          </div>
+          <p className="hero__note" role="status" aria-live="polite">
+            {downloadedFrom === 'hero' ? PDF_TIP : 'Grátis e sem cadastro.'}
+          </p>
         </div>
-        <p className="hero__note" role="status" aria-live="polite">
-          {downloadedFrom === 'hero' ? PDF_TIP : 'Grátis e sem cadastro.'}
-        </p>
+        {/* Visual preview only (wide screens); the full text is one click away. */}
+        <div className="hero__preview" aria-hidden="true">
+          <MessageBubble text={welcome.text} truncated />
+        </div>
       </section>
 
       {/* 2. Mirror: her own words */}
@@ -193,43 +200,47 @@ export function HomeScreen() {
 
       {/* 7. Where to start: the first quick win */}
       <section className="start-here" aria-labelledby="start-here-title">
-        <p className="handwritten">por onde começar</p>
-        <h2 id="start-here-title">Comece pela de boas-vindas. Salva hoje.</h2>
-        <p>É a que você mais manda. Uma mensagem salva já tira várias perguntas da sua semana.</p>
-        <div className="start-here__actions">
-          <button
-            type="button"
-            className={status === 'copied' ? 'button button--large button--done' : 'button button--large'}
-            onClick={copy}
-          >
-            {status === 'copied' ? 'Copiada! Agora cola no WhatsApp' : 'Copiar a de boas-vindas'}
-          </button>
-          <PdfButton page="home" onDownload={() => setDownloadedFrom('start-here')} />
+        <div className="start-here__intro">
+          <p className="handwritten">por onde começar</p>
+          <h2 id="start-here-title">Comece pela de boas-vindas. Salva hoje.</h2>
+          <p>É a que você mais manda. Uma mensagem salva já tira várias perguntas da sua semana.</p>
         </div>
-        <p className="status-note" role="status" aria-live="polite">
-          {status === 'failed' && copyFailedHint('abaixo')}
-          {status === 'copied' && <span className="visually-hidden">{COPIED_ANNOUNCEMENT}</span>}
-        </p>
-        {status === 'failed' && (
-          <div className="copy-fallback">
-            <MessageBubble text={welcome.text} />
-            <p className="copy-fallback__link">
-              Prefere copiar com as dicas do lado?{' '}
-              <MessagesLink message={welcome}>Abrir a mensagem de boas-vindas</MessagesLink>
-            </p>
+        <div className="start-here__body">
+          <div className="start-here__actions">
+            <button
+              type="button"
+              className={status === 'copied' ? 'button button--large button--done' : 'button button--large'}
+              onClick={copy}
+            >
+              {status === 'copied' ? 'Copiada! Agora cola no WhatsApp' : 'Copiar a de boas-vindas'}
+            </button>
+            <PdfButton page="home" onDownload={() => setDownloadedFrom('start-here')} />
           </div>
-        )}
-        <p className="status-note" role="status" aria-live="polite">
-          {downloadedFrom === 'start-here' ? PDF_TIP : ''}
-        </p>
-        <MessagesLink className="text-button">Ver as 3 mensagens com as dicas</MessagesLink>
+          <p className="status-note" role="status" aria-live="polite">
+            {status === 'failed' && copyFailedHint('abaixo')}
+            {status === 'copied' && <span className="visually-hidden">{COPIED_ANNOUNCEMENT}</span>}
+          </p>
+          {status === 'failed' && (
+            <div className="copy-fallback">
+              <MessageBubble text={welcome.text} />
+              <p className="copy-fallback__link">
+                Prefere copiar com as dicas do lado?{' '}
+                <MessagesLink message={welcome}>Abrir a mensagem de boas-vindas</MessagesLink>
+              </p>
+            </div>
+          )}
+          <p className="status-note" role="status" aria-live="polite">
+            {downloadedFrom === 'start-here' ? PDF_TIP : ''}
+          </p>
+          <MessagesLink className="text-button">Ver as 3 mensagens com as dicas</MessagesLink>
+        </div>
       </section>
 
       {/* 8. Bridge to the paid kit + Tally (only after delivery) */}
       <WaitlistSection page="home" />
 
       {/* 9. FAQ */}
-      <section className="section" aria-labelledby="faq-title">
+      <section className="section faq" aria-labelledby="faq-title">
         <h2 id="faq-title">Dúvidas rápidas</h2>
         {FAQ.map((item) => (
           <details key={item.id} className="faq-item" onToggle={(e) => trackFaqOpen(e, item.id)}>

@@ -23,7 +23,7 @@ export function MessageCard({ message, position, highlighted }: Props) {
       <MessageBubble text={message.text} />
 
       <div className="message-card__actions">
-        <button type="button" className={status === 'copied' ? 'button button--done' : 'button'} onClick={copy}>
+        <button type="button" className={status === 'copied' ? 'button button--done' : 'button'} onClick={() => void copy()}>
           {status === 'copied' ? 'Copiada! Agora cola no WhatsApp' : 'Copiar mensagem'}
         </button>
         <span className="shortcut">

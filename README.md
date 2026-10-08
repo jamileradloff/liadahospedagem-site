@@ -29,6 +29,8 @@ src/
   styles.css          brand tokens and all styles
   components/         Header, Footer, MessageBubble, MessageCard, PdfButton, WaitlistSection
   screens/            HomeScreen, MessagesScreen
+  **/*.test.ts(x)     unit and component tests (Vitest + Testing Library, jsdom)
+e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility
 pdf/                  source of the free PDF (see pdf/README.md)
 public/               the generated PDF and the social preview image
 ```
@@ -43,6 +45,34 @@ npm run dev
 `VITE_PREVIEW=1 npm run build` builds the preview variant (screens kept in memory, PDF link disabled) used for
 the single-file preview artifact.
 
+## Checks
+
+| Command | What it does |
+|---|---|
+| `npm run typecheck` | TypeScript for the app (`tsconfig.json`) and for the configs and browser tests (`tsconfig.node.json`) |
+| `npm run lint` | ESLint with type-aware TypeScript rules and the React Hooks rules |
+| `npm test` | unit and component tests in jsdom (`npm run test:watch` while working) |
+| `npm run test:e2e` | browser tests against the production build |
+| `npm run check` | type check, lint and unit tests together |
+| `npm run build` | type check and production build |
+
+The browser tests need the Playwright browsers once per machine:
+
+```bash
+npx playwright install chromium webkit
+```
+
+`npm run test:e2e` builds the site and serves it with `vite preview` on port 4173, with the PostHog key forced
+empty so no events are sent. It runs in desktop Chrome, a Pixel 7 and an iPhone 14 (WebKit). The layout sweep at
+320, 390, 768, 1024 and 1440px runs in desktop Chrome only. Clipboard reads only work in Chromium, so the copy
+success test is skipped in WebKit. Add `--project=desktop-chromium` to run a single browser, or `--ui` to debug.
+
+The accessibility tests run axe against WCAG 2.2 AA rules. They don't replace checking with the keyboard and a
+screen reader.
+
+CI (`.github/workflows/ci.yml`) runs every check, both builds and the browser tests on each pull request and on
+pushes to `main`. A failed browser run uploads the Playwright report as an artifact.
+
 ## Deploy on Cloudflare Pages (free)
 
 1. Push this repo to GitHub.
@@ -50,7 +80,10 @@ the single-file preview artifact.
    (install the Cloudflare GitHub app on "Only select repositories").
 3. Project name: `liadahospedagem` (becomes `liadahospedagem.pages.dev`).
    If the name is taken, update the `og:image` URL in `index.html` and `SITE` in `pdf/build.py`.
-4. Build: framework **Vite**, command `npm run build`, output `dist`.
+4. Build: framework **Vite**, command `npm run check && npm run build`, output `dist`.
+   A failing type check, lint or unit test then stops the deploy. Cloudflare can't run the browser tests;
+   GitHub runs them on pull requests (see [Checks](#checks)). In GitHub, protect `main` and require the CI checks
+   to pass before merging.
 5. **Settings → Variables and Secrets**: add `VITE_POSTHOG_KEY` and `VITE_POSTHOG_HOST` (see `.env.example`)
    to the **Production** environment only, then redeploy.
 

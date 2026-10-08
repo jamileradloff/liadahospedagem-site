@@ -86,19 +86,26 @@ export function navigate(target: string) {
   setLocation({ ...parse(target), cause: 'push', scrollY: null })
 }
 
+let landedScreen: Page | null = null
+
 /** Moves scroll and keyboard focus to where a navigation should land. Runs after the screen renders. */
 export function landOn(current: Location) {
+  const previousScreen = landedScreen
+  landedScreen = current.screen
   const target = current.anchor ? document.getElementById(current.anchor) : null
   if (current.cause === 'initial' && !target) return
 
   const focusTarget = target ?? document.querySelector<HTMLElement>('main h1')
   if (current.scrollY !== null) {
-    window.scrollTo(0, current.scrollY)
+    window.scrollTo({ top: current.scrollY, behavior: 'instant' })
   } else if (target) {
+    // Animate only jumps within a screen. After a screen change the old scroll offset is meaningless, and an
+    // animation still running from it would override a quick Back (Chromium doesn't cancel it).
+    const sameScreen = current.cause === 'push' && previousScreen === current.screen
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    target.scrollIntoView({ behavior: current.cause === 'push' && !reduceMotion ? 'smooth' : 'auto', block: 'start' })
+    target.scrollIntoView({ behavior: sameScreen && !reduceMotion ? 'smooth' : 'instant', block: 'start' })
   } else {
-    window.scrollTo(0, 0)
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
   focusTarget?.focus({ preventScroll: true })
 }

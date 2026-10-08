@@ -210,7 +210,7 @@ export function HomeScreen() {
             <button
               type="button"
               className={status === 'copied' ? 'button button--large button--done' : 'button button--large'}
-              onClick={copy}
+              onClick={() => void copy()}
             >
               {status === 'copied' ? 'Copiada! Agora cola no WhatsApp' : 'Copiar a de boas-vindas'}
             </button>

@@ -77,16 +77,27 @@ describe('navigation', () => {
     expect(window.location.hash).toBe('#cedo')
     expect(card('cedo')).toHaveFocus()
     expect(card('cedo')).toHaveClass('message-card--highlight')
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'instant', block: 'start' })
+  })
+
+  it('animates jumps between messages on the same screen', async () => {
+    await renderAt('/mensagens')
+    const jumpLinks = screen.getByRole('navigation', { name: 'Ir para a mensagem' })
+
+    await userEvent.click(within(jumpLinks).getByRole('link', { name: 'Lembrete de check-out' }))
+
+    expect(card('checkout')).toHaveFocus()
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' })
   })
 
   it('does not animate the scroll when reduced motion is preferred', async () => {
     window.matchMedia = vi.fn().mockReturnValue({ matches: true })
-    await renderAt('/')
+    await renderAt('/mensagens')
+    const jumpLinks = screen.getByRole('navigation', { name: 'Ir para a mensagem' })
 
-    await userEvent.click(screen.getByRole('link', { name: /Lembrete de check-out/ }))
+    await userEvent.click(within(jumpLinks).getByRole('link', { name: 'Lembrete de check-out' }))
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' })
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'instant', block: 'start' })
   })
 
   it.each(['boasvindas', 'cedo', 'checkout'])('supports direct entry to /mensagens#%s', async (anchor) => {

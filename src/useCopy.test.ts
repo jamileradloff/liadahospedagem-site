@@ -32,7 +32,9 @@ describe('useCopy', () => {
     await act(() => result.current.copy())
     expect(result.current.status).toBe('copied')
 
-    act(() => vi.advanceTimersByTime(COPIED_FEEDBACK_MS))
+    act(() => {
+      vi.advanceTimersByTime(COPIED_FEEDBACK_MS)
+    })
     expect(result.current.status).toBe('idle')
   })
 
@@ -41,12 +43,18 @@ describe('useCopy', () => {
     const { result } = renderHook(() => useCopy('welcome', 'oi', 'home'))
 
     await act(() => result.current.copy())
-    act(() => vi.advanceTimersByTime(2000))
+    act(() => {
+      vi.advanceTimersByTime(2000)
+    })
     await act(() => result.current.copy())
 
-    act(() => vi.advanceTimersByTime(COPIED_FEEDBACK_MS - 1))
+    act(() => {
+      vi.advanceTimersByTime(COPIED_FEEDBACK_MS - 1)
+    })
     expect(result.current.status).toBe('copied')
-    act(() => vi.advanceTimersByTime(1))
+    act(() => {
+      vi.advanceTimersByTime(1)
+    })
     expect(result.current.status).toBe('idle')
   })
 

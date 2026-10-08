@@ -16,14 +16,14 @@ const SETUP_STEPS = [
 type Props = { anchor: string; navigationKey: number }
 
 export function MessagesScreen({ anchor, navigationKey }: Props) {
-  const [highlighted, setHighlighted] = useState<string | null>(null)
+  const [expiredNavigation, setExpiredNavigation] = useState<number | null>(null)
   const [downloaded, setDownloaded] = useState(false)
 
   // Landing on a message (from the PDF, the home page or a jump link) gives it a short highlight.
+  const highlighted = anchor && expiredNavigation !== navigationKey ? anchor : null
   useEffect(() => {
-    setHighlighted(anchor || null)
     if (!anchor) return
-    const timer = window.setTimeout(() => setHighlighted(null), 2200)
+    const timer = window.setTimeout(() => setExpiredNavigation(navigationKey), 2200)
     return () => window.clearTimeout(timer)
   }, [anchor, navigationKey])
 

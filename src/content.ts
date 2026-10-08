@@ -4,20 +4,24 @@
 // so it stays in Portuguese to match the WhatsApp shortcut the host saves.
 
 export type MessageId = 'welcome' | 'early-checkin' | 'checkout'
+export type MessageAnchor = 'boasvindas' | 'cedo' | 'checkout'
 
 export type Message = {
-  id: MessageId
-  anchor: 'boasvindas' | 'cedo' | 'checkout'
-  title: string
-  subtitle: string
-  whenToSend: string
-  shortcut: string
-  text: string
-  tip: string
+  readonly id: MessageId
+  readonly anchor: MessageAnchor
+  readonly title: string
+  readonly subtitle: string
+  readonly whenToSend: string
+  readonly shortcut: string
+  readonly text: string
+  readonly tip: string
 }
 
-export const MESSAGES: Message[] = [
-  {
+/** Every message, keyed by its id; each entry's `id` must match its key. */
+type MessagesById = { readonly [Id in MessageId]: Message & { readonly id: Id } }
+
+export const MESSAGE_BY_ID = {
+  welcome: {
     id: 'welcome',
     anchor: 'boasvindas',
     title: 'Boas-vindas e chegada',
@@ -39,7 +43,7 @@ Se tiver alguma dúvida, é só me chamar por aqui. Boa viagem!
 [seu nome]`,
     tip: 'A senha do Wi-Fi já vai aqui, porque é a pergunta que mais chega. E não pula a dica: a padaria que abre cedo, o lugar do pôr do sol. É isso que faz a mensagem parecer sua, e não de robô.',
   },
-  {
+  'early-checkin': {
     id: 'early-checkin',
     anchor: 'cedo',
     title: '“Posso chegar mais cedo?”',
@@ -55,7 +59,7 @@ Se a hospedagem ficar pronta mais cedo, te aviso por aqui para você poder entra
 [seu nome]`,
     tip: 'Não tem onde guardar mala? Apaga a linha opcional. E não promete horário antes de saber se a limpeza termina: “te aviso por aqui se você puder entrar antes” é melhor do que “pode vir ao meio-dia”.',
   },
-  {
+  checkout: {
     id: 'checkout',
     anchor: 'checkout',
     title: 'Lembrete de check-out',
@@ -76,7 +80,10 @@ Foi um prazer receber você! Aproveite o restante da estadia e boa viagem de vol
 [seu nome]`,
     tip: 'Explicar o motivo do horário ajuda o hóspede a entender o lembrete. Peça só o necessário para a saída e mantenha o carinho no final: “Foi um prazer receber você” faz diferença.',
   },
-]
+} as const satisfies MessagesById
+
+/** Display order (pages, contents list, "Mensagem N de 3"). Reordering it does not change any lookup by id. */
+export const MESSAGES: readonly Message[] = [MESSAGE_BY_ID.welcome, MESSAGE_BY_ID['early-checkin'], MESSAGE_BY_ID.checkout]
 
 // In the published preview the PDF is not hosted, so the link only shows the tip.
 export const PDF_URL = import.meta.env.VITE_PREVIEW === '1' ? '#pdf' : '/lia-3-mensagens.pdf'

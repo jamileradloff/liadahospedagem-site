@@ -1,6 +1,6 @@
 import { useState, type ReactNode, type SyntheticEvent } from 'react'
-import { LINKEDIN_URL, MESSAGES, type Message } from '../content'
-import { track } from '../analytics'
+import { LINKEDIN_URL, MESSAGE_BY_ID, MESSAGES, type Message } from '../content'
+import { track, type FaqId } from '../analytics'
 import { MESSAGES_PATH } from '../router'
 import { Link } from '../components/Link'
 import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
@@ -71,7 +71,7 @@ const FAQ = [
     question: 'Preciso entender de tecnologia?',
     answer: 'Não. Se você sabe copiar e colar no WhatsApp, já sabe usar.',
   },
-]
+] as const satisfies readonly { id: FaqId; question: string; answer: string }[]
 
 /** Link to the messages screen (optionally to one message) that records where the visitor came from. */
 function MessagesLink({ message, ...rest }: { message?: Message; className?: string; children: ReactNode }) {
@@ -84,14 +84,14 @@ function MessagesLink({ message, ...rest }: { message?: Message; className?: str
   )
 }
 
-function trackFaqOpen(event: SyntheticEvent<HTMLDetailsElement>, question: string) {
+function trackFaqOpen(event: SyntheticEvent<HTMLDetailsElement>, question: FaqId) {
   if (event.currentTarget.open) track('opened_faq', { question })
 }
 
 export function HomeScreen() {
   // Only the region next to the clicked PDF button shows the tip, so it is announced once.
   const [downloadedFrom, setDownloadedFrom] = useState<'hero' | 'start-here' | null>(null)
-  const welcome = MESSAGES[0]
+  const welcome = MESSAGE_BY_ID.welcome
   const { status, copy } = useCopy(welcome.id, welcome.text, 'home')
 
   return (

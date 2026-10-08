@@ -1,4 +1,5 @@
 import type { PostHog } from 'posthog-js'
+import type { MessageId } from './content'
 
 // Without a key (e.g. local dev or PR previews) nothing is sent and the site works the same.
 const KEY = import.meta.env.VITE_POSTHOG_KEY as string | undefined
@@ -10,6 +11,7 @@ const attribution: Record<string, string> = {}
 // PostHog loads after the page so it doesn't slow down people on mobile data.
 let loading: Promise<PostHog | null> = Promise.resolve(null)
 
+/** The two screens; the same values name the screen in the router and the `page` in events. */
 export type Page = 'home' | 'messages'
 
 export function initAnalytics() {
@@ -37,17 +39,31 @@ export function initAnalytics() {
     .catch(() => null) // ad blockers etc.: the site keeps working
 }
 
-export type AnalyticsEvent =
-  | 'opened_messages' // { from, anchor } went to the copy screen
-  | 'copied_message' // { message, page }
-  | 'copy_failed' // { message, page } the browser blocked the copy
-  | 'downloaded_pdf' // { page }
-  | 'clicked_waitlist' // { page } went to the Tally form
-  | 'opened_faq' // { question }
-  | 'clicked_linkedin'
+export type FaqId = 'is-it-free' | 'regular-whatsapp' | 'single-apartment' | 'tech-skills' | 'who-is-behind-lia'
 
-export function track(event: AnalyticsEvent, props: Record<string, unknown> = {}) {
-  void loading.then((ph) => ph?.capture(event, props))
+type NoProps = Record<string, never>
+
+/** Every custom event and its exact properties (documented in the README). */
+export type EventProps = {
+  /** went from home to the messages screen; `message` is null for the list itself */
+  opened_messages: { from: 'home'; message: MessageId | null }
+  copied_message: { message: MessageId; page: Page }
+  /** the browser blocked the copy */
+  copy_failed: { message: MessageId; page: Page }
+  downloaded_pdf: { page: Page }
+  /** went to the Tally form */
+  clicked_waitlist: { page: Page }
+  opened_faq: { question: FaqId }
+  clicked_linkedin: NoProps
+}
+
+export type AnalyticsEvent = keyof EventProps
+
+export function track<Event extends AnalyticsEvent>(
+  event: Event,
+  ...[props]: EventProps[Event] extends NoProps ? [] : [props: EventProps[Event]]
+) {
+  void loading.then((ph) => ph?.capture(event, props ?? {}))
 }
 
 export function trackPageview() {

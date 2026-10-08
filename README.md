@@ -69,13 +69,16 @@ Events:
 | Event | When | Properties |
 |---|---|---|
 | `$pageview` | a screen was shown | URL, utm_*, origin |
-| `opened_messages` | went from home to the messages screen | `from`, `message` |
-| `copied_message` | copied a message | `message` (`welcome`, `early-checkin`, `checkout`), `page` |
+| `opened_messages` | went from home to the messages screen | `from` (`home`), `message` (a message id, or `null` for the whole list) |
+| `copied_message` | copied a message | `message` (`welcome`, `early-checkin`, `checkout`), `page` (`home`, `messages`) |
 | `copy_failed` | the browser blocked the copy | `message`, `page` |
 | `downloaded_pdf` | opened the PDF | `page` |
 | `clicked_waitlist` | went to the Tally form | `page` |
-| `opened_faq` | opened an FAQ item | `question` |
+| `opened_faq` | opened an FAQ item | `question` (`is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`) |
 | `clicked_linkedin` | clicked Jamile's LinkedIn | |
+
+The properties are typed in `EventProps` (`src/analytics.ts`): a call with a missing, extra or misspelled property
+does not compile.
 
 Funnel: `$pageview` → (`copied_message` or `downloaded_pdf`) → `clicked_waitlist`. Break it down by `utm_content`
 to compare Reels. Answers and price ranges live in Tally.

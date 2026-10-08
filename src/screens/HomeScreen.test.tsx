@@ -2,14 +2,14 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { copyText } from '../clipboard'
-import { MESSAGES } from '../content'
+import { MESSAGE_BY_ID } from '../content'
 import { COPIED_ANNOUNCEMENT } from '../useCopy'
 import { HomeScreen } from './HomeScreen'
 
 vi.mock('../clipboard', () => ({ copyText: vi.fn() }))
 
 const mockedCopyText = vi.mocked(copyText)
-const welcome = MESSAGES.find((m) => m.id === 'welcome')!
+const welcome = MESSAGE_BY_ID.welcome
 
 function statusesWithText(text: string | RegExp) {
   return screen.getAllByRole('status').filter((el) => within(el).queryByText(text))

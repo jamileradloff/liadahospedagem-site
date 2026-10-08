@@ -1,17 +1,15 @@
 import { useEffect, useSyncExternalStore } from 'react'
-import { trackPageview } from './analytics'
+import { trackPageview, type Page } from './analytics'
 
 // Minimal routing: two screens in a single page, so analytics can follow the same visit
 // from the entry screen to the Tally click (cookieless tracking forgets the visitor on reload).
 // In preview mode (VITE_PREVIEW=1) the location lives in memory and the URL never changes.
 
-export type Screen = 'home' | 'messages'
-
 /** User-facing path, kept in Portuguese because it is part of the content (and of the PDF links). */
 export const MESSAGES_PATH = '/mensagens'
 
 export type Location = {
-  screen: Screen
+  screen: Page
   anchor: string
   /** How this location was reached: page load, in-app link, or history/hash change. */
   cause: 'initial' | 'push' | 'pop'

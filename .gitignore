@@ -7,5 +7,6 @@ playwright-report
 test-results
 validation/screenshots
 .DS_Store
+.cursor/
 caderninho/caderninho.html
 scripts/

@@ -11,6 +11,17 @@
   --line: #e3d8c4;
   --text-muted: #5b564f;
 
+  /* Text and focus colors sized for WCAG AA. Brand terracotta stays for large text and decoration,
+     where 3:1 is enough. Ratios are against the surfaces named. */
+  --text-accent: #a15435; /* small terracotta text: 4.7 cream, 5.2 off-white, 5.5 white */
+  --text-accent-on-dark: #f7a67f; /* terracotta text on blue: 4.6 */
+  --text-on-dark: #dfe7e6; /* body text on blue: 7.2 */
+  --text-on-dark-muted: #c9d6d5; /* notes on blue: 6.1 */
+  --text-status: #8f4426; /* status notes: 5.9 cream, 6.6 off-white */
+  --text-example: #68635c; /* the "before" example on its grey bubble: 4.7 */
+  --focus-ring: var(--terracotta); /* 3.5 cream, 3.9 off-white */
+  --focus-ring-on-dark: var(--cream); /* 7.7 blue */
+
   --font-heading: 'Fraunces', Lora, Georgia, serif;
   --font-body: 'DM Sans', Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
   --font-hand: 'Caveat', Kalam, 'Comic Sans MS', cursive;
@@ -78,9 +89,14 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--terracotta);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
   border-radius: 6px;
+}
+
+.hero :focus-visible,
+.waitlist :focus-visible {
+  outline-color: var(--focus-ring-on-dark);
 }
 
 /* Headings only receive focus programmatically, when a screen changes. */
@@ -199,7 +215,7 @@ h1[tabindex='-1']:focus {
 }
 
 .hero__lead {
-  color: #dfe7e6;
+  color: var(--text-on-dark);
   margin-bottom: 1.6rem;
 }
 
@@ -215,7 +231,7 @@ h1[tabindex='-1']:focus {
   margin: 1rem 0 0;
   text-align: center;
   font-size: 0.9375rem;
-  color: #c9d6d5;
+  color: var(--text-on-dark-muted);
 }
 
 /* Home screen sections */
@@ -322,7 +338,7 @@ h1[tabindex='-1']:focus {
 }
 
 .placeholder {
-  color: var(--terracotta-light);
+  color: var(--text-accent-on-dark);
   font-weight: 500;
 }
 
@@ -382,7 +398,7 @@ h1[tabindex='-1']:focus {
   margin: 0 0 0.25rem;
   font-weight: 700;
   font-size: 0.9375rem;
-  color: var(--terracotta);
+  color: var(--text-accent);
 }
 
 .message-card__when {
@@ -422,7 +438,7 @@ h1[tabindex='-1']:focus {
   min-height: 0;
   margin: 0.5rem 0 0;
   font-size: 0.9375rem;
-  color: #8f4426;
+  color: var(--text-status);
 }
 
 .status-note:empty {
@@ -489,13 +505,13 @@ h1[tabindex='-1']:focus {
 .steps li::marker {
   font-family: var(--font-heading);
   font-weight: 600;
-  color: var(--terracotta);
+  color: var(--text-accent);
 }
 
 /* Waitlist invite (Tally) */
 .waitlist {
   background: var(--blue);
-  color: #dfe7e6;
+  color: var(--text-on-dark);
   border-radius: 22px;
   padding: 2rem 1.4rem 1.6rem;
   margin-bottom: 2rem;
@@ -524,7 +540,7 @@ h1[tabindex='-1']:focus {
   position: absolute;
   left: 0;
   top: 0;
-  color: var(--terracotta-light);
+  color: var(--text-accent-on-dark);
   font-weight: 700;
 }
 
@@ -628,7 +644,7 @@ h1[tabindex='-1']:focus {
 
 .bubble--before {
   background: #e7e3dc;
-  color: #6b665f;
+  color: var(--text-example);
   border-radius: 18px 18px 18px 4px;
   padding-bottom: 1.1rem;
   font-size: 0.95rem;

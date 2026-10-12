@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { MESSAGES } from '../content'
 import { MESSAGES_PATH } from '../router'
 import { Link } from '../components/Link'
 import { MessageCard } from '../components/MessageCard'
 import { PdfButton, PDF_TIP } from '../components/PdfButton'
+import { WaitlistCta } from '../components/WaitlistCta'
 import { WaitlistSection } from '../components/WaitlistSection'
 
 const SETUP_STEPS = [
@@ -51,7 +52,10 @@ export function MessagesScreen({ anchor, navigationKey }: Props) {
 
         <div className="messages-list">
           {MESSAGES.map((m, i) => (
-            <MessageCard key={m.id} message={m} position={i + 1} highlighted={highlighted === m.anchor} />
+            <Fragment key={m.id}>
+              <MessageCard message={m} position={i + 1} highlighted={highlighted === m.anchor} />
+              {i === 0 && <WaitlistCta page="messages" />}
+            </Fragment>
           ))}
         </div>
       </div>

@@ -337,6 +337,11 @@ h1[tabindex='-1']:focus {
   background: rgba(224, 138, 98, 0.16);
 }
 
+/* Between message cards the card's own bottom margin is the gap above this block. */
+.messages-list .waitlist-cta {
+  margin: 0 0 1.5rem;
+}
+
 .hero__preview {
   display: none;
 }

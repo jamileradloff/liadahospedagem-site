@@ -6,7 +6,13 @@ import { MESSAGE_BY_ID } from '../content'
 import { COPIED_ANNOUNCEMENT } from '../useCopy'
 import { HomeScreen } from './HomeScreen'
 
+const { track } = vi.hoisted(() => ({ track: vi.fn() }))
+
 vi.mock('../clipboard', () => ({ copyText: vi.fn() }))
+vi.mock('../analytics', async () => {
+  const actual = await vi.importActual<typeof import('../analytics')>('../analytics')
+  return { ...actual, track }
+})
 
 const mockedCopyText = vi.mocked(copyText)
 const welcome = MESSAGE_BY_ID.welcome
@@ -18,6 +24,24 @@ function statusesWithText(text: string | RegExp) {
 describe('HomeScreen welcome copy', () => {
   afterEach(() => {
     mockedCopyText.mockReset()
+    track.mockReset()
+  })
+
+  it('offers the launch waitlist under the hero actions', async () => {
+    render(<HomeScreen />)
+
+    const link = screen.getByRole('link', { name: 'Quero entrar na lista de lançamento' })
+    const prompt = link.parentElement
+    expect(prompt).toHaveTextContent('Quer as 12 mensagens e o assistente da Lia?')
+    expect(prompt).not.toHaveAttribute('role', 'status')
+    expect(link).toHaveClass('button', 'button--outline')
+    expect(link).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener')
+    expect(screen.getByText('Grátis e sem cadastro.')).toBeInTheDocument()
+
+    await userEvent.click(link)
+    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'home' })
   })
 
   it('reveals the welcome template for manual copying when the browser blocks it', async () => {

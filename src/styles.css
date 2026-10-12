@@ -291,6 +291,52 @@ h1[tabindex='-1']:focus {
   color: var(--text-on-dark-muted);
 }
 
+/* Secondary waitlist block: a short question and a smaller outlined action. */
+.waitlist-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1.5rem 0 0;
+  max-width: var(--measure);
+  text-align: center;
+  color: var(--charcoal);
+}
+
+.waitlist-cta p {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.waitlist-cta .button {
+  width: fit-content;
+  max-width: 100%;
+  line-height: 1.3;
+  text-wrap: balance;
+  color: var(--text-accent);
+  box-shadow: inset 0 0 0 2px var(--text-accent);
+}
+
+.waitlist-cta .button:hover {
+  background: rgba(161, 84, 53, 0.08);
+}
+
+.hero .waitlist-cta {
+  color: var(--text-on-dark);
+}
+
+.hero .waitlist-cta .button {
+  color: var(--terracotta-light);
+  box-shadow: inset 0 0 0 2px var(--terracotta-light);
+}
+
+.hero .waitlist-cta .button:hover {
+  background: rgba(224, 138, 98, 0.16);
+}
+
 .hero__preview {
   display: none;
 }
@@ -831,6 +877,11 @@ h1[tabindex='-1']:focus {
   }
 
   .hero__note {
+    text-align: left;
+  }
+
+  .hero .waitlist-cta {
+    align-items: flex-start;
     text-align: left;
   }
 

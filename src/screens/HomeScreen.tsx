@@ -5,10 +5,11 @@ import { MESSAGES_PATH } from '../router'
 import { Link } from '../components/Link'
 import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
 import { MessageBubble } from '../components/MessageBubble'
+import { WaitlistCta } from '../components/WaitlistCta'
 import { WaitlistSection } from '../components/WaitlistSection'
 import { PdfButton, PDF_TIP } from '../components/PdfButton'
 
-// Section order follows the brief: deliver first, then mirror, show, and only at the end the waitlist.
+// Deliver the free messages first. A short waitlist link sits under the hero actions; the full section comes after that delivery.
 
 const MIRROR_LINES = [
   'Se você responde a senha do Wi-Fi toda semana…',
@@ -112,6 +113,7 @@ export function HomeScreen() {
           <p className="hero__note" role="status" aria-live="polite">
             {downloadedFrom === 'hero' ? PDF_TIP : 'Grátis e sem cadastro.'}
           </p>
+          <WaitlistCta page="home" />
         </div>
         {/* Visual preview only (wide screens); the full text is one click away. */}
         <div className="hero__preview" aria-hidden="true">
@@ -236,7 +238,7 @@ export function HomeScreen() {
         </div>
       </section>
 
-      {/* 8. Bridge to the paid kit + Tally (only after delivery) */}
+      {/* 8. Full waitlist section, after the free messages */}
       <WaitlistSection page="home" />
 
       {/* 9. FAQ */}

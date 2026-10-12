@@ -28,9 +28,15 @@ describe('HomeScreen welcome copy', () => {
   })
 
   it('offers the launch waitlist under the hero actions', async () => {
-    render(<HomeScreen />)
+    const { container } = render(<HomeScreen />)
 
-    const link = screen.getByRole('link', { name: 'Quero entrar na lista de lançamento' })
+    const link = within(container.querySelector('.waitlist-cta') as HTMLElement).getByRole('link', {
+      name: 'Quero entrar na lista de lançamento',
+    })
+    const sectionLink = within(container.querySelector('.waitlist') as HTMLElement).getByRole('link', {
+      name: 'Quero entrar na lista de lançamento',
+    })
+    expect(sectionLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
     const prompt = link.parentElement
     expect(prompt).toHaveTextContent('Quer as 12 mensagens e o assistente da Lia?')
     expect(prompt).not.toHaveAttribute('role', 'status')

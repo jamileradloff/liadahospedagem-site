@@ -96,7 +96,7 @@ async function verifyAnalytics(browser) {
   await page.goto(`http://localhost:4174/?utm_source=instagram&utm_medium=dm&utm_content=${REEL}`)
   await page.evaluate(() => document.fonts.ready.then(() => undefined))
 
-  const waitlistHome = new URL(await page.getByRole('link', { name: 'Me avisa quando sair!' }).getAttribute('href'))
+  const waitlistHome = new URL(await page.locator('.waitlist').getByRole('link', { name: 'Quero entrar na lista de lançamento' }).getAttribute('href'))
   check('home waitlist link carries origin=home and the reel', waitlistHome.searchParams.get('origin') === 'home' && waitlistHome.searchParams.get('reel') === REEL, waitlistHome.search)
 
   await page.getByText('É grátis mesmo?').click()
@@ -104,7 +104,7 @@ async function verifyAnalytics(browser) {
   await page.getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' }).waitFor()
   const [pdfPopup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).last().click()])
   await pdfPopup.close()
-  const [tallyPopup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Me avisa quando sair!' }).click()])
+  const [tallyPopup] = await Promise.all([page.waitForEvent('popup'), page.locator('.waitlist').getByRole('link', { name: 'Quero entrar na lista de lançamento' }).click()])
   await tallyPopup.close()
   await page.getByText('Quem está por trás da Lia?').click()
   const [linkedinPopup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Conheça a Jamile no LinkedIn' }).click()])
@@ -112,7 +112,7 @@ async function verifyAnalytics(browser) {
 
   await page.getByRole('link', { name: 'Copiar as mensagens agora' }).click()
   await page.getByRole('heading', { level: 1, name: 'Suas 3 mensagens' }).waitFor()
-  const waitlistMessages = new URL(await page.getByRole('link', { name: 'Me avisa quando sair!' }).getAttribute('href'))
+  const waitlistMessages = new URL(await page.locator('.waitlist').getByRole('link', { name: 'Quero entrar na lista de lançamento' }).getAttribute('href'))
   check('messages waitlist link carries origin=messages and the reel', waitlistMessages.searchParams.get('origin') === 'messages' && waitlistMessages.searchParams.get('reel') === REEL, waitlistMessages.search)
   await page.locator('article#cedo').getByRole('button').click()
   await page.locator('article#cedo').getByRole('button', { name: /Copiada/ }).waitFor()

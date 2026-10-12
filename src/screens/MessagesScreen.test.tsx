@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MessagesScreen } from './MessagesScreen'
@@ -47,9 +47,15 @@ describe('MessagesScreen waitlist prompt', () => {
   })
 
   it('offers the launch waitlist once, between the first and second templates', async () => {
-    render(<MessagesScreen anchor="" navigationKey={1} />)
+    const { container } = render(<MessagesScreen anchor="" navigationKey={1} />)
 
-    const link = screen.getByRole('link', { name: 'Quero entrar na lista de lançamento' })
+    const link = within(container.querySelector('.waitlist-cta') as HTMLElement).getByRole('link', {
+      name: 'Quero entrar na lista de lançamento',
+    })
+    const sectionLink = within(container.querySelector('.waitlist') as HTMLElement).getByRole('link', {
+      name: 'Quero entrar na lista de lançamento',
+    })
+    expect(sectionLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=messages')
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(3)
     const first = articles[0]

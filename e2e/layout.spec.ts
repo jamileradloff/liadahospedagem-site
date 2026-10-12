@@ -10,7 +10,7 @@ const ROUTES: { path: string; controls: (page: Page) => Locator[] }[] = [
       page.getByRole('link', { name: 'Copiar as mensagens agora' }),
       page.getByRole('button', { name: 'Copiar a de boas-vindas' }),
       page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).last(),
-      page.getByRole('link', { name: 'Me avisa quando sair!' }),
+      page.locator('.waitlist').getByRole('link', { name: 'Quero entrar na lista de lançamento' }),
       page.getByText('Quem está por trás da Lia?'),
     ],
   },
@@ -19,7 +19,7 @@ const ROUTES: { path: string; controls: (page: Page) => Locator[] }[] = [
     controls: (page) => [
       page.getByRole('link', { name: 'Voltar para o início' }),
       ...[0, 1, 2].map((i) => page.getByRole('button', { name: 'Copiar mensagem' }).nth(i)),
-      page.getByRole('link', { name: 'Me avisa quando sair!' }),
+      page.locator('.waitlist').getByRole('link', { name: 'Quero entrar na lista de lançamento' }),
       page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }),
     ],
   },

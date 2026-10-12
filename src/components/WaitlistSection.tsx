@@ -34,7 +34,7 @@ export function WaitlistSection({ page }: { page: Page }) {
           rel="noopener"
           onClick={() => track('clicked_waitlist', { page })}
         >
-          Me avisa quando sair!
+          Quero entrar na lista de lançamento
         </a>
         <p className="waitlist__note">É opcional e leva 1 minuto, prometo.</p>
       </div>

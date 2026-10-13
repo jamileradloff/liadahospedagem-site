@@ -152,3 +152,16 @@ One `utm_content` per Reel:
 ```
 https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_content=w3a-welcome
 ```
+
+## Instagram short links
+
+`public/_redirects` sends two short paths to the tagged homepage with a 302. Cloudflare Pages applies the rules;
+`npm run dev` and `npm run preview` do not.
+
+| Link | Use | Redirects to |
+|---|---|---|
+| `https://liadahospedagem.pages.dev/ig` | Instagram bio | `/?utm_source=instagram&utm_medium=bio` |
+| `https://liadahospedagem.pages.dev/story` | Story link stickers | `/?utm_source=instagram&utm_medium=story` |
+
+Keep the full UTM links (with `utm_content`) in DM buttons. Published Story stickers keep pointing at `/story`,
+so fix that rule rather than removing it.

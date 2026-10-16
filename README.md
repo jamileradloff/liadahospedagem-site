@@ -7,13 +7,14 @@ The code is in English; the page copy is in Brazilian Portuguese (it is the prod
 
 ## Screens
 
-One single-page app with two screens:
+One single-page app with three screens:
 
-- `/` home: where the ManyChat DM link lands
+- `/` home: where the bio and other visitors land
 - `/mensagens` the 3 messages with copy buttons, with anchors `#boasvindas`, `#cedo`, `#checkout`
+- `/obrigado` thank-you after the Tally form, with the PDF download
 
-The `/mensagens` path and the anchors stay in Portuguese on purpose: they are user-facing, they are baked into the
-PDF links, and the anchors match the WhatsApp shortcuts the host saves.
+The `/mensagens` and `/obrigado` paths and the anchors stay in Portuguese on purpose: they are user-facing, they are
+baked into the PDF links and the Tally redirect, and the anchors match the WhatsApp shortcuts the host saves.
 
 ## Project structure
 
@@ -21,7 +22,7 @@ PDF links, and the anchors match the WhatsApp shortcuts the host saves.
 src/
   main.tsx            app entry, starts analytics
   App.tsx             header + current screen + footer
-  router.ts           two-screen router (history API, or in-memory in preview mode)
+  router.ts           three-screen router (history API, or in-memory in preview mode)
   analytics.ts        PostHog (lazy, cookieless), event names, Tally link builder
   content.ts          message copy and external URLs
   clipboard.ts        copy with fallback for Instagram's in-app browser
@@ -29,7 +30,7 @@ src/
   copyPrompt.ts       once-per-visit flag for the after-copy waitlist prompt
   styles.css          brand tokens and all styles
   components/         Header, Footer, MessageBubble, MessageCard, PdfButton, WaitlistSection
-  screens/            HomeScreen, MessagesScreen
+  screens/            HomeScreen, MessagesScreen, ThanksScreen
   **/*.test.ts(x)     unit and component tests (Vitest + Testing Library, jsdom)
 e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility, keyboard, zoom, motion
 validation/           repeatable validation scripts (see FRONTEND_VALIDATION.md); screenshots are generated, not committed
@@ -101,7 +102,7 @@ pushes to `main`. A failed browser run uploads the Playwright report as an artif
    to the **Production** environment only, then redeploy.
 
 Every push to `main` deploys production; every PR gets its own preview URL. There is no `404.html` on purpose,
-so Cloudflare serves the app for `/mensagens` too.
+so Cloudflare serves the app for `/mensagens` and `/obrigado` too.
 
 ## Analytics (PostHog)
 
@@ -118,7 +119,8 @@ Events:
 | `opened_messages` | went from home to the messages screen | `from` (`home`), `message` (a message id, or `null` for the whole list) |
 | `copied_message` | copied a message | `message` (`welcome`, `early-checkin`, `checkout`), `page` (`home`, `messages`) |
 | `copy_failed` | the browser blocked the copy | `message`, `page` |
-| `downloaded_pdf` | opened the PDF | `page` |
+| `requested_pdf` | opened the Tally form from a PDF button | `page` (`home`, `messages`) |
+| `downloaded_pdf` | downloaded the PDF file on the thank-you screen | `page` (`thanks`) |
 | `clicked_waitlist` | went to the Tally form | `page`, `placement` (`hero`, `after-first-template`, `section`, `after-copy`) |
 | `viewed_copy_prompt` | the once-per-visit waitlist prompt appeared after a successful copy | `message`, `page` |
 | `opened_faq` | opened an FAQ item | `question` (`is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`) |
@@ -127,13 +129,16 @@ Events:
 The properties are typed in `EventProps` (`src/analytics.ts`): a call with a missing, extra or misspelled property
 does not compile.
 
-Funnel: `$pageview` → (`copied_message` or `downloaded_pdf`) → `clicked_waitlist`. Break it down by `utm_content`
-to compare Reels. Answers and price ranges live in Tally.
+Funnel: `$pageview` → `copied_message` → `clicked_waitlist` / `requested_pdf` → `$pageview` on `/obrigado`. Break it
+down by `utm_content` to compare Reels. Answers and price ranges live in Tally. The PDF buttons send
+`?origin=pdf-request-home|pdf-request-messages&reel=<utm_content>`.
 
 ## Tally
 
 The waitlist button sends `?origin=home|messages|pdf&reel=<utm_content>`.
-The form needs two **hidden fields** named `origin` and `reel`.
+The PDF buttons send `?origin=pdf-request-home|pdf-request-messages` with the same `reel`.
+The form needs two **hidden fields** named `origin` and `reel`, and should redirect on completion to
+`/obrigado?origin=@origin&reel=@reel`.
 
 ## Links inside the PDF
 

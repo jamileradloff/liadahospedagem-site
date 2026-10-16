@@ -78,6 +78,11 @@ describe('MessagesScreen waitlist prompt', () => {
 
     await userEvent.click(sectionLink)
     expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'messages', placement: 'section' })
+
+    const pdf = screen.getByRole('link', { name: 'Receber o Caderninho em PDF' })
+    expect(pdf).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=pdf-request-messages')
+    await userEvent.click(pdf)
+    expect(track).toHaveBeenCalledWith('requested_pdf', { page: 'messages' })
   })
 
   it('invites to the list once, next to the first copied message', async () => {

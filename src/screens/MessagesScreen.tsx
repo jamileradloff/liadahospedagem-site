@@ -3,7 +3,7 @@ import { MESSAGES } from '../content'
 import { MESSAGES_PATH } from '../router'
 import { Link } from '../components/Link'
 import { MessageCard } from '../components/MessageCard'
-import { PdfButton, PDF_TIP } from '../components/PdfButton'
+import { PdfButton } from '../components/PdfButton'
 import { WaitlistCta } from '../components/WaitlistCta'
 import { WaitlistSection } from '../components/WaitlistSection'
 
@@ -18,7 +18,6 @@ type Props = { anchor: string; navigationKey: number }
 
 export function MessagesScreen({ anchor, navigationKey }: Props) {
   const [expiredNavigation, setExpiredNavigation] = useState<number | null>(null)
-  const [downloaded, setDownloaded] = useState(false)
 
   // Landing on a message (from the PDF, the home page or a jump link) gives it a short highlight.
   const highlighted = anchor && expiredNavigation !== navigationKey ? anchor : null
@@ -74,10 +73,7 @@ export function MessagesScreen({ anchor, navigationKey }: Props) {
 
       <section className="pdf-cta">
         <p>Quer guardar as 3 num arquivo, com a cara do caderninho?</p>
-        <PdfButton page="messages" onDownload={() => setDownloaded(true)} />
-        <p className="status-note" role="status" aria-live="polite">
-          {downloaded ? PDF_TIP : ''}
-        </p>
+        <PdfButton page="messages" />
       </section>
     </main>
   )

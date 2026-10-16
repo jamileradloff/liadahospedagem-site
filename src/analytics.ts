@@ -5,14 +5,15 @@ import type { MessageId } from './content'
 const KEY = import.meta.env.VITE_POSTHOG_KEY as string | undefined
 const HOST = (import.meta.env.VITE_POSTHOG_HOST as string | undefined) || 'https://eu.i.posthog.com'
 
-const ATTRIBUTION_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'origin'] as const
+const ATTRIBUTION_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'origin', 'reel'] as const
 const attribution: Record<string, string> = {}
 
 // PostHog loads after the page so it doesn't slow down people on mobile data.
 let loading: Promise<PostHog | null> = Promise.resolve(null)
 
-/** The two screens; the same values name the screen in the router and the `page` in events. */
-export type Page = 'home' | 'messages'
+/** The screens; the same values name the screen in the router and the `page` in events. */
+export type Page = 'home' | 'messages' | 'thanks'
+export type DeliveryPage = Exclude<Page, 'thanks'>
 
 export function initAnalytics() {
   // Remember where the visitor came from (e.g. which Reel), to attach to every event and to the Tally link.
@@ -29,7 +30,7 @@ export function initAnalytics() {
         api_host: HOST,
         persistence: 'memory', // no cookies, no localStorage: no consent banner needed
         autocapture: false, // only the events below, no noise
-        capture_pageview: false, // two screens in one page; screen views are tracked manually
+        capture_pageview: false, // screens share one page; screen views are tracked manually
         capture_pageleave: true,
         person_profiles: 'identified_only',
       })
@@ -50,14 +51,17 @@ type NoProps = Record<string, never>
 export type EventProps = {
   /** went from home to the messages screen; `message` is null for the list itself */
   opened_messages: { from: 'home'; message: MessageId | null }
-  copied_message: { message: MessageId; page: Page }
+  copied_message: { message: MessageId; page: DeliveryPage }
   /** the browser blocked the copy */
-  copy_failed: { message: MessageId; page: Page }
+  copy_failed: { message: MessageId; page: DeliveryPage }
+  /** opened the Tally form from a PDF button */
+  requested_pdf: { page: DeliveryPage }
+  /** downloaded the PDF file (thank-you screen) */
   downloaded_pdf: { page: Page }
   /** went to the Tally form */
-  clicked_waitlist: { page: Page; placement: WaitlistPlacement }
+  clicked_waitlist: { page: DeliveryPage; placement: WaitlistPlacement }
   /** the once-per-visit waitlist prompt appeared after a successful copy */
-  viewed_copy_prompt: { message: MessageId; page: Page }
+  viewed_copy_prompt: { message: MessageId; page: DeliveryPage }
   opened_faq: { question: FaqId }
   clicked_linkedin: NoProps
 }
@@ -75,12 +79,26 @@ export function trackPageview() {
   void loading.then((ph) => ph?.capture('$pageview'))
 }
 
+function reelFromAttribution() {
+  return attribution.utm_content || attribution.reel || ''
+}
+
 /** Tally link carrying the origin, to match each answer to the page and the Reel.
  *  The Tally form needs hidden fields named "origin" and "reel". */
-export function waitlistUrl(base: string, page: Page) {
+export function waitlistUrl(base: string, page: DeliveryPage) {
   const url = new URL(base)
   const fromPdf = attribution.origin === 'pdf' || attribution.utm_source === 'pdf'
   url.searchParams.set('origin', fromPdf ? 'pdf' : page)
-  if (attribution.utm_content) url.searchParams.set('reel', attribution.utm_content)
+  const reel = reelFromAttribution()
+  if (reel) url.searchParams.set('reel', reel)
+  return url.toString()
+}
+
+/** Tally link for the PDF request. Origin names the button; reel is the existing Reel tag if any. */
+export function pdfRequestUrl(base: string, page: DeliveryPage) {
+  const url = new URL(base)
+  url.searchParams.set('origin', `pdf-request-${page}`)
+  const reel = reelFromAttribution()
+  if (reel) url.searchParams.set('reel', reel)
   return url.toString()
 }

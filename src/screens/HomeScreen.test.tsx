@@ -45,6 +45,14 @@ describe('HomeScreen welcome copy', () => {
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener')
     expect(screen.getByText('Grátis e sem cadastro.')).toBeInTheDocument()
+    const pdf = screen.getAllByRole('link', { name: 'Receber o Caderninho em PDF' })[0]
+    if (!pdf) throw new Error('expected a PDF request link')
+    expect(pdf).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=pdf-request-home')
+    expect(pdf).toHaveAttribute('target', '_blank')
+    expect(pdf).toHaveAttribute('rel', 'noopener')
+
+    await userEvent.click(pdf)
+    expect(track).toHaveBeenCalledWith('requested_pdf', { page: 'home' })
 
     await userEvent.click(link)
     expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'home', placement: 'hero' })

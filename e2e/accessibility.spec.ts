@@ -41,3 +41,9 @@ test('the messages page has no WCAG AA violations', async ({ page }) => {
   await gotoSettled(page, '/mensagens')
   await expectNoViolations(page)
 })
+
+test('the thank-you page has no WCAG AA violations', async ({ page }) => {
+  await gotoSettled(page, '/obrigado?origin=pdf-request-home&reel=test')
+  await expect(page.getByRole('heading', { level: 1, name: /Pronto! Seu Caderninho está aqui/ })).toBeFocused()
+  await expectNoViolations(page)
+})

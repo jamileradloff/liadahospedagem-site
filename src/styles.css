@@ -121,6 +121,7 @@ h1[tabindex='-1']:focus {
 .hero__lead,
 .messages-intro p,
 .start-here__intro p,
+.thanks p,
 .waitlist__intro p,
 .steps ol {
   max-width: var(--measure);
@@ -812,6 +813,27 @@ h1[tabindex='-1']:focus {
 
 .pdf-cta p:first-child {
   color: var(--text-muted);
+}
+
+/* Thank-you screen after the Tally form */
+.thanks {
+  background: var(--off-white);
+  border: 1.5px solid var(--terracotta-light);
+  border-radius: var(--radius-block);
+  padding: var(--block-padding);
+  margin-bottom: var(--section-gap);
+}
+
+.thanks .button--large {
+  margin-bottom: 0.75rem;
+}
+
+.thanks__note {
+  margin-top: 1.25rem;
+}
+
+.thanks .text-button {
+  margin-left: 0;
 }
 
 /* Waitlist invite (Tally) */

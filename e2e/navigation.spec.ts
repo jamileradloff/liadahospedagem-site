@@ -5,6 +5,31 @@ const card = (page: Page, anchor: string) => page.locator(`article#${anchor}`)
 const homeHeading = (page: Page) => page.getByRole('heading', { level: 1, name: /3 mensagens prontas/ })
 const messagesHeading = (page: Page) => page.getByRole('heading', { level: 1, name: 'Suas 3 mensagens' })
 
+test('PDF buttons open the Tally form with a pdf-request origin', async ({ page }) => {
+  await gotoSettled(page, '/?utm_content=w3a-welcome')
+  await expect(page.getByRole('link', { name: 'Receber o Caderninho em PDF' }).first()).toHaveAttribute(
+    'href',
+    'https://tally.so/r/9qzR1Q?origin=pdf-request-home&reel=w3a-welcome',
+  )
+
+  await gotoSettled(page, '/mensagens?utm_content=w3a-welcome')
+  await expect(page.getByRole('link', { name: 'Receber o Caderninho em PDF' })).toHaveAttribute(
+    'href',
+    'https://tally.so/r/9qzR1Q?origin=pdf-request-messages&reel=w3a-welcome',
+  )
+})
+
+test('the thank-you screen serves the PDF and returns to the messages', async ({ page }) => {
+  await gotoSettled(page, '/obrigado?origin=pdf-request-home&reel=test')
+
+  await expect(page.getByRole('heading', { level: 1, name: /Pronto! Seu Caderninho está aqui/ })).toBeFocused()
+  await expect(page.getByRole('link', { name: 'Baixar o Caderninho em PDF' })).toHaveAttribute('href', '/lia-3-mensagens.pdf')
+
+  await page.getByRole('link', { name: 'Voltar para as mensagens' }).click()
+  await expect(page).toHaveURL('/mensagens')
+  await expect(messagesHeading(page)).toBeFocused()
+})
+
 test('the main call to action opens the messages screen at the top, with focus on its heading', async ({ page }) => {
   await gotoSettled(page, '/')
   await page.getByRole('link', { name: 'Copiar as mensagens agora' }).click()

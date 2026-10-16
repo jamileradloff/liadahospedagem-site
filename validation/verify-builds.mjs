@@ -1,7 +1,7 @@
 // Verifies the three build variants end to end, without sending anything to the real PostHog or Tally:
 //   1. analytics build: a fake PostHog key and host, with every PostHog request intercepted and decoded
 //   2. no-key build: the default for local work and PR previews, which must make no analytics requests
-//   3. preview build (VITE_PREVIEW=1): in-memory routing, PDF link disabled
+//   3. preview build (VITE_PREVIEW=1): in-memory routing; the thank-you PDF download is disabled
 //   node validation/verify-builds.mjs
 import { gunzipSync } from 'node:zlib'
 import { build, preview } from 'vite'
@@ -102,7 +102,9 @@ async function verifyAnalytics(browser) {
   await page.getByText('É grátis mesmo?').click()
   await page.getByRole('button', { name: 'Copiar a de boas-vindas' }).click()
   await page.getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' }).waitFor()
-  const [pdfPopup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).last().click()])
+  const pdfHome = new URL(await page.getByRole('link', { name: 'Receber o Caderninho em PDF' }).first().getAttribute('href'))
+  check('home PDF button carries origin=pdf-request-home and the reel', pdfHome.searchParams.get('origin') === 'pdf-request-home' && pdfHome.searchParams.get('reel') === REEL, pdfHome.search)
+  const [pdfPopup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Receber o Caderninho em PDF' }).last().click()])
   await pdfPopup.close()
   const [tallyPopup] = await Promise.all([page.waitForEvent('popup'), page.locator('.waitlist').getByRole('link', { name: 'Quero entrar na lista de lançamento' }).click()])
   await tallyPopup.close()
@@ -117,28 +119,34 @@ async function verifyAnalytics(browser) {
   await page.locator('article#cedo').getByRole('button').click()
   await page.locator('article#cedo').getByRole('button', { name: /Copiada/ }).waitFor()
 
-  const wanted = ['$pageview', 'opened_faq', 'copied_message', 'downloaded_pdf', 'clicked_waitlist', 'clicked_linkedin', 'opened_messages', 'viewed_copy_prompt']
+  await page.goto(`http://localhost:4174/obrigado?origin=pdf-request-home&reel=${REEL}`)
+  await page.getByRole('heading', { level: 1, name: /Pronto! Seu Caderninho está aqui/ }).waitFor()
+  const [pdfFile] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).click()])
+  await pdfFile.close()
+
+  const wanted = ['$pageview', 'opened_faq', 'copied_message', 'requested_pdf', 'downloaded_pdf', 'clicked_waitlist', 'clicked_linkedin', 'opened_messages', 'viewed_copy_prompt']
   for (let i = 0; i < 40 && !wanted.every((name) => events.some((e) => e.event === name)); i++) await page.waitForTimeout(250)
   await page.waitForTimeout(500)
 
   const named = (name) => events.filter((e) => e.event === name)
   // Everything PostHog adds on its own: $-properties, the empty ad-campaign fields, the token and the attribution we register.
   const POSTHOG_CAMPAIGN_FIELDS = new Set(['li_fat_id', 'gad_source', 'mc_cid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'fbclid', 'msclkid', 'twclid', 'igshid', 'ttclid', 'rdt_cid', 'epik', 'qclid', 'sccid', 'oppref', 'irclid', '_kx'])
-  const props = (e) => Object.fromEntries(Object.entries(e.properties ?? {}).filter(([key]) => !key.startsWith('$') && !key.startsWith('utm_') && !POSTHOG_CAMPAIGN_FIELDS.has(key) && key !== 'token' && key !== 'distinct_id' && key !== 'origin'))
+  const props = (e) => Object.fromEntries(Object.entries(e.properties ?? {}).filter(([key]) => !key.startsWith('$') && !key.startsWith('utm_') && !POSTHOG_CAMPAIGN_FIELDS.has(key) && key !== 'token' && key !== 'distinct_id' && key !== 'origin' && key !== 'reel'))
   const sameProps = (event, expected) => JSON.stringify(props(event)) === JSON.stringify(expected)
 
-  check('$pageview was sent for both screens', named('$pageview').length === 2, `${named('$pageview').length} sent`)
+  check('$pageview was sent for home, messages and thanks', named('$pageview').length === 3, `${named('$pageview').length} sent`)
   check('opened_faq { question: is-it-free }', named('opened_faq').some((e) => sameProps(e, { question: 'is-it-free' })), JSON.stringify(named('opened_faq').map(props)))
   check('opened_faq { question: who-is-behind-lia }', named('opened_faq').some((e) => sameProps(e, { question: 'who-is-behind-lia' })))
   check('copied_message { message: welcome, page: home }', named('copied_message').some((e) => sameProps(e, { message: 'welcome', page: 'home' })), JSON.stringify(named('copied_message').map(props)))
   check('copied_message { message: early-checkin, page: messages }', named('copied_message').some((e) => sameProps(e, { message: 'early-checkin', page: 'messages' })))
-  check('downloaded_pdf { page: home }', named('downloaded_pdf').some((e) => sameProps(e, { page: 'home' })), JSON.stringify(named('downloaded_pdf').map(props)))
+  check('requested_pdf { page: home }', named('requested_pdf').some((e) => sameProps(e, { page: 'home' })), JSON.stringify(named('requested_pdf').map(props)))
+  check('downloaded_pdf { page: thanks }', named('downloaded_pdf').some((e) => sameProps(e, { page: 'thanks' })), JSON.stringify(named('downloaded_pdf').map(props)))
   check('clicked_waitlist { page: home, placement: section }', named('clicked_waitlist').some((e) => sameProps(e, { page: 'home', placement: 'section' })), JSON.stringify(named('clicked_waitlist').map(props)))
   check('viewed_copy_prompt { message: welcome, page: home }', named('viewed_copy_prompt').some((e) => sameProps(e, { message: 'welcome', page: 'home' })), JSON.stringify(named('viewed_copy_prompt').map(props)))
   check('the copy prompt is recorded once per visit', named('viewed_copy_prompt').length === 1, `${named('viewed_copy_prompt').length} sent`)
   check('clicked_linkedin has no properties', named('clicked_linkedin').some((e) => sameProps(e, {})))
   check('opened_messages { from: home, message: null }', named('opened_messages').some((e) => sameProps(e, { from: 'home', message: null })), JSON.stringify(named('opened_messages').map(props)))
-  check('every event carries the Reel attribution (utm_content)', events.length > 0 && events.every((e) => e.properties?.utm_content === REEL), `${events.length} events`)
+  check('every event carries the Reel (utm_content or reel)', events.length > 0 && events.every((e) => e.properties?.utm_content === REEL || e.properties?.reel === REEL), `${events.length} events`)
   check('no cookies were set', (await context.cookies()).length === 0)
   const storage = await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }))
   check('nothing was written to localStorage or sessionStorage', storage.local.length === 0 && storage.session.length === 0, JSON.stringify(storage))
@@ -172,10 +180,15 @@ async function verifyNoKeyBuild(browser) {
   check('the PDF is served as application/pdf', pdf.status() === 200 && /application\/pdf/.test(pdf.headers()['content-type'] ?? '') && pdfBody.subarray(0, 4).toString() === '%PDF', `${pdf.status()}, ${pdfBody.length} bytes`)
   const direct = await page.request.get('http://localhost:4175/mensagens')
   check('/mensagens is served the app directly (no 404)', direct.status() === 200 && (await direct.text()).includes('<div id="root">'))
+  const thanks = await page.request.get('http://localhost:4175/obrigado')
+  check('/obrigado is served the app directly (no 404)', thanks.status() === 200 && (await thanks.text()).includes('<div id="root">'))
   const og = await page.request.get('http://localhost:4175/og.png')
   check('the social preview image is served', og.status() === 200 && /image\/png/.test(og.headers()['content-type'] ?? ''))
-  const href = await page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).last().getAttribute('href')
-  check('the PDF button points at the real file', href === '/lia-3-mensagens.pdf', href ?? '')
+  const href = await page.getByRole('link', { name: 'Receber o Caderninho em PDF' }).last().getAttribute('href')
+  check('the PDF button points at Tally with a messages origin', href?.includes('tally.so') && href.includes('origin=pdf-request-messages'), href ?? '')
+  await page.goto('http://localhost:4175/obrigado')
+  const download = await page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).getAttribute('href')
+  check('the thank-you download points at the real file', download === '/lia-3-mensagens.pdf', download ?? '')
   await context.close()
   await server.close()
 }
@@ -200,15 +213,13 @@ async function verifyPreviewBuild(browser) {
   await page.getByRole('heading', { level: 1, name: /3 mensagens prontas/ }).waitFor()
   check('the back link returns to the home screen', true)
 
-  const pdfLink = page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).last()
-  check('the PDF link is disabled (#pdf)', (await pdfLink.getAttribute('href')) === '#pdf')
-  let opened = false
-  context.on('page', () => {
-    opened = true
-  })
-  await pdfLink.click()
-  await page.waitForTimeout(500)
-  check('clicking the PDF link opens nothing', !opened && new URL(page.url()).hash === '', page.url())
+  const pdfLink = page.getByRole('link', { name: 'Receber o Caderninho em PDF' }).last()
+  check('the PDF request still opens Tally in the preview', (await pdfLink.getAttribute('href'))?.includes('tally.so') === true)
+  await page.goto('http://localhost:4176/')
+  await page.evaluate(() => history.replaceState(null, '', '/obrigado'))
+  // Preview routing ignores the URL; the download is only on the thank-you screen in the real app.
+  const previewDownload = page.getByRole('link', { name: 'Baixar o Caderninho em PDF' })
+  check('the preview home screen has no PDF file download', (await previewDownload.count()) === 0)
 
   await page.goto('http://localhost:4176/mensagens')
   check('a direct visit to /mensagens shows the home screen (in-memory routing)', await page.getByRole('heading', { level: 1, name: /3 mensagens prontas/ }).isVisible())

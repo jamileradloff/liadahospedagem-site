@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { copyText } from './clipboard'
-import { track, type Page } from './analytics'
+import { track, type DeliveryPage } from './analytics'
 import type { MessageId } from './content'
 import { claimCopyPrompt } from './copyPrompt'
 
@@ -10,7 +10,7 @@ export const COPIED_FEEDBACK_MS = 3000
 
 /** Copies a message, tracks the event and returns the button state.
  *  `showPrompt` stays true on the message whose copy was the first success of the visit. */
-export function useCopy(message: MessageId, text: string, page: Page) {
+export function useCopy(message: MessageId, text: string, page: DeliveryPage) {
   const [status, setStatus] = useState<CopyStatus>('idle')
   const [showPrompt, setShowPrompt] = useState(false)
   const timeout = useRef<number | undefined>(undefined)

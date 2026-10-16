@@ -67,6 +67,15 @@ test.describe('keyboard', () => {
     await expect(page.locator('article#checkout').locator('.waitlist-cta--after-copy a')).toBeFocused()
   })
 
+  test('the thank-you screen keeps the download in reach after the heading', async ({ page }) => {
+    await gotoSettled(page, '/obrigado')
+    await expect(page.getByRole('heading', { level: 1, name: /Pronto! Seu Caderninho está aqui/ })).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('link', { name: 'Baixar o Caderninho em PDF' })).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('link', { name: 'Voltar para as mensagens' })).toBeFocused()
+  })
+
   test('FAQ items open and close with Enter and Space', async ({ page }) => {
     await gotoSettled(page, '/')
     const summary = page.getByText('Preciso entender de tecnologia?')
@@ -85,7 +94,7 @@ test.describe('keyboard', () => {
 test.describe('zoom and reflow', () => {
   test.skip(({ isMobile }) => isMobile, 'Zoom is emulated with the desktop viewport')
 
-  for (const path of ['/', '/mensagens']) {
+  for (const path of ['/', '/mensagens', '/obrigado']) {
     // 200% and 400% browser zoom on a 1280px-wide window leave 640 and 320 CSS pixels (WCAG 1.4.10 uses 320).
     for (const [zoom, width] of [['200%', 640], ['400%', 320]] as const) {
       test(`${path} at ${zoom} zoom (${width} CSS px) reflows without horizontal scrolling`, async ({ page }) => {

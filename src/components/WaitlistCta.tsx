@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { TALLY_URL } from '../content'
-import { track, waitlistUrl, type Page, type WaitlistPlacement } from '../analytics'
+import { track, waitlistUrl, type DeliveryPage, type WaitlistPlacement } from '../analytics'
 
-type Props = { page: Page; placement: WaitlistPlacement; className?: string; children?: ReactNode }
+type Props = { page: DeliveryPage; placement: WaitlistPlacement; className?: string; children?: ReactNode }
 
 /** Compact launch-waitlist prompt. The same link behavior is reused on both screens. */
 export function WaitlistCta({ page, placement, className, children }: Props) {

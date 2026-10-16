@@ -11,6 +11,8 @@ describe('analytics event types', () => {
     track('clicked_linkedin')
     track('clicked_waitlist', { page: 'home', placement: 'hero' })
     track('viewed_copy_prompt', { message: 'welcome', page: 'home' })
+    track('requested_pdf', { page: 'home' })
+    track('downloaded_pdf', { page: 'thanks' })
 
     // @ts-expect-error unknown message id
     track('copied_message', { message: 'goodbye', page: 'home' })
@@ -24,6 +26,8 @@ describe('analytics event types', () => {
     track('clicked_waitlist', { page: 'home', placement: 'footer' })
     // @ts-expect-error extra property
     track('downloaded_pdf', { page: 'home', anchor: 'cedo' })
+    // @ts-expect-error thank-you is not a PDF-request page
+    track('requested_pdf', { page: 'thanks' })
     // @ts-expect-error props are required for this event
     track('copy_failed')
     // @ts-expect-error this event takes no props

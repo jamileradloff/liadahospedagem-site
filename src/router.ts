@@ -1,12 +1,13 @@
 import { useEffect, useSyncExternalStore } from 'react'
 import { trackPageview, type Page } from './analytics'
 
-// Minimal routing: two screens in a single page, so analytics can follow the same visit
+// Minimal routing: screens in a single page, so analytics can follow the same visit
 // from the entry screen to the Tally click (cookieless tracking forgets the visitor on reload).
 // In preview mode (VITE_PREVIEW=1) the location lives in memory and the URL never changes.
 
-/** User-facing path, kept in Portuguese because it is part of the content (and of the PDF links). */
+/** User-facing paths, kept in Portuguese because they are part of the content (and of the PDF links). */
 export const MESSAGES_PATH = '/mensagens'
+export const THANKS_PATH = '/obrigado'
 
 export type Location = {
   screen: Page
@@ -24,7 +25,8 @@ const PREVIEW = import.meta.env.VITE_PREVIEW === '1'
 function parse(target: string): Pick<Location, 'screen' | 'anchor'> {
   const url = new URL(target, window.location.origin)
   const path = url.pathname.replace(/\/+$/, '')
-  return { screen: path === MESSAGES_PATH ? 'messages' : 'home', anchor: decodeURIComponent(url.hash.slice(1)) }
+  const screen = path === MESSAGES_PATH ? 'messages' : path === THANKS_PATH ? 'thanks' : 'home'
+  return { screen, anchor: decodeURIComponent(url.hash.slice(1)) }
 }
 
 function savedScrollY(): number | null {
@@ -93,7 +95,9 @@ export function landOn(current: Location) {
   const previousScreen = landedScreen
   landedScreen = current.screen
   const target = current.anchor ? document.getElementById(current.anchor) : null
-  if (current.cause === 'initial' && !target) return
+  // A plain load of home or messages leaves focus where the browser put it. The thank-you screen
+  // is a landing after Tally, so its heading takes focus even on the first load.
+  if (current.cause === 'initial' && !target && current.screen !== 'thanks') return
 
   const focusTarget = target ?? document.querySelector<HTMLElement>('main h1')
   if (current.scrollY !== null) {

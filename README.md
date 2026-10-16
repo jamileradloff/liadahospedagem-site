@@ -129,9 +129,41 @@ Events:
 The properties are typed in `EventProps` (`src/analytics.ts`): a call with a missing, extra or misspelled property
 does not compile.
 
-Funnel: `$pageview` → `copied_message` → `clicked_waitlist` / `requested_pdf` → `$pageview` on `/obrigado`. Break it
-down by `utm_content` to compare Reels. Answers and price ranges live in Tally. The PDF buttons send
-`?origin=pdf-request-home|pdf-request-messages&reel=<utm_content>`.
+The PDF buttons send `?origin=pdf-request-home|pdf-request-messages&reel=<utm_content>`.
+
+### Measuring the free page
+
+Analytics persist in memory only (no cookies). A reload, a new tab, or Tally's redirect is a new person in
+PostHog. Build the funnel for **one visit**; treat `/obrigado` pageviews as a separate submit count.
+
+**Same-visit funnel** (Product analytics → New insight → Funnel). Conversion window: 24 hours is fine; most
+conversions happen in the same tab. Duplicate it, with a global filter on `utm_medium`:
+
+| Insight | Filter | What it answers |
+|---|---|---|
+| Bio | `utm_medium` = `bio` | Visitors from `/ig` (and the TikTok bio, `utm_source=tiktok`) |
+| DM | `utm_medium` = `dm` | Visitors from `/dm` |
+
+Steps:
+
+1. `$pageview`
+2. `copied_message`
+3. An **action** named `Opened Tally` that matches `clicked_waitlist` **or** `requested_pdf`
+
+Optional: break step 2 down by `message`, step 3 by `placement` / event name, and the whole funnel by
+`utm_content` to compare Reels.
+
+**Form submits** (not joinable to the funnel above, because Tally opens in a new tab):
+
+- Trend of `$pageview` where `$pathname` = `/obrigado`. That is the Tally redirect landing, once the form
+  redirect is on. Break it down by `origin` (`home`, `messages`, `pdf-request-home`, `pdf-request-messages`).
+- Tally's own submission count is the source of truth for the list. The presale trigger is **20 people on
+  that list**.
+
+Compare after two weeks of production traffic with the Oct 9–15 baseline (launch-day tests excluded): about
+47 visitors → 4 copied a message → 3 clicked to Tally → 0 submitted. The two numbers to watch are **share of
+visitors who copy** (`copied_message` / `$pageview` in the funnel) and **form submits per visitor** (`/obrigado`
+pageviews, or Tally submissions, / landing `$pageview`).
 
 ## Tally
 

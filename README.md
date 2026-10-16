@@ -155,7 +155,7 @@ https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_conten
 
 ## Short links (Instagram, TikTok)
 
-`public/_redirects` sends three short paths to the tagged homepage with a 302. Cloudflare Pages applies the rules;
+`public/_redirects` sends short paths to tagged pages with a 302. Cloudflare Pages applies the rules;
 `npm run dev` and `npm run preview` do not.
 
 | Link | Use | Redirects to |
@@ -163,6 +163,7 @@ https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_conten
 | `https://liadahospedagem.pages.dev/ig` | Instagram bio | `/?utm_source=instagram&utm_medium=bio` |
 | `https://liadahospedagem.pages.dev/story` | Story link stickers | `/?utm_source=instagram&utm_medium=story` |
 | `https://liadahospedagem.pages.dev/tiktok` | TikTok bio | `/?utm_source=tiktok&utm_medium=bio` |
+| `https://liadahospedagem.pages.dev/dm` | ManyChat keyword DM (CADERNINHO, KIT) | `/mensagens?utm_source=instagram&utm_medium=dm&utm_content=ig-comment` |
 
-Keep the full UTM links (with `utm_content`) in DM buttons. Published Story stickers keep pointing at `/story`,
-so fix that rule rather than removing it.
+`/dm` lands straight on the messages page. Reel-specific DM buttons can still use full UTM links with their own
+`utm_content`. Published Story stickers keep pointing at `/story`, so fix that rule rather than removing it.

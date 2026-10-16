@@ -1,13 +1,14 @@
-import { useState, type ReactNode, type SyntheticEvent } from 'react'
+import { type ReactNode, type SyntheticEvent } from 'react'
 import { LINKEDIN_URL, MESSAGE_BY_ID, MESSAGES, type Message } from '../content'
 import { track, type FaqId } from '../analytics'
 import { MESSAGES_PATH } from '../router'
 import { Link } from '../components/Link'
 import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
 import { MessageBubble } from '../components/MessageBubble'
+import { AfterCopyPrompt } from '../components/AfterCopyPrompt'
 import { WaitlistCta } from '../components/WaitlistCta'
 import { WaitlistSection } from '../components/WaitlistSection'
-import { PdfButton, PDF_TIP } from '../components/PdfButton'
+import { PdfButton } from '../components/PdfButton'
 
 // Deliver the free messages first. A short waitlist link sits under the hero actions; the full section comes after that delivery.
 
@@ -75,7 +76,16 @@ const FAQ = [
 ] as const satisfies readonly { id: FaqId; question: string; answer: string }[]
 
 /** Link to the messages screen (optionally to one message) that records where the visitor came from. */
-function MessagesLink({ message, ...rest }: { message?: Message; className?: string; children: ReactNode }) {
+function MessagesLink({
+  message,
+  ...rest
+}: {
+  message?: Message
+  className?: string
+  tabIndex?: number
+  'aria-hidden'?: boolean
+  children: ReactNode
+}) {
   return (
     <Link
       {...rest}
@@ -90,10 +100,8 @@ function trackFaqOpen(event: SyntheticEvent<HTMLDetailsElement>, question: FaqId
 }
 
 export function HomeScreen() {
-  // Only the region next to the clicked PDF button shows the tip, so it is announced once.
-  const [downloadedFrom, setDownloadedFrom] = useState<'hero' | 'start-here' | null>(null)
   const welcome = MESSAGE_BY_ID.welcome
-  const { status, copy } = useCopy(welcome.id, welcome.text, 'home')
+  const { status, copy, showPrompt } = useCopy(welcome.id, welcome.text, 'home')
 
   return (
     <main>
@@ -108,17 +116,15 @@ export function HomeScreen() {
           </p>
           <div className="hero__actions">
             <MessagesLink className="button button--large">Copiar as mensagens agora</MessagesLink>
-            <PdfButton page="home" light onDownload={() => setDownloadedFrom('hero')} />
+            <PdfButton page="home" light />
           </div>
-          <p className="hero__note" role="status" aria-live="polite">
-            {downloadedFrom === 'hero' ? PDF_TIP : 'Grátis e sem cadastro.'}
-          </p>
-          <WaitlistCta page="home" />
+          <p className="hero__note">Grátis e sem cadastro.</p>
+          <WaitlistCta page="home" placement="hero" />
         </div>
-        {/* Visual preview only (wide screens); the full text is one click away. */}
-        <div className="hero__preview" aria-hidden="true">
+        {/* Visual preview, a tap target only: the primary button already leads to the same messages. */}
+        <MessagesLink className="hero__preview" message={welcome} tabIndex={-1} aria-hidden>
           <MessageBubble text={welcome.text} truncated />
-        </div>
+        </MessagesLink>
       </section>
 
       {/* 2. Mirror: her own words */}
@@ -216,12 +222,13 @@ export function HomeScreen() {
             >
               {status === 'copied' ? 'Copiada! Agora cola no WhatsApp' : 'Copiar a de boas-vindas'}
             </button>
-            <PdfButton page="home" onDownload={() => setDownloadedFrom('start-here')} />
+            <PdfButton page="home" />
           </div>
           <p className="status-note" role="status" aria-live="polite">
             {status === 'failed' && copyFailedHint('abaixo')}
             {status === 'copied' && <span className="visually-hidden">{COPIED_ANNOUNCEMENT}</span>}
           </p>
+          {showPrompt && <AfterCopyPrompt page="home" />}
           {status === 'failed' && (
             <div className="copy-fallback">
               <MessageBubble text={welcome.text} />
@@ -231,9 +238,6 @@ export function HomeScreen() {
               </p>
             </div>
           )}
-          <p className="status-note" role="status" aria-live="polite">
-            {downloadedFrom === 'start-here' ? PDF_TIP : ''}
-          </p>
           <MessagesLink className="text-button">Ver as 3 mensagens com as dicas</MessagesLink>
         </div>
       </section>

@@ -124,6 +124,18 @@ describe('navigation', () => {
     expect(document.body).toHaveFocus()
   })
 
+  it('opens the thank-you screen, focuses its heading, and goes back to the messages', async () => {
+    await renderAt('/obrigado?origin=pdf-request-home&reel=test')
+
+    expect(screen.getByRole('heading', { level: 1, name: /Pronto! Seu Caderninho está aqui/ })).toHaveFocus()
+    expect(screen.getByRole('link', { name: 'Baixar o Caderninho em PDF' })).toHaveAttribute('href', '/lia-3-mensagens.pdf')
+
+    await userEvent.click(screen.getByRole('link', { name: 'Voltar para as mensagens' }))
+
+    expect(window.location.pathname).toBe('/mensagens')
+    expect(screen.getByRole('heading', { level: 1, name: 'Suas 3 mensagens' })).toHaveFocus()
+  })
+
   it('follows Back and Forward between screens and message anchors', async () => {
     await renderAt('/')
     await userEvent.click(screen.getByRole('link', { name: /Posso chegar mais cedo/ }))

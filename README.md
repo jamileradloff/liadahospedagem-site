@@ -7,13 +7,14 @@ The code is in English; the page copy is in Brazilian Portuguese (it is the prod
 
 ## Screens
 
-One single-page app with two screens:
+One single-page app with three screens:
 
-- `/` home: where the ManyChat DM link lands
+- `/` home: where the bio and other visitors land
 - `/mensagens` the 3 messages with copy buttons, with anchors `#boasvindas`, `#cedo`, `#checkout`
+- `/obrigado` thank-you after the Tally form, with the PDF download
 
-The `/mensagens` path and the anchors stay in Portuguese on purpose: they are user-facing, they are baked into the
-PDF links, and the anchors match the WhatsApp shortcuts the host saves.
+The `/mensagens` and `/obrigado` paths and the anchors stay in Portuguese on purpose: they are user-facing, they are
+baked into the PDF links and the Tally redirect, and the anchors match the WhatsApp shortcuts the host saves.
 
 ## Project structure
 
@@ -21,14 +22,15 @@ PDF links, and the anchors match the WhatsApp shortcuts the host saves.
 src/
   main.tsx            app entry, starts analytics
   App.tsx             header + current screen + footer
-  router.ts           two-screen router (history API, or in-memory in preview mode)
+  router.ts           three-screen router (history API, or in-memory in preview mode)
   analytics.ts        PostHog (lazy, cookieless), event names, Tally link builder
   content.ts          message copy and external URLs
   clipboard.ts        copy with fallback for Instagram's in-app browser
   useCopy.ts          copy hook: button state + tracking
+  copyPrompt.ts       once-per-visit flag for the after-copy waitlist prompt
   styles.css          brand tokens and all styles
   components/         Header, Footer, MessageBubble, MessageCard, PdfButton, WaitlistSection
-  screens/            HomeScreen, MessagesScreen
+  screens/            HomeScreen, MessagesScreen, ThanksScreen
   **/*.test.ts(x)     unit and component tests (Vitest + Testing Library, jsdom)
 e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility, keyboard, zoom, motion
 validation/           repeatable validation scripts (see FRONTEND_VALIDATION.md); screenshots are generated, not committed
@@ -100,7 +102,7 @@ pushes to `main`. A failed browser run uploads the Playwright report as an artif
    to the **Production** environment only, then redeploy.
 
 Every push to `main` deploys production; every PR gets its own preview URL. There is no `404.html` on purpose,
-so Cloudflare serves the app for `/mensagens` too.
+so Cloudflare serves the app for `/mensagens` and `/obrigado` too.
 
 ## Analytics (PostHog)
 
@@ -117,21 +119,58 @@ Events:
 | `opened_messages` | went from home to the messages screen | `from` (`home`), `message` (a message id, or `null` for the whole list) |
 | `copied_message` | copied a message | `message` (`welcome`, `early-checkin`, `checkout`), `page` (`home`, `messages`) |
 | `copy_failed` | the browser blocked the copy | `message`, `page` |
-| `downloaded_pdf` | opened the PDF | `page` |
-| `clicked_waitlist` | went to the Tally form | `page` |
+| `requested_pdf` | opened the Tally form from a PDF button | `page` (`home`, `messages`) |
+| `downloaded_pdf` | downloaded the PDF file on the thank-you screen | `page` (`thanks`) |
+| `clicked_waitlist` | went to the Tally form | `page`, `placement` (`hero`, `after-first-template`, `section`, `after-copy`) |
+| `viewed_copy_prompt` | the once-per-visit waitlist prompt appeared after a successful copy | `message`, `page` |
 | `opened_faq` | opened an FAQ item | `question` (`is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`) |
 | `clicked_linkedin` | clicked Jamile's LinkedIn | |
 
 The properties are typed in `EventProps` (`src/analytics.ts`): a call with a missing, extra or misspelled property
 does not compile.
 
-Funnel: `$pageview` → (`copied_message` or `downloaded_pdf`) → `clicked_waitlist`. Break it down by `utm_content`
-to compare Reels. Answers and price ranges live in Tally.
+The PDF buttons send `?origin=pdf-request-home|pdf-request-messages&reel=<utm_content>`.
+
+### Measuring the free page
+
+Analytics persist in memory only (no cookies). A reload, a new tab, or Tally's redirect is a new person in
+PostHog. Build the funnel for **one visit**; treat `/obrigado` pageviews as a separate submit count.
+
+**Same-visit funnel** (Product analytics → New insight → Funnel). Conversion window: 24 hours is fine; most
+conversions happen in the same tab. Duplicate it, with a global filter on `utm_medium`:
+
+| Insight | Filter | What it answers |
+|---|---|---|
+| Bio | `utm_medium` = `bio` | Visitors from `/ig` (and the TikTok bio, `utm_source=tiktok`) |
+| DM | `utm_medium` = `dm` | Visitors from `/dm` |
+
+Steps:
+
+1. `$pageview`
+2. `copied_message`
+3. An **action** named `Opened Tally` that matches `clicked_waitlist` **or** `requested_pdf`
+
+Optional: break step 2 down by `message`, step 3 by `placement` / event name, and the whole funnel by
+`utm_content` to compare Reels.
+
+**Form submits** (not joinable to the funnel above, because Tally opens in a new tab):
+
+- Trend of `$pageview` where `$pathname` = `/obrigado`. That is the Tally redirect landing, once the form
+  redirect is on. Break it down by `origin` (`home`, `messages`, `pdf-request-home`, `pdf-request-messages`).
+- Tally's own submission count is the source of truth for the list. The presale trigger is **20 people on
+  that list**.
+
+Compare after two weeks of production traffic with the Oct 9–15 baseline (launch-day tests excluded): about
+47 visitors → 4 copied a message → 3 clicked to Tally → 0 submitted. The two numbers to watch are **share of
+visitors who copy** (`copied_message` / `$pageview` in the funnel) and **form submits per visitor** (`/obrigado`
+pageviews, or Tally submissions, / landing `$pageview`).
 
 ## Tally
 
 The waitlist button sends `?origin=home|messages|pdf&reel=<utm_content>`.
-The form needs two **hidden fields** named `origin` and `reel`.
+The PDF buttons send `?origin=pdf-request-home|pdf-request-messages` with the same `reel`.
+The form needs two **hidden fields** named `origin` and `reel`, and should redirect on completion to
+`/obrigado?origin=@origin&reel=@reel`.
 
 ## Links inside the PDF
 
@@ -155,7 +194,7 @@ https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_conten
 
 ## Short links (Instagram, TikTok)
 
-`public/_redirects` sends three short paths to the tagged homepage with a 302. Cloudflare Pages applies the rules;
+`public/_redirects` sends short paths to tagged pages with a 302. Cloudflare Pages applies the rules;
 `npm run dev` and `npm run preview` do not.
 
 | Link | Use | Redirects to |
@@ -163,6 +202,7 @@ https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_conten
 | `https://liadahospedagem.pages.dev/ig` | Instagram bio | `/?utm_source=instagram&utm_medium=bio` |
 | `https://liadahospedagem.pages.dev/story` | Story link stickers | `/?utm_source=instagram&utm_medium=story` |
 | `https://liadahospedagem.pages.dev/tiktok` | TikTok bio | `/?utm_source=tiktok&utm_medium=bio` |
+| `https://liadahospedagem.pages.dev/dm` | ManyChat keyword DM (CADERNINHO, KIT) | `/mensagens?utm_source=instagram&utm_medium=dm&utm_content=ig-comment` |
 
-Keep the full UTM links (with `utm_content`) in DM buttons. Published Story stickers keep pointing at `/story`,
-so fix that rule rather than removing it.
+`/dm` lands straight on the messages page. Reel-specific DM buttons can still use full UTM links with their own
+`utm_content`. Published Story stickers keep pointing at `/story`, so fix that rule rather than removing it.

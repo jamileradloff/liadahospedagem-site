@@ -1,11 +1,12 @@
 import type { Message } from '../content'
 import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
 import { MessageBubble } from './MessageBubble'
+import { AfterCopyPrompt } from './AfterCopyPrompt'
 
 type Props = { message: Message; position: number; highlighted: boolean }
 
 export function MessageCard({ message, position, highlighted }: Props) {
-  const { status, copy } = useCopy(message.id, message.text, 'messages')
+  const { status, copy, showPrompt } = useCopy(message.id, message.text, 'messages')
 
   return (
     <article
@@ -34,6 +35,7 @@ export function MessageCard({ message, position, highlighted }: Props) {
         {status === 'failed' && copyFailedHint('acima')}
         {status === 'copied' && <span className="visually-hidden">{COPIED_ANNOUNCEMENT}</span>}
       </p>
+      {showPrompt && <AfterCopyPrompt page="messages" />}
 
       <aside className="tip">
         <p className="tip__title">Dica da Lia</p>

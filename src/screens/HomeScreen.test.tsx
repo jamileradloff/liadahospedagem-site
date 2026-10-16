@@ -45,9 +45,34 @@ describe('HomeScreen welcome copy', () => {
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener')
     expect(screen.getByText('Grátis e sem cadastro.')).toBeInTheDocument()
+    const pdf = screen.getAllByRole('link', { name: 'Receber o Caderninho em PDF' })[0]
+    if (!pdf) throw new Error('expected a PDF request link')
+    expect(pdf).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=pdf-request-home')
+    expect(pdf).toHaveAttribute('target', '_blank')
+    expect(pdf).toHaveAttribute('rel', 'noopener')
+
+    await userEvent.click(pdf)
+    expect(track).toHaveBeenCalledWith('requested_pdf', { page: 'home' })
 
     await userEvent.click(link)
-    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'home' })
+    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'home', placement: 'hero' })
+
+    await userEvent.click(sectionLink)
+    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'home', placement: 'section' })
+  })
+
+  it('previews the welcome template as a tap target outside the tab order', async () => {
+    const { container } = render(<HomeScreen />)
+
+    const preview = container.querySelector('.hero__preview') as HTMLElement
+    expect(preview.tagName).toBe('A')
+    expect(preview).toHaveAttribute('href', '/mensagens#boasvindas')
+    expect(preview).toHaveAttribute('aria-hidden', 'true')
+    expect(preview).toHaveAttribute('tabindex', '-1')
+    expect(preview.querySelector('.bubble--truncated')).not.toBeNull()
+
+    await userEvent.click(preview)
+    expect(track).toHaveBeenCalledWith('opened_messages', { from: 'home', message: 'welcome' })
   })
 
   it('reveals the welcome template for manual copying when the browser blocks it', async () => {
@@ -63,6 +88,8 @@ describe('HomeScreen welcome copy', () => {
       'href',
       '/mensagens#boasvindas',
     )
+    expect(container.querySelector('.waitlist-cta--after-copy')).toBeNull()
+    expect(track).not.toHaveBeenCalledWith('viewed_copy_prompt', expect.anything())
   })
 
   it('announces a successful copy once', async () => {
@@ -76,5 +103,23 @@ describe('HomeScreen welcome copy', () => {
     expect(statusesWithText(COPIED_ANNOUNCEMENT)).toHaveLength(1)
     expect(container.querySelector('.copy-fallback')).toBeNull()
     expect(button).toHaveFocus()
+    expect(track).toHaveBeenCalledWith('viewed_copy_prompt', { message: 'welcome', page: 'home' })
+
+    const prompt = container.querySelector('.waitlist-cta--after-copy') as HTMLElement
+    const promptLink = within(prompt).getByRole('link', { name: 'Quero entrar na lista de lançamento' })
+    expect(prompt).toHaveTextContent('Copiou')
+    expect(prompt).toHaveTextContent('Essa é 1 de 12 mensagens.')
+    expect(prompt).toHaveTextContent('Quer as outras 9 e o assistente da Lia?')
+    expect(promptLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
+    expect(promptLink).toHaveAttribute('target', '_blank')
+    expect(promptLink).toHaveAttribute('rel', 'noopener')
+    expect(button.compareDocumentPosition(promptLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+
+    await userEvent.click(promptLink)
+    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'home', placement: 'after-copy' })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' }))
+    expect(container.querySelectorAll('.waitlist-cta--after-copy')).toHaveLength(1)
+    expect(track.mock.calls.filter((call) => call[0] === 'viewed_copy_prompt')).toHaveLength(1)
   })
 })

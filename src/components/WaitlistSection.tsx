@@ -1,8 +1,8 @@
 import { TALLY_URL } from '../content'
-import { track, waitlistUrl, type Page } from '../analytics'
+import { track, waitlistUrl, type DeliveryPage } from '../analytics'
 
 // Bridge to the paid kit (Tally waitlist). Always placed AFTER the messages are delivered.
-export function WaitlistSection({ page }: { page: Page }) {
+export function WaitlistSection({ page }: { page: DeliveryPage }) {
   return (
     <section className="waitlist" aria-labelledby={`waitlist-title-${page}`}>
       <div className="waitlist__intro">
@@ -32,7 +32,7 @@ export function WaitlistSection({ page }: { page: Page }) {
           href={waitlistUrl(TALLY_URL, page)}
           target="_blank"
           rel="noopener"
-          onClick={() => track('clicked_waitlist', { page })}
+          onClick={() => track('clicked_waitlist', { page, placement: 'section' })}
         >
           Quero entrar na lista de lançamento
         </a>

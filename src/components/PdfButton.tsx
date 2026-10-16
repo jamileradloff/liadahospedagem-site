@@ -1,22 +1,37 @@
-import { PDF_URL } from '../content'
-import { track, type Page } from '../analytics'
+import { PDF_URL, TALLY_URL } from '../content'
+import { pdfRequestUrl, track, type DeliveryPage } from '../analytics'
 
 export const PDF_TIP =
   'O caderninho abriu numa aba nova. No iPhone, toca em compartilhar e depois em “Salvar em Arquivos” para guardar.'
 
-type Props = { page: Page; light?: boolean; onDownload?: () => void }
+type Props = { page: DeliveryPage; light?: boolean }
 
-/** Secondary PDF button. Opens in a new tab and notifies the parent through onDownload. */
-export function PdfButton({ page, light = false, onDownload }: Props) {
+/** Opens the Tally form so the visitor can receive the PDF after submitting. */
+export function PdfButton({ page, light = false }: Props) {
   return (
     <a
       className={light ? 'button button--outline button--light button--full' : 'button button--outline button--full'}
+      href={pdfRequestUrl(TALLY_URL, page)}
+      target="_blank"
+      rel="noopener"
+      onClick={() => track('requested_pdf', { page })}
+    >
+      Receber o Caderninho em PDF
+    </a>
+  )
+}
+
+/** The real PDF file, used on the thank-you screen after the form. */
+export function PdfDownloadButton({ onDownload }: { onDownload?: () => void }) {
+  return (
+    <a
+      className="button button--large"
       href={PDF_URL}
       target="_blank"
       rel="noopener"
       onClick={(e) => {
-        if (PDF_URL === '#pdf') e.preventDefault() // the preview does not host the PDF
-        track('downloaded_pdf', { page })
+        if (PDF_URL === '#pdf') e.preventDefault()
+        track('downloaded_pdf', { page: 'thanks' })
         onDownload?.()
       }}
     >

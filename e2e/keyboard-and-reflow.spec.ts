@@ -62,6 +62,9 @@ test.describe('keyboard', () => {
     await expect(copy).toHaveText('Copiada! Agora cola no WhatsApp')
     await expect(page.locator('article#checkout').getByRole('status')).toContainText('Mensagem copiada. Agora cola no WhatsApp.')
     expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('Foi um prazer receber você')
+    await expect(copy).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(page.locator('article#checkout').locator('.waitlist-cta--after-copy a')).toBeFocused()
   })
 
   test('FAQ items open and close with Enter and Space', async ({ page }) => {

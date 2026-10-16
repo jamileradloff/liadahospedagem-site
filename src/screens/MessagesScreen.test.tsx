@@ -1,14 +1,18 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { copyText } from '../clipboard'
 import { MessagesScreen } from './MessagesScreen'
 
 const { track } = vi.hoisted(() => ({ track: vi.fn() }))
 
+vi.mock('../clipboard', () => ({ copyText: vi.fn() }))
 vi.mock('../analytics', async () => {
   const actual = await vi.importActual<typeof import('../analytics')>('../analytics')
   return { ...actual, track }
 })
+
+const mockedCopyText = vi.mocked(copyText)
 
 const card = (anchor: string) => document.getElementById(anchor)
 
@@ -43,6 +47,7 @@ describe('MessagesScreen highlight', () => {
 
 describe('MessagesScreen waitlist prompt', () => {
   afterEach(() => {
+    mockedCopyText.mockReset()
     track.mockReset()
   })
 
@@ -69,6 +74,42 @@ describe('MessagesScreen waitlist prompt', () => {
     expect(link).toHaveAttribute('rel', 'noopener')
 
     await userEvent.click(link)
-    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'messages' })
+    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'messages', placement: 'after-first-template' })
+
+    await userEvent.click(sectionLink)
+    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'messages', placement: 'section' })
+  })
+
+  it('invites to the list once, next to the first copied message', async () => {
+    mockedCopyText.mockResolvedValue(true)
+    const { container } = render(<MessagesScreen anchor="" navigationKey={1} />)
+
+    const first = screen.getByRole('article', { name: /Boas-vindas/ })
+    const second = screen.getByRole('article', { name: /chegar mais cedo/ })
+    await userEvent.click(within(first).getByRole('button', { name: 'Copiar mensagem' }))
+
+    const prompt = first.querySelector('.waitlist-cta--after-copy') as HTMLElement
+    expect(prompt).not.toBeNull()
+    expect(second.querySelector('.waitlist-cta--after-copy')).toBeNull()
+    expect(track).toHaveBeenCalledWith('viewed_copy_prompt', { message: 'welcome', page: 'messages' })
+    expect(within(first).getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' })).toHaveFocus()
+
+    await userEvent.click(within(prompt).getByRole('link', { name: 'Quero entrar na lista de lançamento' }))
+    expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'messages', placement: 'after-copy' })
+
+    await userEvent.click(within(second).getByRole('button', { name: 'Copiar mensagem' }))
+    expect(container.querySelectorAll('.waitlist-cta--after-copy')).toHaveLength(1)
+    expect(second.querySelector('.waitlist-cta--after-copy')).toBeNull()
+    expect(track.mock.calls.filter((call) => call[0] === 'viewed_copy_prompt')).toHaveLength(1)
+  })
+
+  it('does not show the copy prompt when copying fails', async () => {
+    mockedCopyText.mockResolvedValue(false)
+    render(<MessagesScreen anchor="" navigationKey={1} />)
+
+    await userEvent.click(within(screen.getByRole('article', { name: /Boas-vindas/ })).getByRole('button', { name: 'Copiar mensagem' }))
+
+    expect(document.querySelector('.waitlist-cta--after-copy')).toBeNull()
+    expect(track).not.toHaveBeenCalledWith('viewed_copy_prompt', expect.anything())
   })
 })

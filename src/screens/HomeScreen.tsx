@@ -5,6 +5,7 @@ import { MESSAGES_PATH } from '../router'
 import { Link } from '../components/Link'
 import { COPIED_ANNOUNCEMENT, copyFailedHint, useCopy } from '../useCopy'
 import { MessageBubble } from '../components/MessageBubble'
+import { AfterCopyPrompt } from '../components/AfterCopyPrompt'
 import { WaitlistCta } from '../components/WaitlistCta'
 import { WaitlistSection } from '../components/WaitlistSection'
 import { PdfButton, PDF_TIP } from '../components/PdfButton'
@@ -102,7 +103,7 @@ export function HomeScreen() {
   // Only the region next to the clicked PDF button shows the tip, so it is announced once.
   const [downloadedFrom, setDownloadedFrom] = useState<'hero' | 'start-here' | null>(null)
   const welcome = MESSAGE_BY_ID.welcome
-  const { status, copy } = useCopy(welcome.id, welcome.text, 'home')
+  const { status, copy, showPrompt } = useCopy(welcome.id, welcome.text, 'home')
 
   return (
     <main>
@@ -122,7 +123,7 @@ export function HomeScreen() {
           <p className="hero__note" role="status" aria-live="polite">
             {downloadedFrom === 'hero' ? PDF_TIP : 'Grátis e sem cadastro.'}
           </p>
-          <WaitlistCta page="home" />
+          <WaitlistCta page="home" placement="hero" />
         </div>
         {/* Visual preview, a tap target only: the primary button already leads to the same messages. */}
         <MessagesLink className="hero__preview" message={welcome} tabIndex={-1} aria-hidden>
@@ -231,6 +232,7 @@ export function HomeScreen() {
             {status === 'failed' && copyFailedHint('abaixo')}
             {status === 'copied' && <span className="visually-hidden">{COPIED_ANNOUNCEMENT}</span>}
           </p>
+          {showPrompt && <AfterCopyPrompt page="home" />}
           {status === 'failed' && (
             <div className="copy-fallback">
               <MessageBubble text={welcome.text} />

@@ -32,7 +32,7 @@ export function WaitlistSection({ page }: { page: Page }) {
           href={waitlistUrl(TALLY_URL, page)}
           target="_blank"
           rel="noopener"
-          onClick={() => track('clicked_waitlist', { page })}
+          onClick={() => track('clicked_waitlist', { page, placement: 'section' })}
         >
           Quero entrar na lista de lançamento
         </a>

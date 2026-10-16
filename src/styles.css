@@ -338,8 +338,15 @@ h1[tabindex='-1']:focus {
 }
 
 /* Between message cards the card's own bottom margin is the gap above this block. */
-.messages-list .waitlist-cta {
+.messages-list > .waitlist-cta {
   margin: 0 0 1.5rem;
+}
+
+/* Under the copy button that triggered it, aligned with the message it belongs to. */
+.waitlist-cta--after-copy {
+  align-items: flex-start;
+  margin-top: 1rem;
+  text-align: left;
 }
 
 /* Phones and tablets: one column, with the preview between the hero actions and the waitlist prompt. */

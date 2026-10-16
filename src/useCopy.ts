@@ -2,14 +2,17 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { copyText } from './clipboard'
 import { track, type Page } from './analytics'
 import type { MessageId } from './content'
+import { claimCopyPrompt } from './copyPrompt'
 
 export type CopyStatus = 'idle' | 'copied' | 'failed'
 
 export const COPIED_FEEDBACK_MS = 3000
 
-/** Copies a message, tracks the event and returns the button state. */
+/** Copies a message, tracks the event and returns the button state.
+ *  `showPrompt` stays true on the message whose copy was the first success of the visit. */
 export function useCopy(message: MessageId, text: string, page: Page) {
   const [status, setStatus] = useState<CopyStatus>('idle')
+  const [showPrompt, setShowPrompt] = useState(false)
   const timeout = useRef<number | undefined>(undefined)
   // Only the latest request may update the state; unmounting invalidates all of them.
   const latestRequest = useRef(0)
@@ -30,10 +33,15 @@ export function useCopy(message: MessageId, text: string, page: Page) {
     if (request !== latestRequest.current) return
     setStatus(ok ? 'copied' : 'failed')
     track(ok ? 'copied_message' : 'copy_failed', { message, page })
-    if (ok) timeout.current = window.setTimeout(() => setStatus('idle'), COPIED_FEEDBACK_MS)
+    if (!ok) return
+    timeout.current = window.setTimeout(() => setStatus('idle'), COPIED_FEEDBACK_MS)
+    if (claimCopyPrompt()) {
+      setShowPrompt(true)
+      track('viewed_copy_prompt', { message, page })
+    }
   }, [message, text, page])
 
-  return { status, copy }
+  return { status, copy, showPrompt }
 }
 
 export const COPIED_ANNOUNCEMENT = 'Mensagem copiada. Agora cola no WhatsApp.'

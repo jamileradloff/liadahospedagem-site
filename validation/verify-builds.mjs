@@ -117,7 +117,7 @@ async function verifyAnalytics(browser) {
   await page.locator('article#cedo').getByRole('button').click()
   await page.locator('article#cedo').getByRole('button', { name: /Copiada/ }).waitFor()
 
-  const wanted = ['$pageview', 'opened_faq', 'copied_message', 'downloaded_pdf', 'clicked_waitlist', 'clicked_linkedin', 'opened_messages']
+  const wanted = ['$pageview', 'opened_faq', 'copied_message', 'downloaded_pdf', 'clicked_waitlist', 'clicked_linkedin', 'opened_messages', 'viewed_copy_prompt']
   for (let i = 0; i < 40 && !wanted.every((name) => events.some((e) => e.event === name)); i++) await page.waitForTimeout(250)
   await page.waitForTimeout(500)
 
@@ -133,7 +133,9 @@ async function verifyAnalytics(browser) {
   check('copied_message { message: welcome, page: home }', named('copied_message').some((e) => sameProps(e, { message: 'welcome', page: 'home' })), JSON.stringify(named('copied_message').map(props)))
   check('copied_message { message: early-checkin, page: messages }', named('copied_message').some((e) => sameProps(e, { message: 'early-checkin', page: 'messages' })))
   check('downloaded_pdf { page: home }', named('downloaded_pdf').some((e) => sameProps(e, { page: 'home' })), JSON.stringify(named('downloaded_pdf').map(props)))
-  check('clicked_waitlist { page: home }', named('clicked_waitlist').some((e) => sameProps(e, { page: 'home' })), JSON.stringify(named('clicked_waitlist').map(props)))
+  check('clicked_waitlist { page: home, placement: section }', named('clicked_waitlist').some((e) => sameProps(e, { page: 'home', placement: 'section' })), JSON.stringify(named('clicked_waitlist').map(props)))
+  check('viewed_copy_prompt { message: welcome, page: home }', named('viewed_copy_prompt').some((e) => sameProps(e, { message: 'welcome', page: 'home' })), JSON.stringify(named('viewed_copy_prompt').map(props)))
+  check('the copy prompt is recorded once per visit', named('viewed_copy_prompt').length === 1, `${named('viewed_copy_prompt').length} sent`)
   check('clicked_linkedin has no properties', named('clicked_linkedin').some((e) => sameProps(e, {})))
   check('opened_messages { from: home, message: null }', named('opened_messages').some((e) => sameProps(e, { from: 'home', message: null })), JSON.stringify(named('opened_messages').map(props)))
   check('every event carries the Reel attribution (utm_content)', events.length > 0 && events.every((e) => e.properties?.utm_content === REEL), `${events.length} events`)

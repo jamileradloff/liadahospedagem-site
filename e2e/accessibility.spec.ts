@@ -17,6 +17,15 @@ test('the home page has no WCAG AA violations', async ({ page }) => {
   await expectNoViolations(page)
 })
 
+test('the after-copy waitlist prompt has no WCAG AA violations', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Only Chromium lets tests grant clipboard access')
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await gotoSettled(page, '/')
+  await page.getByRole('button', { name: 'Copiar a de boas-vindas' }).click()
+  await expect(page.locator('.waitlist-cta--after-copy')).toBeVisible()
+  await expectNoViolations(page)
+})
+
 test('the home page copy fallback has no WCAG AA violations', async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'clipboard', { value: { writeText: () => Promise.reject(new Error('blocked')) } })

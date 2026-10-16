@@ -3,7 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { copyText } from './clipboard'
 import { COPIED_FEEDBACK_MS, useCopy } from './useCopy'
 
+const { track } = vi.hoisted(() => ({ track: vi.fn() }))
+
 vi.mock('./clipboard', () => ({ copyText: vi.fn() }))
+vi.mock('./analytics', async () => {
+  const actual = await vi.importActual<typeof import('./analytics')>('./analytics')
+  return { ...actual, track }
+})
 
 const mockedCopyText = vi.mocked(copyText)
 
@@ -23,6 +29,7 @@ describe('useCopy', () => {
   afterEach(() => {
     vi.useRealTimers()
     mockedCopyText.mockReset()
+    track.mockReset()
   })
 
   it('returns to idle after the feedback interval', async () => {
@@ -75,6 +82,36 @@ describe('useCopy', () => {
       await firstCopy
     })
     expect(result.current.status).toBe('copied')
+  })
+
+  it('offers the waitlist prompt on the first successful copy of the visit', async () => {
+    mockedCopyText.mockResolvedValue(true)
+    const first = renderHook(() => useCopy('welcome', 'oi', 'home'))
+    const second = renderHook(() => useCopy('checkout', 'tchau', 'messages'))
+
+    await act(() => first.result.current.copy())
+    expect(first.result.current.showPrompt).toBe(true)
+    expect(track).toHaveBeenCalledWith('viewed_copy_prompt', { message: 'welcome', page: 'home' })
+
+    act(() => {
+      vi.advanceTimersByTime(COPIED_FEEDBACK_MS)
+    })
+    expect(first.result.current.status).toBe('idle')
+    expect(first.result.current.showPrompt).toBe(true)
+
+    await act(() => second.result.current.copy())
+    expect(second.result.current.showPrompt).toBe(false)
+    expect(track.mock.calls.filter((call) => call[0] === 'viewed_copy_prompt')).toHaveLength(1)
+  })
+
+  it('does not offer the prompt when the copy fails', async () => {
+    mockedCopyText.mockResolvedValue(false)
+    const { result } = renderHook(() => useCopy('welcome', 'oi', 'home'))
+
+    await act(() => result.current.copy())
+    expect(result.current.status).toBe('failed')
+    expect(result.current.showPrompt).toBe(false)
+    expect(track).not.toHaveBeenCalledWith('viewed_copy_prompt', expect.anything())
   })
 
   it('clears pending feedback work on unmount', async () => {

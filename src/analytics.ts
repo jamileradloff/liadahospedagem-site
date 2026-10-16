@@ -41,6 +41,9 @@ export function initAnalytics() {
 
 export type FaqId = 'is-it-free' | 'regular-whatsapp' | 'single-apartment' | 'tech-skills' | 'who-is-behind-lia'
 
+/** Where a waitlist link sits on the page. */
+export type WaitlistPlacement = 'hero' | 'after-first-template' | 'section' | 'after-copy'
+
 type NoProps = Record<string, never>
 
 /** Every custom event and its exact properties (documented in the README). */
@@ -52,7 +55,9 @@ export type EventProps = {
   copy_failed: { message: MessageId; page: Page }
   downloaded_pdf: { page: Page }
   /** went to the Tally form */
-  clicked_waitlist: { page: Page }
+  clicked_waitlist: { page: Page; placement: WaitlistPlacement }
+  /** the once-per-visit waitlist prompt appeared after a successful copy */
+  viewed_copy_prompt: { message: MessageId; page: Page }
   opened_faq: { question: FaqId }
   clicked_linkedin: NoProps
 }

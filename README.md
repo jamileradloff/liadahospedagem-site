@@ -26,6 +26,7 @@ src/
   content.ts          message copy and external URLs
   clipboard.ts        copy with fallback for Instagram's in-app browser
   useCopy.ts          copy hook: button state + tracking
+  copyPrompt.ts       once-per-visit flag for the after-copy waitlist prompt
   styles.css          brand tokens and all styles
   components/         Header, Footer, MessageBubble, MessageCard, PdfButton, WaitlistSection
   screens/            HomeScreen, MessagesScreen
@@ -118,7 +119,8 @@ Events:
 | `copied_message` | copied a message | `message` (`welcome`, `early-checkin`, `checkout`), `page` (`home`, `messages`) |
 | `copy_failed` | the browser blocked the copy | `message`, `page` |
 | `downloaded_pdf` | opened the PDF | `page` |
-| `clicked_waitlist` | went to the Tally form | `page` |
+| `clicked_waitlist` | went to the Tally form | `page`, `placement` (`hero`, `after-first-template`, `section`, `after-copy`) |
+| `viewed_copy_prompt` | the once-per-visit waitlist prompt appeared after a successful copy | `message`, `page` |
 | `opened_faq` | opened an FAQ item | `question` (`is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`) |
 | `clicked_linkedin` | clicked Jamile's LinkedIn | |
 

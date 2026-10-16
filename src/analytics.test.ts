@@ -9,6 +9,8 @@ describe('analytics event types', () => {
     track('opened_messages', { from: 'home', message: null })
     track('opened_faq', { question: 'is-it-free' })
     track('clicked_linkedin')
+    track('clicked_waitlist', { page: 'home', placement: 'hero' })
+    track('viewed_copy_prompt', { message: 'welcome', page: 'home' })
 
     // @ts-expect-error unknown message id
     track('copied_message', { message: 'goodbye', page: 'home' })
@@ -16,6 +18,10 @@ describe('analytics event types', () => {
     track('downloaded_pdf', { page: 'pdf' })
     // @ts-expect-error missing required `page`
     track('clicked_waitlist', {})
+    // @ts-expect-error missing required `placement`
+    track('clicked_waitlist', { page: 'home' })
+    // @ts-expect-error unknown placement
+    track('clicked_waitlist', { page: 'home', placement: 'footer' })
     // @ts-expect-error extra property
     track('downloaded_pdf', { page: 'home', anchor: 'cedo' })
     // @ts-expect-error props are required for this event

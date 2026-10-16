@@ -54,7 +54,7 @@ export function MessagesScreen({ anchor, navigationKey }: Props) {
           {MESSAGES.map((m, i) => (
             <Fragment key={m.id}>
               <MessageCard message={m} position={i + 1} highlighted={highlighted === m.anchor} />
-              {i === 0 && <WaitlistCta page="messages" />}
+              {i === 0 && <WaitlistCta page="messages" placement="after-first-template" />}
             </Fragment>
           ))}
         </div>

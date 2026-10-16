@@ -77,6 +77,13 @@ test.describe('copying', () => {
     await expect(page.getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' })).toBeVisible()
     await expect(page.getByRole('status').filter({ hasText: 'Mensagem copiada. Agora cola no WhatsApp.' })).toHaveCount(1)
     expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/^Oi, \[nome do hóspede\]! 😊 Aqui é \[seu nome\]/)
+    const prompt = page.locator('.waitlist-cta--after-copy')
+    await expect(prompt).toContainText('Essa é 1 de 12 mensagens.')
+    await expect(prompt.getByRole('link', { name: 'Quero entrar na lista de lançamento' })).toHaveAttribute(
+      'href',
+      'https://tally.so/r/9qzR1Q?origin=home',
+    )
+    await expect(page.getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' })).toBeFocused()
   })
 
   test('when the browser blocks copying, the home page shows the message to copy by hand', async ({ page }) => {

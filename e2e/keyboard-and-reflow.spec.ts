@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 import { blockClipboard, expectNoHorizontalOverflow, gotoSettled } from './support'
 
-const FOCUSABLE = 'a[href], button, summary'
+const FOCUSABLE = ':is(a[href], button, summary):not([tabindex="-1"])'
 
 /** True when the focused element has a visible outline or box-shadow ring. */
 function focusedElementHasIndicator(page: Page) {
@@ -112,9 +112,10 @@ test.describe('zoom and reflow', () => {
         content: '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }',
       })
       await expectNoHorizontalOverflow(page)
-      // Text must not be cut off inside fixed-height boxes.
+      // Text must not be cut off inside fixed-height boxes. Decorative previews are truncated on purpose.
       const cutOff = await page.evaluate(() =>
         [...document.querySelectorAll<HTMLElement>('*')]
+          .filter((el) => !el.closest('[aria-hidden="true"]'))
           .filter((el) => getComputedStyle(el).overflow !== 'visible' && el.scrollHeight > el.clientHeight + 1 && el.clientHeight > 0)
           .map((el) => `${el.tagName}.${el.className}`),
       )

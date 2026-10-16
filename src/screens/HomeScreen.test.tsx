@@ -50,6 +50,20 @@ describe('HomeScreen welcome copy', () => {
     expect(track).toHaveBeenCalledWith('clicked_waitlist', { page: 'home' })
   })
 
+  it('previews the welcome template as a tap target outside the tab order', async () => {
+    const { container } = render(<HomeScreen />)
+
+    const preview = container.querySelector('.hero__preview') as HTMLElement
+    expect(preview.tagName).toBe('A')
+    expect(preview).toHaveAttribute('href', '/mensagens#boasvindas')
+    expect(preview).toHaveAttribute('aria-hidden', 'true')
+    expect(preview).toHaveAttribute('tabindex', '-1')
+    expect(preview.querySelector('.bubble--truncated')).not.toBeNull()
+
+    await userEvent.click(preview)
+    expect(track).toHaveBeenCalledWith('opened_messages', { from: 'home', message: 'welcome' })
+  })
+
   it('reveals the welcome template for manual copying when the browser blocks it', async () => {
     mockedCopyText.mockResolvedValue(false)
     const { container } = render(<HomeScreen />)

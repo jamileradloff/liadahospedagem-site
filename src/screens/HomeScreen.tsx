@@ -75,7 +75,16 @@ const FAQ = [
 ] as const satisfies readonly { id: FaqId; question: string; answer: string }[]
 
 /** Link to the messages screen (optionally to one message) that records where the visitor came from. */
-function MessagesLink({ message, ...rest }: { message?: Message; className?: string; children: ReactNode }) {
+function MessagesLink({
+  message,
+  ...rest
+}: {
+  message?: Message
+  className?: string
+  tabIndex?: number
+  'aria-hidden'?: boolean
+  children: ReactNode
+}) {
   return (
     <Link
       {...rest}
@@ -115,10 +124,10 @@ export function HomeScreen() {
           </p>
           <WaitlistCta page="home" />
         </div>
-        {/* Visual preview only (wide screens); the full text is one click away. */}
-        <div className="hero__preview" aria-hidden="true">
+        {/* Visual preview, a tap target only: the primary button already leads to the same messages. */}
+        <MessagesLink className="hero__preview" message={welcome} tabIndex={-1} aria-hidden>
           <MessageBubble text={welcome.text} truncated />
-        </div>
+        </MessagesLink>
       </section>
 
       {/* 2. Mirror: her own words */}

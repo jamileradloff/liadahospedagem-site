@@ -44,7 +44,10 @@ describe('HomeScreen welcome copy', () => {
     expect(link).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener')
-    expect(screen.getByText('Grátis e sem cadastro.')).toBeInTheDocument()
+    expect(screen.getByText('Copiar é grátis e sem cadastro.')).toBeInTheDocument()
+    expect(
+      screen.getByText('É. Copiar é grátis e sem cadastro. Se quiser o PDF, é só deixar seu e-mail.'),
+    ).toBeInTheDocument()
     const pdf = screen.getAllByRole('link', { name: 'Receber o Caderninho em PDF' })[0]
     if (!pdf) throw new Error('expected a PDF request link')
     expect(pdf).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=pdf-request-home')

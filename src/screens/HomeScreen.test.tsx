@@ -49,6 +49,9 @@ describe('HomeScreen welcome copy', () => {
     expect(waitlist).toHaveTextContent('É opcional e leva 1 minuto, prometo.')
     const prompt = link.parentElement
     expect(prompt).toHaveTextContent('Quer as 12 mensagens e o assistente da Lia?')
+    expect(prompt).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(prompt).not.toHaveAttribute('role', 'status')
     expect(link).toHaveClass('button', 'button--outline')
     expect(link).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
@@ -123,6 +126,9 @@ describe('HomeScreen welcome copy', () => {
     expect(prompt).toHaveTextContent('Copiou')
     expect(prompt).toHaveTextContent('Essa é 1 de 12 mensagens.')
     expect(prompt).toHaveTextContent('Quer as outras 9 e o assistente da Lia?')
+    expect(prompt).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(promptLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
     expect(promptLink).toHaveAttribute('target', '_blank')
     expect(promptLink).toHaveAttribute('rel', 'noopener')

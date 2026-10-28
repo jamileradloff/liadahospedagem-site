@@ -77,6 +77,9 @@ describe('MessagesScreen waitlist prompt', () => {
     expect(first.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(link.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(link.closest('.waitlist-cta')).toHaveTextContent('Quer as 12 mensagens e o assistente da Lia?')
+    expect(link.closest('.waitlist-cta')).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(link).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=messages')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener')
@@ -103,6 +106,9 @@ describe('MessagesScreen waitlist prompt', () => {
 
     const prompt = first.querySelector('.waitlist-cta--after-copy') as HTMLElement
     expect(prompt).not.toBeNull()
+    expect(prompt).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(second.querySelector('.waitlist-cta--after-copy')).toBeNull()
     expect(track).toHaveBeenCalledWith('viewed_copy_prompt', { message: 'welcome', page: 'messages' })
     expect(within(first).getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' })).toHaveFocus()

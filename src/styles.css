@@ -306,10 +306,21 @@ h1[tabindex='-1']:focus {
 
 .waitlist-cta p {
   margin: 0;
+}
+
+.waitlist-cta p:not(.waitlist-cta__note) {
   font-size: 1.125rem;
   font-weight: 500;
   line-height: 1.35;
   text-wrap: balance;
+}
+
+.waitlist-cta__note {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-muted);
+  text-wrap: pretty;
 }
 
 .waitlist-cta .button {
@@ -327,6 +338,10 @@ h1[tabindex='-1']:focus {
 
 .hero .waitlist-cta {
   color: var(--text-on-dark);
+}
+
+.hero .waitlist-cta__note {
+  color: var(--text-on-dark-muted);
 }
 
 .hero .waitlist-cta .button {

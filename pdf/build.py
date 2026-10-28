@@ -163,7 +163,7 @@ pages.append(f'''<section class="page">
 <div class="phome"></div></div>
 <div class="side">
 <p>Agora imagina responder algumas perguntas sobre a sua hospedagem <b>uma vez só</b> e receber as 12 mensagens adaptadas com seus dados: horários, instruções de entrada, Wi-Fi e regras da casa.</p>
-<p>Tudo em português, espanhol e inglês, para você conferir, copiar e usar.</p>
+<p>Em português, para você conferir, copiar e usar. Espanhol e inglês chegam depois.</p>
 <div class="hand example">exemplo: Estúdios do Campeche, Florianópolis</div>
 </div></div>
 <div class="assist">
@@ -181,12 +181,12 @@ pages.append(f'''<section class="page">
 pages.append(f'''<section class="page cover last">
 <div class="kicker light">Tô preparando o resto</div>
 <h2 class="light">Essas são 3 de 12 mensagens.</h2>
-<p class="light">O caderninho completo cobre a estadia inteira, da reserva à avaliação. Estou finalizando. Quer saber quando sair? Quem entrar na lista recebe uma condição especial de lançamento.</p>
+<p class="light">O caderninho completo cobre a estadia inteira, da reserva à avaliação. Estou montando com calma. Quer o caderninho completo quando ficar pronto? Deixa seu e-mail: quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.</p>
 <div class="highlight"><b>Um assistente que responde do seu jeito.</b> Você coloca no ChatGPT ou no Claude uma vez só. Chegou uma pergunta nova? Ele escreve a resposta no seu tom e pede sua confirmação antes de oferecer desconto, mudar horário ou autorizar pet.</div>
 <ul class="checks">
 <li>As 3 daqui e mais 9: pedido de desconto, pets, barulho, saída mais tarde, orientações de chegada e resposta de avaliação.</li>
-<li>Em português, espanhol e inglês, para receber hóspede de fora sem medo de escrever besteira.</li>
-<li>Para até 2 propriedades, cada uma com seus próprios dados.</li>
+<li>O assistente responde hóspede de fora no idioma dele. As mensagens em espanhol e inglês chegam depois, de graça pra quem comprar no lançamento.</li>
+<li>Para 1 propriedade, com os dados da sua casa.</li>
 </ul>
 <a class="btn" href="{TALLY}">Me avisa quando sair!</a>
 <div class="hand light center note">É opcional e leva 1 minuto, prometo.</div>

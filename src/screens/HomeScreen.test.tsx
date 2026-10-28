@@ -33,18 +33,34 @@ describe('HomeScreen welcome copy', () => {
     const link = within(container.querySelector('.waitlist-cta') as HTMLElement).getByRole('link', {
       name: 'Quero entrar na lista de lançamento',
     })
-    const sectionLink = within(container.querySelector('.waitlist') as HTMLElement).getByRole('link', {
+    const waitlist = container.querySelector('.waitlist') as HTMLElement
+    const sectionLink = within(waitlist).getByRole('link', {
       name: 'Quero entrar na lista de lançamento',
     })
     expect(sectionLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
+    expect(waitlist).toHaveTextContent(
+      'Estou montando com calma. Quer o caderninho completo quando ficar pronto? Deixa seu e-mail: quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
+    expect(waitlist).toHaveTextContent(
+      'O assistente responde hóspede de fora no idioma dele. As mensagens em espanhol e inglês chegam depois, de graça pra quem comprar no lançamento.',
+    )
+    expect(waitlist).toHaveTextContent('Para 1 propriedade, com os dados da sua casa.')
+    expect(waitlist).toHaveTextContent('Essas são 3 de 12 mensagens.')
+    expect(waitlist).toHaveTextContent('É opcional e leva 1 minuto, prometo.')
     const prompt = link.parentElement
     expect(prompt).toHaveTextContent('Quer as 12 mensagens e o assistente da Lia?')
+    expect(prompt).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(prompt).not.toHaveAttribute('role', 'status')
     expect(link).toHaveClass('button', 'button--outline')
     expect(link).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener')
-    expect(screen.getByText('Grátis e sem cadastro.')).toBeInTheDocument()
+    expect(screen.getByText('Copiar é grátis e sem cadastro.')).toBeInTheDocument()
+    expect(
+      screen.getByText('É. Copiar é grátis e sem cadastro. Se quiser o PDF, é só deixar seu e-mail.'),
+    ).toBeInTheDocument()
     const pdf = screen.getAllByRole('link', { name: 'Receber o Caderninho em PDF' })[0]
     if (!pdf) throw new Error('expected a PDF request link')
     expect(pdf).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=pdf-request-home')
@@ -110,6 +126,9 @@ describe('HomeScreen welcome copy', () => {
     expect(prompt).toHaveTextContent('Copiou')
     expect(prompt).toHaveTextContent('Essa é 1 de 12 mensagens.')
     expect(prompt).toHaveTextContent('Quer as outras 9 e o assistente da Lia?')
+    expect(prompt).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(promptLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=home')
     expect(promptLink).toHaveAttribute('target', '_blank')
     expect(promptLink).toHaveAttribute('rel', 'noopener')

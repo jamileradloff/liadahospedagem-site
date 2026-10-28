@@ -18,6 +18,9 @@ export function WaitlistCta({ page, placement, className, children }: Props) {
       >
         Quero entrar na lista de lançamento
       </a>
+      <p className="waitlist-cta__note">
+        Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.
+      </p>
     </div>
   )
 }

@@ -54,7 +54,7 @@ const FAQ = [
   {
     id: 'is-it-free',
     question: 'É grátis mesmo?',
-    answer: 'É. Sem cadastro, sem pedir seu e-mail. Copia e usa.',
+    answer: 'É. Copiar é grátis e sem cadastro. Se quiser o PDF, é só deixar seu e-mail.',
   },
   {
     id: 'regular-whatsapp',
@@ -118,7 +118,7 @@ export function HomeScreen() {
             <MessagesLink className="button button--large">Copiar as mensagens agora</MessagesLink>
             <PdfButton page="home" light />
           </div>
-          <p className="hero__note">Grátis e sem cadastro.</p>
+          <p className="hero__note">Copiar é grátis e sem cadastro.</p>
           <WaitlistCta page="home" placement="hero" />
         </div>
         {/* Visual preview, a tap target only: the primary button already leads to the same messages. */}

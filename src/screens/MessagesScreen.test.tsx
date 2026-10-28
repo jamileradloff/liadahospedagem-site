@@ -57,10 +57,18 @@ describe('MessagesScreen waitlist prompt', () => {
     const link = within(container.querySelector('.waitlist-cta') as HTMLElement).getByRole('link', {
       name: 'Quero entrar na lista de lançamento',
     })
-    const sectionLink = within(container.querySelector('.waitlist') as HTMLElement).getByRole('link', {
+    const waitlist = container.querySelector('.waitlist') as HTMLElement
+    const sectionLink = within(waitlist).getByRole('link', {
       name: 'Quero entrar na lista de lançamento',
     })
     expect(sectionLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=messages')
+    expect(waitlist).toHaveTextContent(
+      'Estou montando com calma. Quer o caderninho completo quando ficar pronto? Deixa seu e-mail: quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
+    expect(waitlist).toHaveTextContent(
+      'O assistente responde hóspede de fora no idioma dele. As mensagens em espanhol e inglês chegam depois, de graça pra quem comprar no lançamento.',
+    )
+    expect(waitlist).toHaveTextContent('Para 1 propriedade, com os dados da sua casa.')
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(3)
     const first = articles[0]
@@ -69,6 +77,9 @@ describe('MessagesScreen waitlist prompt', () => {
     expect(first.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(link.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(link.closest('.waitlist-cta')).toHaveTextContent('Quer as 12 mensagens e o assistente da Lia?')
+    expect(link.closest('.waitlist-cta')).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(link).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=messages')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener')
@@ -95,6 +106,9 @@ describe('MessagesScreen waitlist prompt', () => {
 
     const prompt = first.querySelector('.waitlist-cta--after-copy') as HTMLElement
     expect(prompt).not.toBeNull()
+    expect(prompt).toHaveTextContent(
+      'Quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
     expect(second.querySelector('.waitlist-cta--after-copy')).toBeNull()
     expect(track).toHaveBeenCalledWith('viewed_copy_prompt', { message: 'welcome', page: 'messages' })
     expect(within(first).getByRole('button', { name: 'Copiada! Agora cola no WhatsApp' })).toHaveFocus()

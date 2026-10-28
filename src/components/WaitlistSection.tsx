@@ -9,8 +9,9 @@ export function WaitlistSection({ page }: { page: DeliveryPage }) {
         <p className="handwritten handwritten--light">tô preparando o resto</p>
         <h2 id={`waitlist-title-${page}`}>Essas são 3 de 12 mensagens.</h2>
         <p>
-          O caderninho completo cobre a estadia inteira, da reserva à avaliação. Estou finalizando. Quer saber quando
-          sair? Quem entrar na lista recebe uma condição especial de lançamento.
+          O caderninho completo cobre a estadia inteira, da reserva à avaliação. Estou montando com calma. Quer o
+          caderninho completo quando ficar pronto? Deixa seu e-mail: quem está na lista fica sabendo primeiro e ganha o
+          preço especial de lançamento.
         </p>
       </div>
       <div className="waitlist__body">
@@ -24,8 +25,11 @@ export function WaitlistSection({ page }: { page: DeliveryPage }) {
             As 3 daqui e mais 9: pedido de desconto, pets, barulho, saída mais tarde, orientações de chegada e
             resposta de avaliação.
           </li>
-          <li>Em português, espanhol e inglês, para receber hóspede de fora sem medo de escrever besteira.</li>
-          <li>Para até 2 propriedades, cada uma com seus próprios dados.</li>
+          <li>
+            O assistente responde hóspede de fora no idioma dele. As mensagens em espanhol e inglês chegam depois, de
+            graça pra quem comprar no lançamento.
+          </li>
+          <li>Para 1 propriedade, com os dados da sua casa.</li>
         </ul>
         <a
           className="button button--large"

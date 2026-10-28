@@ -57,10 +57,18 @@ describe('MessagesScreen waitlist prompt', () => {
     const link = within(container.querySelector('.waitlist-cta') as HTMLElement).getByRole('link', {
       name: 'Quero entrar na lista de lançamento',
     })
-    const sectionLink = within(container.querySelector('.waitlist') as HTMLElement).getByRole('link', {
+    const waitlist = container.querySelector('.waitlist') as HTMLElement
+    const sectionLink = within(waitlist).getByRole('link', {
       name: 'Quero entrar na lista de lançamento',
     })
     expect(sectionLink).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=messages')
+    expect(waitlist).toHaveTextContent(
+      'Estou montando com calma. Quer o caderninho completo quando ficar pronto? Deixa seu e-mail: quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.',
+    )
+    expect(waitlist).toHaveTextContent(
+      'O assistente responde hóspede de fora no idioma dele. As mensagens em espanhol e inglês chegam depois, de graça pra quem comprar no lançamento.',
+    )
+    expect(waitlist).toHaveTextContent('Para 1 propriedade, com os dados da sua casa.')
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(3)
     const first = articles[0]

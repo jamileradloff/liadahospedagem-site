@@ -1,0 +1,224 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>o Caderninho da Lia · 3 mensagens prontas</title><style>@font-face{font-family:"Fraunces";src:url(fonts/Fraunces-SemiBold.ttf);font-weight:600}
+@font-face{font-family:"DM Sans";src:url(fonts/DMSans-Regular.ttf);font-weight:400}
+@font-face{font-family:"DM Sans";src:url(fonts/DMSans-Medium.ttf);font-weight:500}
+@font-face{font-family:"DM Sans";src:url(fonts/DMSans-Bold.ttf);font-weight:700}
+@font-face{font-family:"Caveat";src:url(fonts/Caveat-SemiBold.ttf);font-weight:600}
+@font-face{font-family:"DM Mono";src:url(fonts/dmmono.ttf);font-weight:400}
+@page{size:540px 864px;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans","Noto Color Emoji",sans-serif;color:#2B2B2B;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+a{color:inherit;text-decoration:none}
+.page{width:540px;height:864px;position:relative;overflow:hidden;background:#F4ECDD;padding:44px 44px 70px;page-break-after:always;display:flex;flex-direction:column}
+.page p{font-size:15px;line-height:1.5;margin-bottom:11px}
+h1,h2,h3{font-family:"Fraunces",serif;font-weight:600;color:#1F4E5F;letter-spacing:-.01em}
+h2{font-size:30px;line-height:1.12;margin-bottom:12px}
+.kicker{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#C0643F;font-weight:700;margin-bottom:9px}
+.hand{font-family:"Caveat",cursive;font-weight:600;color:#C0643F;font-size:24px;line-height:1.1}
+code{font-family:"DM Mono",monospace;font-size:13px;background:#E2E7E3;color:#1F4E5F;padding:2px 7px;border-radius:5px}
+.center{text-align:center}
+.book{display:inline-block;width:11px;height:15px;border-radius:1px 2px 2px 1px;background:#C0643F;border-left:3px solid #8F4426;position:relative;flex:none}
+.book::after{content:"";position:absolute;left:2px;top:4px;width:4px;height:2px;background:#F4ECDD}
+
+/* footer */
+.foot{position:absolute;left:44px;right:44px;bottom:26px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6F6A62;letter-spacing:.02em}
+.foot .ig{display:inline-flex;align-items:center;gap:9px}
+.foot.dark{color:#B9C9CB}
+
+/* cover */
+.cover{background:#1F4E5F;color:#F4ECDD;padding:52px 46px 70px}
+.brandrow{display:flex;align-items:center;gap:12px;font-family:"Caveat",cursive;font-weight:600;font-size:27px;color:#E7B79E}
+.brandrow .book{width:16px;height:22px;border-left-width:4px}
+.brandrow .book::after{left:3px;top:6px;width:6px;height:3px}
+.covermid{margin-top:auto;margin-bottom:auto}
+.cover h1{color:#F4ECDD;font-size:46px;line-height:1.08;margin-bottom:22px}
+.cover .lead{font-size:18px;line-height:1.45;color:#E8DFCF;max-width:430px}
+.hand.big{font-size:32px;color:#E7B79E;margin-bottom:30px;transform:rotate(-2deg);transform-origin:left}
+
+/* page 2 */
+.disclose{font-size:14px !important;color:#5E5850;margin:-4px 0 16px !important}
+.qbox{position:relative;background:#FBF8F2;border:1.5px solid #DDCFB8;border-radius:22px;padding:24px 26px 20px;margin-bottom:22px}
+.qbox .quote{font-family:"Fraunces",serif;font-weight:600;font-size:24px;line-height:1.22;color:#1F4E5F;margin-bottom:16px;padding-right:56px}
+.liabadge{position:absolute;right:20px;top:16px;background:#1F4E5F;color:#F4ECDD;font-family:"Fraunces",serif;font-weight:600;font-size:16px;padding:5px 13px 6px;border-radius:8px}
+.liabadge::before{content:"";position:absolute;left:8px;bottom:-6px;border-width:6px 6px 0 0;border-style:solid;border-color:#1F4E5F transparent transparent transparent}
+.liabadge .dot{position:absolute;right:-3px;top:-3px;width:7px;height:7px;border-radius:50%;background:#C0643F}
+.sig{display:flex;align-items:center;gap:14px;font-size:14px;color:#1F4E5F}
+.sig .line{width:34px;height:1.5px;background:#B08A62}
+.toc{list-style:none;counter-reset:i;margin-top:8px}
+.toc li{counter-increment:i;position:relative;padding:9px 0 9px 44px;border-bottom:1px solid #DDCFB8;display:flex;flex-direction:column;font-size:15px}
+.toc li:last-child{border-bottom:0}
+.toc li::before{content:counter(i);position:absolute;left:0;top:11px;width:29px;height:29px;border-radius:50%;background:#C0643F;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.toc li span{font-size:13px;color:#6F6A62}
+
+/* messages */
+.when{color:#5E5850;margin-bottom:14px !important}
+.when b{color:#5E5850}
+.bubble{background:#1F4E5F;color:#F4ECDD;border-radius:18px 18px 4px 18px;padding:18px 20px 12px;margin-bottom:14px}
+.bubble p{font-size:15px !important;line-height:1.5 !important;margin-bottom:12px !important}
+.bubble p:last-of-type{margin-bottom:4px !important}
+.fill{color:#F2A27E}
+.tick{text-align:right;font-size:10px;color:#9FB8BF;letter-spacing:-.25em;padding-right:4px}
+.row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.copybtn{display:inline-flex;align-items:center;gap:9px;background:#C0643F;color:#fff;font-weight:700;font-size:15px;padding:12px 20px;border-radius:999px}
+.shortcut{font-size:14px;color:#5E5850}
+.tip{background:#FBF8F2;border:1.5px solid #DDCFB8;border-radius:16px;padding:14px 18px 6px}
+.tip .hand{margin-bottom:6px}
+.tip p{font-size:14.5px !important}
+
+/* setup steps */
+.steps{list-style:none;counter-reset:s;margin:6px 0 26px}
+.steps li{counter-increment:s;position:relative;padding-left:46px;font-size:15px;line-height:1.55;margin-bottom:16px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;background:#E2E7E3;color:#1F4E5F;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+
+/* page 7 */
+.two-col{display:flex;gap:22px;align-items:flex-start;margin:4px 0 16px}
+.phone{flex:none;width:184px;height:372px;border:7px solid #2B2B2B;border-radius:30px;background:#FBF8F2;position:relative;padding:12px 9px 0;overflow:hidden}
+.notch{position:absolute;top:6px;left:50%;margin-left:-29px;width:58px;height:15px;border-radius:9px;background:#2B2B2B}
+.pstatus{display:flex;justify-content:space-between;font-size:8px;font-weight:700;padding:0 8px;margin-bottom:12px}
+.bars{width:12px;height:6px;border-bottom:6px solid #2B2B2B;border-left:6px solid transparent}
+.phead{display:flex;align-items:center;gap:6px;padding:0 3px;margin-bottom:7px}
+.phead .book{width:8px;height:12px;border-left-width:2px}
+.phead .book::after{display:none}
+.phead div{display:flex;flex-direction:column;font-size:8px;line-height:1.25}
+.phead small{font-size:6.5px;color:#6F6A62}
+.pcount{margin-left:auto;background:#F6DCCD;color:#C0643F;font-size:6px;font-weight:700;padding:2px 6px;border-radius:999px}
+.ptabs{display:flex;background:#EFE7D8;border-radius:7px;padding:2px;margin-bottom:7px;font-size:6.5px}
+.ptabs span{flex:1;text-align:center;padding:4px 0;color:#6F6A62}
+.ptabs .on{background:#fff;color:#1F4E5F;font-weight:700;border-radius:5px}
+.pcard{background:#fff;border:1px solid #E6DCCB;border-radius:9px;padding:8px}
+.ptitle{font-family:"Fraunces",serif;font-weight:600;font-size:9.5px;color:#1F4E5F;display:block}
+.pcard small{font-size:6px;color:#6F6A62;display:block;margin-bottom:6px}
+.pbubble{background:#1F4E5F;color:#F4ECDD;border-radius:7px;padding:7px 8px}
+.pbubble p{font-size:5.9px !important;line-height:1.4 !important;margin-bottom:4px !important}
+.pbubble p:last-child{margin-bottom:0 !important}
+.pfill{color:#F2A27E}
+.pcopy{display:inline-flex;align-items:center;gap:4px;margin-top:7px;border:1px solid #1F4E5F;color:#1F4E5F;border-radius:6px;font-size:6.5px;font-weight:700;padding:4px 8px}
+.pcopy svg{width:7px;height:7px}
+.phome{position:absolute;bottom:6px;left:50%;margin-left:-30px;width:60px;height:3px;border-radius:2px;background:#2B2B2B}
+.side p{font-size:15.5px !important;line-height:1.5 !important}
+.hand.example{font-size:22px;margin-top:6px}
+.assist{display:flex;gap:14px;border:1.5px solid #C0643F;border-radius:20px;padding:15px 16px 14px;background:#FBF8F2;align-items:center}
+.atext{flex:1}
+.atext .hand{font-size:21px;margin-bottom:4px}
+.atext h3{font-size:20px;line-height:1.15;margin-bottom:8px}
+.atext p{font-size:13px !important;line-height:1.5 !important;margin-bottom:0 !important}
+.amock{flex:none;width:140px;background:#F4ECDD;border:1px solid #E6DCCB;border-radius:12px;padding:12px 10px}
+.astep{display:flex;align-items:center;gap:7px;font-family:"Fraunces",serif;font-size:11.5px;line-height:1.15;color:#2B2B2B;margin-bottom:8px}
+.astep .num{flex:none;width:19px;height:19px;border-radius:50%;background:#1F4E5F;color:#fff;font-family:"DM Sans";font-weight:700;font-size:9px;display:flex;align-items:center;justify-content:center}
+.astep.dim .num{background:#CFC2AC}
+.aseg{display:flex;background:#fff;border:1px solid #E6DCCB;border-radius:8px;padding:3px;font-size:9.5px;font-weight:700;margin-bottom:8px}
+.aseg span{flex:1;text-align:center;padding:5px 0;color:#6F6A62}
+.aseg .on{background:#1F4E5F;color:#fff;border-radius:6px}
+.abar{height:6px;border-radius:3px;background:#E6DCCB;margin-bottom:6px}
+.abar.short{width:65%;margin-bottom:12px}
+.abar.flex{flex:1;margin:0}
+
+/* page 8 */
+.last .kicker.light{color:#E7B79E}
+.last h2.light{color:#F4ECDD;font-size:31px}
+.page .light{color:#DCE5E4}
+.highlight{background:#2A5D6F;border:1.5px solid #E08A62;border-radius:14px;padding:13px 16px;font-size:14.5px;line-height:1.5;color:#E8EEED;margin:4px 0 14px}
+.highlight b{color:#F4ECDD}
+.checks{list-style:none;margin-bottom:20px}
+.checks li{position:relative;padding-left:26px;font-size:14.5px;line-height:1.5;color:#DCE5E4;margin-bottom:9px}
+.checks li::before{content:"✓";position:absolute;left:2px;top:0;color:#E08A62;font-weight:700}
+.btn{display:block;text-align:center;background:#C0643F;color:#fff;font-weight:700;font-size:18px;padding:16px;border-radius:999px}
+.hand.note{color:#E7B79E;font-size:21px;margin-top:9px}
+.tag{margin-top:auto;text-align:center;font-family:"Caveat",cursive;font-weight:600;font-size:23px;line-height:1.25;color:#E7B79E}
+.credit{text-align:center;font-size:11.5px;color:#B9C9CB;margin:8px 0 6px}
+.credit a{text-decoration:underline;text-underline-offset:2px}
+</style></head><body><section class="page cover">
+<div class="brandrow"><span class="book"></span>o Caderninho da Lia</div>
+<div class="covermid">
+<h1>3 mensagens prontas para você parar de digitar a mesma coisa todo dia</h1>
+<p class="lead">Copia, troca o que está entre colchetes e salva como atalho no WhatsApp. Em 10 minutos, tá feito.</p>
+</div>
+<div class="hand big">Grátis e com carinho, Lia.</div>
+<div class="foot dark"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>1/8</span></div></section><section class="page">
+<div class="kicker">Antes de começar</div>
+<h2>Oi, eu sou a Lia.</h2>
+<p class="disclose">Sou uma personagem criada com IA, e as mensagens foram escritas por uma pessoa de verdade.</p>
+<div class="qbox">
+<div class="liabadge">Lia<span class="dot"></span></div>
+<div class="kicker">Anota essa</div>
+<div class="quote">Se você responde a senha do Wi-Fi toda semana,<br>o problema não é o hóspede.<br>É o processo.</div>
+<div class="sig"><span class="line"></span><a href="https://www.instagram.com/liadahospedagem/">@liadahospedagem</a></div>
+</div>
+<p>Hóspede não lê manual, ele pergunta. E você? Responde de novo do mercado, do carro, às 11 da noite...</p>
+<p><b>Não dá para fazer o hóspede parar de perguntar, mas dá para parar de digitar.</b></p>
+<ol class="toc">
+<li><b>Boas-vindas e chegada</b><span>a que você mais manda</span></li>
+<li><b>“Posso chegar mais cedo?”</b><span>dizer não sem fechar a porta</span></li>
+<li><b>Lembrete de check-out</b><span>sem parecer que você tá expulsando o hóspede</span></li>
+</ol>
+<div class="foot"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>2/8</span></div></section><section class="page">
+<div class="kicker">Mensagem 1 de 3</div>
+<h2>Boas-vindas e chegada</h2>
+<p class="when"><b>Quando mandar:</b> na véspera ou no dia da chegada.</p>
+<div class="bubble"><p>Oi, <span class="fill">[nome do hóspede]</span>! 😊 Aqui é <span class="fill">[seu nome]</span>, da <span class="fill">[sua hospedagem]</span>. Que bom que você vem para <span class="fill">[cidade]</span>!</p><p>Já deixo aqui as informações para sua chegada:</p><p>🕒 Check-in a partir das <span class="fill">[horário]</span>.<br>🔑 <span class="fill">[como entrar — ex.: a chave fica no cofre ao lado da porta. Te envio a senha no dia da chegada.]</span><br>🚗 <span class="fill">[onde estacionar — apague esta linha se não se aplicar]</span><br>📶 Wi-Fi: <span class="fill">[nome da rede]</span> · senha: <span class="fill">[senha]</span><br>💡 Uma dica minha: <span class="fill">[ex.: a padaria da esquina abre às 6h]</span></p><p>Se tiver alguma dúvida, é só me chamar por aqui. Boa viagem!</p><p><span class="fill">[seu nome]</span></p><div class="tick">✓✓</div></div>
+<div class="row"><a class="copybtn" href="https://liadahospedagem.pages.dev/mensagens?utm_source=pdf#boasvindas"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Toca aqui para copiar</span></a><span class="shortcut">Atalho: <code>/boasvindas</code></span></div>
+<div class="tip"><div class="hand">Dica da Lia</div><p>A senha do Wi-Fi já vai aqui, porque é a pergunta que mais chega. E não pula a dica: a padaria que abre cedo, o lugar do pôr do sol. É isso que faz a mensagem parecer sua, e não de robô.</p></div>
+<div class="foot"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>3/8</span></div></section><section class="page">
+<div class="kicker">Mensagem 2 de 3</div>
+<h2>“Posso chegar mais cedo?”</h2>
+<p class="when"><b>Quando mandar:</b> quando o hóspede pede para entrar antes do horário.</p>
+<div class="bubble"><p>Oi, <span class="fill">[nome do hóspede]</span>! Nosso check-in começa às <span class="fill">[horário]</span>, porque antes disso estamos preparando tudo para receber você.</p><p>Se a hospedagem ficar pronta mais cedo, te aviso por aqui para você poder entrar antes. 😊</p><p><span class="fill">[Opcional, se puder guardar bagagens: Enquanto isso, você pode deixar as malas com a gente e aproveitar o dia.]</span></p><p><span class="fill">[seu nome]</span></p><div class="tick">✓✓</div></div>
+<div class="row"><a class="copybtn" href="https://liadahospedagem.pages.dev/mensagens?utm_source=pdf#cedo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Toca aqui para copiar</span></a><span class="shortcut">Atalho: <code>/cedo</code></span></div>
+<div class="tip"><div class="hand">Dica da Lia</div><p>Não tem onde guardar mala? Apaga a linha opcional. E não promete horário antes de saber se a limpeza termina: “te aviso por aqui se você puder entrar antes” é melhor do que “pode vir ao meio-dia”.</p></div>
+<div class="foot"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>4/8</span></div></section><section class="page">
+<div class="kicker">Mensagem 3 de 3</div>
+<h2>Lembrete de check-out</h2>
+<p class="when"><b>Quando mandar:</b> na noite anterior à saída.</p>
+<div class="bubble"><p>Oi, <span class="fill">[nome do hóspede]</span>! 😊 Espero que esteja curtindo a estadia na <span class="fill">[sua hospedagem]</span>.</p><p>Passando para lembrar que amanhã o check-out é até as <span class="fill">[horário]</span>, para a gente preparar tudo para os próximos hóspedes.</p><p>Antes de sair, por favor:<br>• <span class="fill">[onde deixar a chave]</span><br>• <span class="fill">[outra orientação de saída, se houver]</span><br>• <span class="fill">[ex.: desligar o ar-condicionado e as luzes]</span></p><p>Foi um prazer receber você! Aproveite o restante da estadia e boa viagem de volta. 👋</p><p><span class="fill">[seu nome]</span></p><div class="tick">✓✓</div></div>
+<div class="row"><a class="copybtn" href="https://liadahospedagem.pages.dev/mensagens?utm_source=pdf#checkout"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Toca aqui para copiar</span></a><span class="shortcut">Atalho: <code>/checkout</code></span></div>
+<div class="tip"><div class="hand">Dica da Lia</div><p>Explicar o motivo do horário ajuda o hóspede a entender o lembrete. Peça só o necessário para a saída e mantenha o carinho no final: “Foi um prazer receber você” faz diferença.</p></div>
+<div class="foot"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>5/8</span></div></section><section class="page">
+<div class="kicker">10 minutos</div>
+<h2>Agora salva no WhatsApp Business</h2>
+<ol class="steps">
+<li>Abre o WhatsApp Business e procura <b>Ferramentas</b> ou <b>Ferramentas comerciais</b>. Depois, toca em <b>Respostas rápidas</b>. O caminho pode variar conforme o celular e a versão do aplicativo.</li>
+<li>Toca em <b>+</b> e cola a mensagem. Substitui os campos entre colchetes pelos dados da sua hospedagem e apaga as orientações que não se aplicam. Deixa só <b>[nome do hóspede]</b> para preencher antes de enviar.</li>
+<li>Escolhe um atalho simples, como <b>boasvindas</b>, <b>cedo</b> ou <b>checkout</b>, e toca em <b>Salvar</b>. Repete esses passos para as três mensagens.</li>
+<li>Para usar, abre a conversa, digita <b>/</b> e seleciona a resposta. Troca [nome do hóspede] pelo nome da pessoa, confere a mensagem e envia.</li>
+</ol>
+<div class="center"><a class="copybtn" href="https://liadahospedagem.pages.dev/mensagens?utm_source=pdf"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Abrir as 3 mensagens para copiar no celular</span></a></div>
+<div class="foot"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>6/8</span></div></section><section class="page">
+<div class="kicker">E agora?</div>
+<h2>Suas 3 mensagens já estão prontas. E as outras situações?</h2>
+<div class="two-col">
+<div class="phone"><div class="notch"></div>
+<div class="pstatus"><span>9:41</span><span class="bars"></span></div>
+<div class="phead"><span class="book"></span><div><b>Suas mensagens</b><small>Estúdios do Campeche</small></div><span class="pcount">1 de 12</span></div>
+<div class="ptabs"><span class="on">Português</span><span>Español</span><span>English</span></div>
+<div class="pcard"><b class="ptitle">Boas-vindas e chegada</b><small>Manda na véspera ou no dia da chegada.</small>
+<div class="pbubble"><p>Oi, <span class="pfill">[nome do hóspede]</span>! 😊 Aqui é Renata, dos Estúdios do Campeche. Que bom que você vem para Florianópolis!</p><p>Já deixo aqui as informações para sua chegada:</p><p>🕒 Check-in a partir das 14h.<br>🔑 A chave fica no cofre ao lado do portão de madeira. Te envio a senha no dia da chegada.<br>🚗 Vaga coberta na garagem, a primeira à esquerda.<br>📶 Wi-Fi: Campeche_Hospedes · senha: praia2026<br>💡 Uma dica minha: a padaria Pão da Ilha abre às 6h.</p><p>Se tiver alguma dúvida, é só me chamar por aqui. Boa viagem!</p><p>Renata</p></div>
+<span class="pcopy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> Copiar mensagem</span></div>
+<div class="phome"></div></div>
+<div class="side">
+<p>Agora imagina responder algumas perguntas sobre a sua hospedagem <b>uma vez só</b> e receber as 12 mensagens adaptadas com seus dados: horários, instruções de entrada, Wi-Fi e regras da casa.</p>
+<p>Em português, para você conferir, copiar e usar. Espanhol e inglês chegam depois.</p>
+<div class="hand example">exemplo: Estúdios do Campeche, Florianópolis</div>
+</div></div>
+<div class="assist">
+<div class="atext"><div class="hand">chega de 'Prezado hóspede':</div>
+<h3>Um assistente que responde do seu jeito</h3>
+<p>Você coloca no <b>ChatGPT</b> ou no <b>Claude</b> uma vez só. Chegou uma pergunta nova? Ele escreve a resposta com o seu tom e pede sua confirmação antes de oferecer desconto, mudar horários ou autorizar pets.</p></div>
+<div class="amock"><div class="astep"><span class="num">1</span><b>Coloca seu assistente na IA</b></div>
+<div class="aseg"><span class="on">ChatGPT</span><span>Claude</span></div>
+<div class="abar"></div><div class="abar short"></div>
+<div class="astep dim"><span class="num">2</span><span class="abar flex"></span></div></div>
+</div>
+<div class="foot"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>7/8</span></div></section><section class="page cover last">
+<div class="kicker light">Tô preparando o resto</div>
+<h2 class="light">Essas são 3 de 12 mensagens.</h2>
+<p class="light">O caderninho completo cobre a estadia inteira, da reserva à avaliação. Estou montando com calma. Quer o caderninho completo quando ficar pronto? Deixa seu e-mail: quem está na lista fica sabendo primeiro e ganha o preço especial de lançamento.</p>
+<div class="highlight"><b>Um assistente que responde do seu jeito.</b> Você coloca no ChatGPT ou no Claude uma vez só. Chegou uma pergunta nova? Ele escreve a resposta no seu tom e pede sua confirmação antes de oferecer desconto, mudar horário ou autorizar pet.</div>
+<ul class="checks">
+<li>As 3 daqui e mais 9: pedido de desconto, pets, barulho, saída mais tarde, orientações de chegada e resposta de avaliação.</li>
+<li>O assistente responde hóspede de fora no idioma dele. As mensagens em espanhol e inglês chegam depois, de graça pra quem comprar no lançamento.</li>
+<li>Para 1 propriedade, com os dados da sua casa.</li>
+</ul>
+<a class="btn" href="https://tally.so/r/9qzR1Q?origin=pdf">Me avisa quando sair!</a>
+<div class="hand light center note">É opcional e leva 1 minuto, prometo.</div>
+<div class="tag">Automatize o repetitivo.<br>Não automatize o carinho.</div>
+<div class="credit">Criado por <a href="https://www.linkedin.com/in/jamileradloff/">Jamile Radloff</a></div>
+<div class="foot dark"><a class="ig" href="https://www.instagram.com/liadahospedagem/"><span class="book"></span>@liadahospedagem</a><span>8/8</span></div></section></body></html>

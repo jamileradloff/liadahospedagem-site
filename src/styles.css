@@ -196,13 +196,12 @@ h1[tabindex='-1']:focus {
   align-items: center;
   justify-content: center;
   min-height: 3rem;
-  padding: 0.7rem 1.25rem;
+  padding: 0.7rem 1.4rem;
   border: 0;
   border-radius: 999px;
   background: var(--terracotta);
   color: #fff;
-  /* 17px on small phones so "Receber o Caderninho em PDF" fits on one line; 19px from about 610px wide. */
-  font: 700 clamp(1.0625rem, 0.9rem + 0.75vw, 1.1875rem)/1.2 var(--font-body);
+  font: 700 1.1875rem/1.2 var(--font-body);
   text-decoration: none;
   text-align: center;
   cursor: pointer;

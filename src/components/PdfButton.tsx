@@ -16,7 +16,7 @@ export function PdfButton({ page, light = false }: Props) {
       rel="noopener"
       onClick={() => track('requested_pdf', { page })}
     >
-      Receber o Caderninho em PDF
+      Receber o PDF
     </a>
   )
 }

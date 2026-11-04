@@ -7,13 +7,13 @@ const messagesHeading = (page: Page) => page.getByRole('heading', { level: 1, na
 
 test('PDF buttons open the Tally form with a pdf-request origin', async ({ page }) => {
   await gotoSettled(page, '/?utm_content=w3a-welcome')
-  await expect(page.getByRole('link', { name: 'Receber o Caderninho em PDF' }).first()).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Receber o PDF' }).first()).toHaveAttribute(
     'href',
     'https://tally.so/r/9qzR1Q?origin=pdf-request-home&reel=w3a-welcome',
   )
 
   await gotoSettled(page, '/mensagens?utm_content=w3a-welcome')
-  await expect(page.getByRole('link', { name: 'Receber o Caderninho em PDF' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Receber o PDF' })).toHaveAttribute(
     'href',
     'https://tally.so/r/9qzR1Q?origin=pdf-request-messages&reel=w3a-welcome',
   )

@@ -265,8 +265,8 @@ h1[tabindex='-1']:focus {
   background: var(--blue);
   color: var(--cream);
   border-radius: var(--radius-block);
-  padding: var(--block-padding);
-  padding-top: calc(var(--block-padding) + 0.5rem);
+  /* One declaration, not shorthand + override: Chrome saves that pair with empty values, which breaks PostHog replays. */
+  padding: calc(var(--block-padding) + 0.5rem) var(--block-padding) var(--block-padding);
   margin-bottom: var(--section-gap);
 }
 
@@ -465,8 +465,7 @@ h1[tabindex='-1']:focus {
 .contents {
   background: var(--off-white);
   border-radius: var(--radius-block);
-  padding: var(--block-padding);
-  padding-bottom: calc(var(--block-padding) - 0.75rem);
+  padding: var(--block-padding) var(--block-padding) calc(var(--block-padding) - 0.75rem);
 }
 
 .toc {
@@ -520,8 +519,7 @@ h1[tabindex='-1']:focus {
 
 .audience__block {
   border-radius: var(--radius-block);
-  padding: var(--block-padding);
-  padding-bottom: calc(var(--block-padding) - 0.75rem);
+  padding: var(--block-padding) var(--block-padding) calc(var(--block-padding) - 0.75rem);
 }
 
 .audience__block--yes {
@@ -720,8 +718,7 @@ h1[tabindex='-1']:focus {
 .message-card {
   background: var(--off-white);
   border-radius: var(--radius-block);
-  padding: var(--block-padding);
-  padding-top: calc(var(--block-padding) + 0.25rem);
+  padding: calc(var(--block-padding) + 0.25rem) var(--block-padding) var(--block-padding);
   margin-bottom: 1.5rem;
   scroll-margin-top: 1rem;
   box-shadow: 0 0 0 0 transparent;
@@ -856,8 +853,7 @@ h1[tabindex='-1']:focus {
   background: var(--blue);
   color: var(--text-on-dark);
   border-radius: var(--radius-block);
-  padding: var(--block-padding);
-  padding-top: calc(var(--block-padding) + 0.5rem);
+  padding: calc(var(--block-padding) + 0.5rem) var(--block-padding) var(--block-padding);
   margin-bottom: var(--section-gap);
 }
 

@@ -61,7 +61,7 @@ describe('HomeScreen welcome copy', () => {
     expect(
       screen.getByText('É. Copiar é grátis e sem cadastro. Se quiser o PDF, é só deixar seu e-mail.'),
     ).toBeInTheDocument()
-    const pdf = screen.getAllByRole('link', { name: 'Receber o Caderninho em PDF' })[0]
+    const pdf = screen.getAllByRole('link', { name: 'Receber o PDF' })[0]
     if (!pdf) throw new Error('expected a PDF request link')
     expect(pdf).toHaveAttribute('href', 'https://tally.so/r/9qzR1Q?origin=pdf-request-home')
     expect(pdf).toHaveAttribute('target', '_blank')

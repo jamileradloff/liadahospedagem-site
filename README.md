@@ -192,7 +192,7 @@ One `utm_content` per Reel:
 https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_content=w3a-welcome
 ```
 
-## Short links (Instagram, TikTok)
+## Short links (Instagram, TikTok, Facebook)
 
 `public/_redirects` sends short paths to tagged pages with a 302. Cloudflare Pages applies the rules;
 `npm run dev` and `npm run preview` do not.
@@ -203,6 +203,11 @@ https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_conten
 | `https://liadahospedagem.pages.dev/story` | Story link stickers | `/?utm_source=instagram&utm_medium=story` |
 | `https://liadahospedagem.pages.dev/tiktok` | TikTok bio | `/?utm_source=tiktok&utm_medium=bio` |
 | `https://liadahospedagem.pages.dev/dm` | ManyChat keyword DM (CADERNINHO, KIT) | `/mensagens?utm_source=instagram&utm_medium=dm&utm_content=ig-comment` |
+| `https://liadahospedagem.pages.dev/fb-grupo` | Facebook group post for the Caderninho check-in campaign | `/?utm_source=facebook&utm_medium=group&utm_campaign=caderninho&utm_content=checkin` |
 
 `/dm` lands straight on the messages page. Reel-specific DM buttons can still use full UTM links with their own
 `utm_content`. Published Story stickers keep pointing at `/story`, so fix that rule rather than removing it.
+
+`/fb-grupo` identifies the Caderninho check-in campaign in Facebook groups, not a specific group or post. Reusing it
+across groups aggregates their traffic. Keep `/fb-grupo` reserved for this campaign: to compare other groups or posts,
+add new paths with their own `utm_content` instead of changing the attribution of a link that is already published.

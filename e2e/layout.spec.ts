@@ -42,7 +42,6 @@ const ROUTES: { path: string; controls: (page: Page) => Locator[] }[] = [
     path: '/pede-assim/check-out-mais-tarde',
     controls: (page) => [
       page.getByRole('button', { name: 'Toca aqui para copiar: Check-out mais tarde' }),
-      page.getByRole('link', { name: 'Voltar ao índice de situações' }),
       page.getByRole('link', { name: '@liadahospedagem no Instagram' }),
     ],
   },

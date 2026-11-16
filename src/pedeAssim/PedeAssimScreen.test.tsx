@@ -69,7 +69,8 @@ describe('Pede assim situation', () => {
     ])
     expect(promptBlock().textContent).toBe(checkout.prompt)
     expect(promptBlock().querySelectorAll('.field')).toHaveLength(checkout.prompt.match(/\[[^\]\n]+\]/g)?.length ?? 0)
-    expect(screen.getByRole('link', { name: 'Voltar ao índice de situações' })).toHaveAttribute('href', '/pede-assim')
+    // Readers go back to the PDF for the next situation, where the examples and checks are.
+    expect(screen.getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['https://www.instagram.com/liadahospedagem/'])
 
     for (const other of INSTRUCTIONS.filter((item) => item !== checkout)) {
       expect(screen.queryByText(other.title)).not.toBeInTheDocument()
@@ -86,15 +87,6 @@ describe('Pede assim situation', () => {
     act(() => navigate('/pede-assim/como-chegar'))
 
     expect(screen.getByRole('status')).toBeEmptyDOMElement()
-  })
-
-  it('returns to the index', async () => {
-    await renderAt('/pede-assim/check-out-mais-tarde')
-
-    await userEvent.click(await screen.findByRole('link', { name: 'Voltar ao índice de situações' }))
-
-    expect(window.location.pathname).toBe('/pede-assim')
-    expect(screen.getByRole('heading', { level: 2, name: 'Índice de situações' })).toBeInTheDocument()
   })
 })
 

@@ -57,25 +57,19 @@ test('Back and Forward between the index and a situation land on each heading', 
 
   await page.getByRole('link', { name: CHECKOUT }).click()
   await expect(heading(page, CHECKOUT)).toBeFocused()
-  await page.getByRole('link', { name: 'Voltar ao índice de situações' }).click()
-  await expect(heading(page, 'Índice de situações')).toBeFocused()
 
   await page.goBack()
-  await expect(page).toHaveURL(/\/pede-assim\/check-out-mais-tarde$/)
-  await expect(heading(page, CHECKOUT)).toBeFocused()
-
-  await page.goForward()
   await expect(page).toHaveURL(/\/pede-assim$/)
   await expect(heading(page, 'Índice de situações')).toBeFocused()
-})
 
-test('a tab opened straight on a situation, as from the PDF, stays inside the site after Back', async ({ page }) => {
-  await openSettled(page, '/pede-assim/check-out-mais-tarde', CHECKOUT)
-
-  await page.getByRole('link', { name: 'Voltar ao índice de situações' }).click()
-  await expect(heading(page, 'Índice de situações')).toBeVisible()
-  await page.goBack()
-
+  await page.goForward()
   await expect(page).toHaveURL(/\/pede-assim\/check-out-mais-tarde$/)
   await expect(heading(page, CHECKOUT)).toBeFocused()
+})
+
+test('a situation opened from the PDF offers no way to the other situations', async ({ page }) => {
+  await openSettled(page, '/pede-assim/check-out-mais-tarde', CHECKOUT)
+
+  await expect(page.getByRole('link')).toHaveCount(1)
+  await expect(page.getByRole('link')).toHaveAccessibleName('@liadahospedagem no Instagram')
 })

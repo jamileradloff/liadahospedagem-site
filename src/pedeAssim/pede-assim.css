@@ -122,7 +122,6 @@ body:has(.pede-assim) {
 }
 
 .pede-assim-index a,
-.pede-assim .return,
 .pede-assim .footer-link {
   padding: 0.55rem 0.8rem;
   min-height: 44px;
@@ -135,12 +134,10 @@ body:has(.pede-assim) {
 }
 
 .pede-assim-index a:hover,
-.pede-assim .return:hover,
 .pede-assim .footer-link:hover {
   background: var(--hover);
 }
 
-.pede-assim .return,
 .pede-assim .footer-link {
   width: fit-content;
   margin-top: 1rem;

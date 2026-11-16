@@ -1,6 +1,4 @@
 import { useRef } from 'react'
-import { Link } from '../components/Link'
-import { PEDE_ASSIM_PATH } from '../router'
 import { INSTRUCTIONS, type Instruction } from './instructions'
 import { useInstructionCopy } from './useInstructionCopy'
 
@@ -54,9 +52,6 @@ export function InstructionView({ instruction }: { instruction: Instruction }) {
           ),
         )}
       </div>
-      <Link className="return" to={PEDE_ASSIM_PATH}>
-        Voltar ao índice de situações
-      </Link>
     </section>
   )
 }

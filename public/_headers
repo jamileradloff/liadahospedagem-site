@@ -1,0 +1,5 @@
+/pede-assim
+  X-Robots-Tag: noindex
+
+/pede-assim/*
+  X-Robots-Tag: noindex

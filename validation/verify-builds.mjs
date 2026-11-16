@@ -3,6 +3,8 @@
 //   2. no-key build: the default for local work and PR previews, which must make no analytics requests
 //   3. preview build (VITE_PREVIEW=1): in-memory routing; the thank-you PDF download is disabled
 //   node validation/verify-builds.mjs
+import { readFileSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 import { build, preview } from 'vite'
 import { chromium } from '@playwright/test'
@@ -159,10 +161,25 @@ async function verifyAnalytics(browser) {
   await server.close()
 }
 
+// The paid guide's text must only ship in the lazy Pede assim chunk, never in the free page's entry chunk.
+function verifyPedeAssimIsolation(outDir) {
+  const { groups } = JSON.parse(readFileSync(new URL('../src/pedeAssim/instructions.json', import.meta.url), 'utf8'))
+  const markers = groups.flatMap((group) => group.items).map((item) => item.prompt.split('\n').reduce((a, b) => (b.length > a.length ? b : a)))
+  const entry = readFileSync(join(outDir, 'index.html'), 'utf8').match(/<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"/)?.[1]
+  const chunks = readdirSync(join(outDir, 'assets')).filter((name) => name.endsWith('.js')).map((name) => ({ name: `assets/${name}`, text: readFileSync(join(outDir, 'assets', name), 'utf8') }))
+  const entryText = chunks.find((chunk) => chunk.name === entry)?.text ?? ''
+  const leaked = markers.filter((marker) => entryText.includes(marker))
+  check('the entry chunk holds none of the 12 Pede assim instructions', entryText !== '' && leaked.length === 0, `${entry}, ${leaked.length} found`)
+  const holders = chunks.filter((chunk) => markers.every((marker) => chunk.text.includes(marker)))
+  const partial = chunks.filter((chunk) => !holders.includes(chunk) && markers.some((marker) => chunk.text.includes(marker)))
+  check('exactly one lazy chunk holds all 12 instructions', markers.length === 12 && holders.length === 1 && holders[0].name !== entry && partial.length === 0, holders.map((chunk) => chunk.name).join(', ') || 'none')
+}
+
 // ---------------------------------------------------------------- 2. build without a key + PDF
 async function verifyNoKeyBuild(browser) {
   console.log('\n# Production build without a PostHog key')
   await buildVariant('/tmp/lia-dist-nokey', { VITE_POSTHOG_KEY: '', VITE_PREVIEW: '' })
+  verifyPedeAssimIsolation('/tmp/lia-dist-nokey')
   const server = await serve('/tmp/lia-dist-nokey', 4175)
   const context = await browser.newContext()
   await stubExternal(context)

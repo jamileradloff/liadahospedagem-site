@@ -83,6 +83,14 @@ empty so no events are sent. It runs in desktop Chrome, a Pixel 7 and an iPhone 
 320, 390, 768, 1024 and 1440px runs in desktop Chrome only. Clipboard reads only work in Chromium, so the copy
 success test is skipped in WebKit. Add `--project=desktop-chromium` to run a single browser, or `--ui` to debug.
 
+`e2e/pede-assim-pdf-links.spec.ts` opens each of the 12 `/pede-assim/<slug>` pages the guide's PDF links to and
+checks that the copy button copies exactly that instruction. To run the Pede assim tests against a deployed site
+(a Pages preview, or production after a release), skipping the local server:
+
+```bash
+PLAYWRIGHT_BASE_URL=https://<host> npx playwright test e2e/pede-assim
+```
+
 The accessibility tests run axe against WCAG 2.2 AA rules. They don't replace checking with the keyboard and a
 screen reader.
 

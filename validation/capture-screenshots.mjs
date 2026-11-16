@@ -12,6 +12,8 @@ const WIDTHS = [320, 390, 768, 1024, 1440]
 const ROUTES = [
   ['home', '/'],
   ['messages', '/mensagens'],
+  ['pede-assim-index', '/pede-assim'],
+  ['pede-assim-checkout', '/pede-assim/check-out-mais-tarde'],
 ]
 
 await mkdir(OUT, { recursive: true })

@@ -42,6 +42,24 @@ test('the messages page has no WCAG AA violations', async ({ page }) => {
   await expectNoViolations(page)
 })
 
+test('the Pede assim index has no WCAG AA violations', async ({ page }) => {
+  await gotoSettled(page, '/pede-assim')
+  await expect(page.getByRole('heading', { level: 2, name: 'Índice de situações' })).toBeVisible()
+  await expectNoViolations(page)
+})
+
+test('a Pede assim situation has no WCAG AA violations, also after a blocked copy', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: () => Promise.reject(new Error('blocked')) } })
+    document.execCommand = () => false
+  })
+  await gotoSettled(page, '/pede-assim/check-out-mais-tarde')
+  await expectNoViolations(page)
+  await page.getByRole('button', { name: 'Toca aqui para copiar: Check-out mais tarde' }).click()
+  await expect(page.getByRole('status')).toHaveText(/Texto selecionado/)
+  await expectNoViolations(page)
+})
+
 test('the thank-you page has no WCAG AA violations', async ({ page }) => {
   await gotoSettled(page, '/obrigado?origin=pdf-request-home&reel=test')
   await expect(page.getByRole('heading', { level: 1, name: /Pronto! Seu Caderninho está aqui/ })).toBeFocused()

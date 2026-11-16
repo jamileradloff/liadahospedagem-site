@@ -63,9 +63,10 @@ describe('Pede assim situation', () => {
 
     const title = await screen.findByRole('heading', { level: 2, name: checkout.title })
     expect(title.closest('section')).toHaveTextContent(/^05 \/ 12/)
-    for (const name of ['Quando usar', 'O que preencher', 'Texto para copiar']) {
-      expect(screen.getByRole('heading', { level: 3, name })).toBeInTheDocument()
-    }
+    expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([
+      'O que preencher',
+      'Texto para copiar',
+    ])
     expect(promptBlock().textContent).toBe(checkout.prompt)
     expect(promptBlock().querySelectorAll('.field')).toHaveLength(checkout.prompt.match(/\[[^\]\n]+\]/g)?.length ?? 0)
     expect(screen.getByRole('link', { name: 'Voltar ao índice de situações' })).toHaveAttribute('href', '/pede-assim')

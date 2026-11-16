@@ -29,16 +29,18 @@ export function InstructionView({ instruction }: { instruction: Instruction }) {
           aria-controls={promptId}
           onClick={() => void copy()}
         >
+          <svg aria-hidden="true" width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <rect x="3" y="2" width="11" height="12" rx="2" />
+            <rect className="glyph-front" x="6" y="5" width="11" height="12" rx="2" />
+          </svg>
           Toca aqui para copiar
         </button>
         <p className="status" role="status" aria-atomic="true">
           {status}
         </p>
       </div>
-      <h3>Quando usar</h3>
-      {paragraphs(instruction.when)}
       <h3>O que preencher</h3>
-      {paragraphs(instruction.fields)}
+      <div className="fields">{paragraphs(instruction.fields)}</div>
       <h3>Texto para copiar</h3>
       <div className="prompt" id={promptId} ref={promptElement}>
         {/* The capture group keeps each [campo] as its own odd-numbered piece. */}

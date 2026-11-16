@@ -3,6 +3,8 @@ import { INSTAGRAM_URL } from '../content'
 import { findInstruction } from './instructions'
 import { IndexView } from './IndexView'
 import { InstructionView } from './InstructionView'
+import mark from './assets/caderninho-v5.png'
+import './pede-assim.css'
 
 const TITLE = 'Pede assim pra IA'
 
@@ -34,6 +36,7 @@ export function PedeAssimScreen({ instruction: slug }: { instruction: string }) 
             <p className="eyebrow">Lia da Hospedagem</p>
             <h1>{TITLE}</h1>
           </div>
+          <img src={mark} width={64} height={74} alt="Marca Caderninho da Lia: caderno terracota com balão de conversa." />
         </div>
       </header>
       <main className="pede-assim-main">

@@ -1,0 +1,227 @@
+/* The approved v5 look of the Pede assim guide, ported from its companion page. Everything is scoped under
+   .pede-assim so it can't touch the free page, and loads with the lazy screen only (fonts included). */
+@font-face {
+  font-family: 'Pede Assim DM Sans';
+  src: url('./assets/DMSans-Variable.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pede Assim Fraunces';
+  src: url('./assets/Fraunces-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+body:has(.pede-assim) {
+  background: #fbf8f2;
+}
+
+.pede-assim {
+  --paper: #fbf8f2;
+  --cream: #f4ecdd;
+  --teal: #1f4e5f;
+  --ink: #2b2b2b;
+  --button: #a45636;
+  --button-hover: #8b462b;
+  --peach: #f5ba9d;
+  --rule: #d0c3ad;
+  --hover: #e9dcc5;
+
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font: 1rem/1.5 'Pede Assim DM Sans', system-ui, sans-serif;
+  overflow-wrap: normal;
+}
+
+.pede-assim-main,
+.pede-assim-masthead-inner,
+.pede-assim-footer {
+  width: min(100%, 37rem);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 6vw, 2rem);
+}
+
+.pede-assim-masthead {
+  background: var(--teal);
+  color: var(--paper);
+  padding-block: 1.6rem;
+}
+
+.pede-assim-masthead-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.pede-assim-masthead-inner img {
+  width: 64px;
+  height: auto;
+}
+
+.pede-assim .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  margin: 0 0 0.35rem;
+}
+
+.pede-assim h1,
+.pede-assim h2,
+.pede-assim h3 {
+  font-family: 'Pede Assim Fraunces', Georgia, serif;
+  font-weight: 450;
+  line-height: 1.14;
+  margin: 0;
+  color: var(--teal);
+  text-wrap: initial;
+}
+
+.pede-assim h1 {
+  color: inherit;
+  font-size: clamp(1.85rem, 6vw, 2.55rem);
+  letter-spacing: -0.025em;
+}
+
+.pede-assim h2 {
+  font-size: clamp(1.75rem, 6vw, 2.3rem);
+  letter-spacing: -0.022em;
+  overflow-wrap: anywhere;
+}
+
+.pede-assim h3 {
+  font-size: 1.165rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.pede-assim p {
+  margin: 0.55em 0;
+}
+
+.pede-assim-index,
+.pede-assim-instruction {
+  padding-block: 1.85rem 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.pede-assim-index ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.45rem 0 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.pede-assim a,
+.pede-assim button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pede-assim-index a,
+.pede-assim .return,
+.pede-assim .footer-link {
+  padding: 0.55rem 0.8rem;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  border-radius: 0.5rem;
+  background: var(--cream);
+  color: var(--teal);
+  text-decoration: none;
+}
+
+.pede-assim-index a:hover,
+.pede-assim .return:hover,
+.pede-assim .footer-link:hover {
+  background: var(--hover);
+}
+
+.pede-assim .return,
+.pede-assim .footer-link {
+  width: fit-content;
+  margin-top: 1rem;
+}
+
+.pede-assim :focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+
+/* Headings only receive focus programmatically, when a page opens. */
+.pede-assim h2[tabindex='-1']:focus {
+  outline: none;
+}
+
+.pede-assim .lead {
+  margin: 0.65rem 0 1rem;
+}
+
+.pede-assim .actions {
+  text-align: center;
+}
+
+.pede-assim .copy {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.35rem;
+  background: var(--button);
+  color: var(--paper);
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pede-assim .copy:hover {
+  background: var(--button-hover);
+}
+
+.pede-assim .copy .glyph-front {
+  fill: var(--button);
+}
+
+.pede-assim .copy:hover .glyph-front {
+  fill: var(--button-hover);
+}
+
+.pede-assim .status {
+  min-height: 1.5em;
+  margin: 0.35rem 0 0;
+  color: var(--teal);
+  font-size: 0.875rem;
+}
+
+.pede-assim .actions + h3 {
+  margin-top: 0.5rem;
+}
+
+.pede-assim .fields p {
+  margin: 0.4rem 0;
+}
+
+.pede-assim .prompt {
+  margin-top: 0.55rem;
+  background: var(--teal);
+  color: var(--paper);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: 0.7rem;
+  padding: 1.1rem;
+  user-select: text;
+}
+
+.pede-assim .field {
+  color: var(--peach);
+}
+
+.pede-assim-footer {
+  padding-block: 0.4rem 1.6rem;
+}

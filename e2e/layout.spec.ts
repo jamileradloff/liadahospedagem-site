@@ -30,6 +30,22 @@ const ROUTES: { path: string; controls: (page: Page) => Locator[] }[] = [
       page.getByRole('link', { name: 'Voltar para as mensagens' }),
     ],
   },
+  {
+    path: '/pede-assim',
+    controls: (page) => [
+      page.getByRole('link', { name: 'Pedido de desconto' }),
+      page.getByRole('link', { name: 'Responder a uma avaliação negativa' }),
+      page.getByRole('link', { name: '@liadahospedagem no Instagram' }),
+    ],
+  },
+  {
+    path: '/pede-assim/check-out-mais-tarde',
+    controls: (page) => [
+      page.getByRole('button', { name: 'Toca aqui para copiar: Check-out mais tarde' }),
+      page.getByRole('link', { name: 'Voltar ao índice de situações' }),
+      page.getByRole('link', { name: '@liadahospedagem no Instagram' }),
+    ],
+  },
 ]
 
 async function expectControlsReachable(page: Page, controls: Locator[]) {

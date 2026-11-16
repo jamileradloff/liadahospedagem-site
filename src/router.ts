@@ -8,10 +8,14 @@ import { trackPageview, type Page } from './analytics'
 /** User-facing paths, kept in Portuguese because they are part of the content (and of the PDF links). */
 export const MESSAGES_PATH = '/mensagens'
 export const THANKS_PATH = '/obrigado'
+/** The paid guide's companion. Every `/pede-assim/<slug>` is printed in sold PDFs, so these paths can never change. */
+export const PEDE_ASSIM_PATH = '/pede-assim'
 
 export type Location = {
   screen: Page
   anchor: string
+  /** The Pede assim situation's slug, as written in the URL; empty for its index and for the other screens. */
+  instruction: string
   /** How this location was reached: page load, in-app link, or history/hash change. */
   cause: 'initial' | 'push' | 'pop'
   /** Scroll position saved when the user left this history entry, restored on Back/Forward. */
@@ -22,11 +26,16 @@ export type Location = {
 
 const PREVIEW = import.meta.env.VITE_PREVIEW === '1'
 
-function parse(target: string): Pick<Location, 'screen' | 'anchor'> {
+export function parse(target: string): Pick<Location, 'screen' | 'anchor' | 'instruction'> {
   const url = new URL(target, window.location.origin)
   const path = url.pathname.replace(/\/+$/, '')
+  const anchor = decodeURIComponent(url.hash.slice(1))
+  if (path === PEDE_ASSIM_PATH || path.startsWith(`${PEDE_ASSIM_PATH}/`)) {
+    // Unknown slugs are left to the Pede assim screen, so the router doesn't pull the guide into the main bundle.
+    return { screen: 'pede-assim', anchor, instruction: path.slice(PEDE_ASSIM_PATH.length + 1) }
+  }
   const screen = path === MESSAGES_PATH ? 'messages' : path === THANKS_PATH ? 'thanks' : 'home'
-  return { screen, anchor: decodeURIComponent(url.hash.slice(1)) }
+  return { screen, anchor, instruction: '' }
 }
 
 function savedScrollY(): number | null {
@@ -38,7 +47,7 @@ function savedScrollY(): number | null {
 }
 
 let location: Location = {
-  ...(PREVIEW ? { screen: 'home', anchor: '' } : parse(window.location.href)),
+  ...(PREVIEW ? { screen: 'home', anchor: '', instruction: '' } : parse(window.location.href)),
   cause: 'initial',
   scrollY: null,
   key: 0,
@@ -53,7 +62,14 @@ function setLocation(next: Omit<Location, 'key'>) {
 function onHistoryChange() {
   const next = parse(window.location.href)
   // Back/Forward between hash entries fires popstate and then hashchange for the same entry.
-  if (location.cause === 'pop' && next.screen === location.screen && next.anchor === location.anchor) return
+  if (
+    location.cause === 'pop' &&
+    next.screen === location.screen &&
+    next.anchor === location.anchor &&
+    next.instruction === location.instruction
+  ) {
+    return
+  }
   setLocation({ ...next, cause: 'pop', scrollY: savedScrollY() })
 }
 
@@ -76,7 +92,7 @@ export function useLocation(): Location {
   const current = useSyncExternalStore(subscribe, () => location)
   useEffect(() => {
     trackPageview()
-  }, [current.screen])
+  }, [current.screen, current.instruction])
   return current
 }
 
@@ -95,11 +111,16 @@ export function landOn(current: Location) {
   const previousScreen = landedScreen
   landedScreen = current.screen
   const target = current.anchor ? document.getElementById(current.anchor) : null
+  const pedeAssim = current.screen === 'pede-assim'
   // A plain load of home or messages leaves focus where the browser put it. The thank-you screen
-  // is a landing after Tally, so its heading takes focus even on the first load.
-  if (current.cause === 'initial' && !target && current.screen !== 'thanks') return
+  // is a landing after Tally, and a Pede assim situation a landing from the PDF, so their headings
+  // take focus even on the first load.
+  if (current.cause === 'initial' && !target && current.screen !== 'thanks' && !(pedeAssim && current.instruction)) {
+    return
+  }
 
-  const focusTarget = target ?? document.querySelector<HTMLElement>('main h1')
+  // Pede assim pages keep their h1 in the masthead; the page's own heading is the h2 in main.
+  const focusTarget = target ?? document.querySelector<HTMLElement>(pedeAssim ? 'main h2' : 'main h1')
   if (current.scrollY !== null) {
     window.scrollTo({ top: current.scrollY, behavior: 'instant' })
   } else if (target) {

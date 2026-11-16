@@ -7,14 +7,26 @@ The code is in English; the page copy is in Brazilian Portuguese (it is the prod
 
 ## Screens
 
-One single-page app with three screens:
+One single-page app with these screens:
 
 - `/` home: where the bio and other visitors land
 - `/mensagens` the 3 messages with copy buttons, with anchors `#boasvindas`, `#cedo`, `#checkout`
 - `/obrigado` thank-you after the Tally form, with the PDF download
+- `/pede-assim` index of the 12 situations of the paid guide “Pede assim pra IA”
+- `/pede-assim/<slug>` one situation, e.g. `/pede-assim/check-out-mais-tarde`: its instruction and a copy button.
+  An unknown slug shows the index.
 
 The `/mensagens` and `/obrigado` paths and the anchors stay in Portuguese on purpose: they are user-facing, they are
 baked into the PDF links and the Tally redirect, and the anchors match the WhatsApp shortcuts the host saves.
+
+**The `/pede-assim/<slug>` paths are permanent.** Each copy button in the guide's PDF links to one of them, and a
+PDF that has been sold can't be updated. Never rename or remove a slug; to change a title, keep its slug.
+
+The Pede assim pages are the guide's companion, not part of the free page. They load as a separate chunk, so the
+12 instructions are not in the free page's JavaScript (`verify-builds.mjs` checks this), and they ask search engines
+not to index them (`<meta name="robots" content="noindex">` and an `X-Robots-Tag: noindex` header from
+`public/_headers`). Anyone with a link can still open them. The instructions in `src/pedeAssim/instructions.json`
+are generated from the guide's manuscript, which is not in this repo; don't edit them by hand.
 
 ## Project structure
 
@@ -22,7 +34,7 @@ baked into the PDF links and the Tally redirect, and the anchors match the Whats
 src/
   main.tsx            app entry, starts analytics
   App.tsx             header + current screen + footer
-  router.ts           three-screen router (history API, or in-memory in preview mode)
+  router.ts           router (history API, or in-memory in preview mode)
   analytics.ts        PostHog (lazy, cookieless), event names, Tally link builder
   content.ts          message copy and external URLs
   clipboard.ts        copy with fallback for Instagram's in-app browser
@@ -31,11 +43,12 @@ src/
   styles.css          brand tokens and all styles
   components/         Header, Footer, MessageBubble, MessageCard, PdfButton, WaitlistSection
   screens/            HomeScreen, MessagesScreen, ThanksScreen
+  pedeAssim/          the /pede-assim screens (loaded lazily), their styles, fonts and the instructions data
   **/*.test.ts(x)     unit and component tests (Vitest + Testing Library, jsdom)
 e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility, keyboard, zoom, motion
 validation/           repeatable validation scripts (see FRONTEND_VALIDATION.md); screenshots are generated, not committed
 pdf/                  source of the free PDF (see pdf/README.md)
-public/               the generated PDF and the social preview image
+public/               the generated PDF, the social preview image, and the Cloudflare _redirects and _headers
 ```
 
 ## Run locally
@@ -70,6 +83,14 @@ empty so no events are sent. It runs in desktop Chrome, a Pixel 7 and an iPhone 
 320, 390, 768, 1024 and 1440px runs in desktop Chrome only. Clipboard reads only work in Chromium, so the copy
 success test is skipped in WebKit. Add `--project=desktop-chromium` to run a single browser, or `--ui` to debug.
 
+`e2e/pede-assim-pdf-links.spec.ts` opens each of the 12 `/pede-assim/<slug>` pages the guide's PDF links to and
+checks that the copy button copies exactly that instruction. To run the Pede assim tests against a deployed site
+(a Pages preview, or production after a release), skipping the local server:
+
+```bash
+PLAYWRIGHT_BASE_URL=https://<host> npx playwright test e2e/pede-assim
+```
+
 The accessibility tests run axe against WCAG 2.2 AA rules. They don't replace checking with the keyboard and a
 screen reader.
 
@@ -77,7 +98,8 @@ Two scripts in `validation/` go beyond the test suite (they build the site thems
 
 - `node validation/verify-builds.mjs` builds the analytics, no-key and preview variants and checks them: every event
   and its properties (against a fake PostHog host, nothing is sent), the Tally link attribution, no cookies or
-  storage, the PDF being served, and the preview's in-memory routing.
+  storage, the PDF being served, the preview's in-memory routing, and that the 12 Pede assim instructions are in
+  one lazy chunk and not in the entry chunk.
 - `node validation/capture-screenshots.mjs` takes full-page screenshots of both routes at 320, 390, 768, 1024 and
   1440 px (needs `npx vite preview --port 4173` running).
 
@@ -102,7 +124,12 @@ pushes to `main`. A failed browser run uploads the Playwright report as an artif
    to the **Production** environment only, then redeploy.
 
 Every push to `main` deploys production; every PR gets its own preview URL. There is no `404.html` on purpose,
-so Cloudflare serves the app for `/mensagens` and `/obrigado` too.
+so Cloudflare serves the app for `/mensagens` and `/obrigado` too. `/pede-assim` and `/pede-assim/*` also have
+explicit rewrites to `/` in `public/_redirects` (to `/`, not `/index.html`, which Pages redirects to the home page),
+so their links keep working if a `404.html` is added.
+
+`npm run preview` applies neither `_redirects` nor `_headers`. To check them locally:
+`npm run build && npx wrangler@4 pages dev dist --port 8788`, then delete the `.wrangler/` folder it creates.
 
 ## Analytics (PostHog)
 
@@ -125,6 +152,7 @@ Events:
 | `viewed_copy_prompt` | the once-per-visit waitlist prompt appeared after a successful copy | `message`, `page` |
 | `opened_faq` | opened an FAQ item | `question` (`is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`) |
 | `clicked_linkedin` | clicked Jamile's LinkedIn | |
+| `copied_instruction` | copied an instruction on a Pede assim page (the paid guide's companion) | `instruction` (the situation's slug, e.g. `check-out-mais-tarde`) |
 
 The properties are typed in `EventProps` (`src/analytics.ts`): a call with a missing, extra or misspelled property
 does not compile.

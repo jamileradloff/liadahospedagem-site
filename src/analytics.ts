@@ -12,8 +12,8 @@ const attribution: Record<string, string> = {}
 let loading: Promise<PostHog | null> = Promise.resolve(null)
 
 /** The screens; the same values name the screen in the router and the `page` in events. */
-export type Page = 'home' | 'messages' | 'thanks'
-export type DeliveryPage = Exclude<Page, 'thanks'>
+export type Page = 'home' | 'messages' | 'thanks' | 'pede-assim'
+export type DeliveryPage = Exclude<Page, 'thanks' | 'pede-assim'>
 
 export function initAnalytics() {
   // Remember where the visitor came from (e.g. which Reel), to attach to every event and to the Tally link.

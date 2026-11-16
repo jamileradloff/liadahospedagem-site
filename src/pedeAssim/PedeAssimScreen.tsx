@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { INSTAGRAM_URL } from '../content'
+import { landOn, type Location } from '../router'
 import { findInstruction } from './instructions'
 import { IndexView } from './IndexView'
 import { InstructionView } from './InstructionView'
@@ -9,8 +10,8 @@ import './pede-assim.css'
 const TITLE = 'Pede assim pra IA'
 
 /** The paid guide's companion: its own masthead and footer, without the free page's header, waitlist or PDF. */
-export function PedeAssimScreen({ instruction: slug }: { instruction: string }) {
-  const instruction = findInstruction(slug)
+export function PedeAssimScreen({ location }: { location: Location }) {
+  const instruction = findInstruction(location.instruction)
 
   useEffect(() => {
     const robots = document.createElement('meta')
@@ -27,6 +28,10 @@ export function PedeAssimScreen({ instruction: slug }: { instruction: string }) 
   useEffect(() => {
     document.title = instruction ? `${instruction.title} · ${TITLE}` : `${TITLE} · Índice`
   }, [instruction])
+
+  useEffect(() => {
+    landOn(location)
+  }, [location])
 
   return (
     <div className="pede-assim">

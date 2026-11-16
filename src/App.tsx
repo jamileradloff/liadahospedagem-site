@@ -15,13 +15,14 @@ export function App() {
   const location = useLocation()
 
   useEffect(() => {
-    landOn(location)
+    // The lazy Pede assim screen lands by itself once it has rendered.
+    if (location.screen !== 'pede-assim') landOn(location)
   }, [location])
 
   if (location.screen === 'pede-assim') {
     return (
       <Suspense fallback={null}>
-        <PedeAssimScreen instruction={location.instruction} />
+        <PedeAssimScreen location={location} />
       </Suspense>
     )
   }

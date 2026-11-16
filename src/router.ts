@@ -111,11 +111,16 @@ export function landOn(current: Location) {
   const previousScreen = landedScreen
   landedScreen = current.screen
   const target = current.anchor ? document.getElementById(current.anchor) : null
+  const pedeAssim = current.screen === 'pede-assim'
   // A plain load of home or messages leaves focus where the browser put it. The thank-you screen
-  // is a landing after Tally, so its heading takes focus even on the first load.
-  if (current.cause === 'initial' && !target && current.screen !== 'thanks') return
+  // is a landing after Tally, and a Pede assim situation a landing from the PDF, so their headings
+  // take focus even on the first load.
+  if (current.cause === 'initial' && !target && current.screen !== 'thanks' && !(pedeAssim && current.instruction)) {
+    return
+  }
 
-  const focusTarget = target ?? document.querySelector<HTMLElement>('main h1')
+  // Pede assim pages keep their h1 in the masthead; the page's own heading is the h2 in main.
+  const focusTarget = target ?? document.querySelector<HTMLElement>(pedeAssim ? 'main h2' : 'main h1')
   if (current.scrollY !== null) {
     window.scrollTo({ top: current.scrollY, behavior: 'instant' })
   } else if (target) {

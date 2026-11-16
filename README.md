@@ -125,6 +125,7 @@ Events:
 | `viewed_copy_prompt` | the once-per-visit waitlist prompt appeared after a successful copy | `message`, `page` |
 | `opened_faq` | opened an FAQ item | `question` (`is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`) |
 | `clicked_linkedin` | clicked Jamile's LinkedIn | |
+| `copied_instruction` | copied an instruction on a Pede assim page (the paid guide's companion) | `instruction` (the situation's slug, e.g. `check-out-mais-tarde`) |
 
 The properties are typed in `EventProps` (`src/analytics.ts`): a call with a missing, extra or misspelled property
 does not compile.

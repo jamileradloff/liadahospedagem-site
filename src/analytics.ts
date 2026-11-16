@@ -63,6 +63,8 @@ export type EventProps = {
   /** the once-per-visit waitlist prompt appeared after a successful copy */
   viewed_copy_prompt: { message: MessageId; page: DeliveryPage }
   opened_faq: { question: FaqId }
+  /** copied a Pede assim instruction; `instruction` is its slug */
+  copied_instruction: { instruction: string }
   clicked_linkedin: NoProps
 }
 

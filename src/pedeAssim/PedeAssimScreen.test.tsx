@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GROUPS, INSTRUCTIONS, type Instruction } from './instructions'
@@ -23,6 +23,7 @@ function promptBlock() {
 
 beforeEach(() => {
   document.title = '3 mensagens prontas · Lia da Hospedagem'
+  Element.prototype.scrollIntoView = vi.fn()
   vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
   window.matchMedia = vi.fn().mockReturnValue({ matches: false })
 })
@@ -74,6 +75,16 @@ describe('Pede assim situation', () => {
       expect(document.body.textContent).not.toContain(other.prompt)
     }
     expect(document.title).toBe('Check-out mais tarde · Pede assim pra IA')
+  })
+
+  it('starts each situation without the previous copy message', async () => {
+    const { navigate } = await renderAt('/pede-assim/check-out-mais-tarde')
+    await userEvent.click(await screen.findByRole('button', { name: `Toca aqui para copiar: ${checkout.title}` }))
+    await waitFor(() => expect(screen.getByRole('status')).not.toBeEmptyDOMElement())
+
+    act(() => navigate('/pede-assim/como-chegar'))
+
+    expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
   it('returns to the index', async () => {

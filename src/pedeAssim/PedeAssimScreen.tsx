@@ -37,7 +37,7 @@ export function PedeAssimScreen({ instruction: slug }: { instruction: string }) 
         </div>
       </header>
       <main className="pede-assim-main">
-        {instruction ? <InstructionView instruction={instruction} /> : <IndexView />}
+        {instruction ? <InstructionView key={instruction.slug} instruction={instruction} /> : <IndexView />}
       </main>
       <footer className="pede-assim-footer">
         <a className="footer-link" href={INSTAGRAM_URL} aria-label="@liadahospedagem no Instagram">

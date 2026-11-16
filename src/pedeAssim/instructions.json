@@ -1,0 +1,125 @@
+{
+  "groups": [
+    {
+      "title": "Antes de fechar a reserva",
+      "items": [
+        {
+          "number": 1,
+          "slug": "pedido-de-desconto",
+          "title": "Pedido de desconto",
+          "when": "Quando a pessoa pede um valor menor antes de reservar.",
+          "fields": "Cole a mensagem e informe a regra de desconto e a sua decisão. Se aprovou um desconto, diga quanto é (em % ou R$) e sobre qual valor vale. Só preencha a alternativa se já tiver confirmado o que pode oferecer e em que condições.",
+          "prompt": "Mensagem do hóspede: [cole a mensagem].\nRegra de desconto: [informe a regra].\nMinha decisão: [manter o valor, ou oferecer o desconto aprovado em % ou R$ e dizer sobre qual valor ele vale].\nAlternativa já confirmada (opcional): [diga qual e em que condições].\n\nEscreve uma única resposta curta e simpática em português do Brasil, pra eu mandar no canal da reserva. Explica minha decisão e oferece só a alternativa que eu confirmei. Se a decisão estiver em aberto, espera minha decisão. Faz uma pergunta com as duas opções explícitas: manter o valor ou aprovar um desconto. Se eu escolher dar desconto sem informar quanto, pergunta qual percentual ou valor em reais (R$) aprovei e sobre qual valor ele vale. Pode deixar de fora o campo opcional. Se faltar informação necessária, me pergunta antes de escrever pro hóspede.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        }
+      ]
+    },
+    {
+      "title": "Antes da chegada",
+      "items": [
+        {
+          "number": 2,
+          "slug": "como-chegar",
+          "title": "Como chegar",
+          "when": "Quando perguntam como chegar à unidade ou onde estacionar.",
+          "fields": "Cole a mensagem e informe o endereço e como reconhecer a entrada. Mapa e ponto de referência são opcionais. Preencha o estacionamento se perguntaram ou se for preciso pra chegar. Diga onde parar ou avise que não há vaga.",
+          "prompt": "Mensagem do hóspede: [cole a mensagem].\nEndereço: [endereço da unidade].\nEntrada: [como reconhecer a entrada].\nMapa e ponto de referência (opcionais): [link e/ou referência].\nEstacionamento (se perguntaram ou se for necessário pra chegar): [onde parar ou diga que não há vaga].\n\nEscreve uma única mensagem curta, em português do Brasil, pro canal da reserva. Começa pelo endereço e inclui o mapa se eu informar. Depois, explica a entrada e onde parar, se precisar. Deixa de fora os detalhes opcionais em branco e usa só as orientações que eu passei. Se faltar informação necessária, me pergunta antes.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        },
+        {
+          "number": 3,
+          "slug": "boas-vindas-e-chegada",
+          "title": "Boas-vindas e chegada",
+          "when": "Quando for mandar as primeiras orientações antes da chegada.",
+          "fields": "Informe o dia, o horário de início do check-in e o primeiro passo na chegada. Se quiser, inclua o primeiro nome e o canal de ajuda com o horário, se houver. Se a entrada usa código, avise sem informar o código real.",
+          "prompt": "Chegada: [dia ou data].\nCheck-in a partir de: [horário].\nPrimeiro passo na chegada: [o que a pessoa deve fazer].\nPrimeiro nome (opcional): [nome].\nContato pra ajuda (opcional): [canal de ajuda e horário, se houver].\n\nEscreve uma única mensagem curta de boas-vindas, em português do Brasil, pro canal da reserva. Diz quando começa o check-in e o que fazer ao chegar. Se eu passar o nome, cumprimenta pelo primeiro nome. Usa uma saudação como “Oi!” seguido do nome sem “bem-vindo” ou “bem-vinda”. Se eu passar o contato, inclui o canal e o horário informado. Se o acesso exigir um código, põe a palavra CÓDIGO no lugar dele pra eu trocar depois. Deixa de fora os campos opcionais em branco. Se faltar informação necessária, me pergunta antes.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        }
+      ]
+    },
+    {
+      "title": "Pedidos e imprevistos",
+      "items": [
+        {
+          "number": 4,
+          "slug": "check-in-mais-cedo",
+          "title": "Check-in mais cedo",
+          "when": "Quando a pessoa pede pra entrar antes do horário. Confira a reserva, a saída anterior e a limpeza antes de decidir.",
+          "fields": "Cole a mensagem, informe o horário da reserva e diga se pode liberar antes, manter o horário ou se ainda vai verificar. Se liberar, diga a partir de que horas. Só preencha o prazo de retorno se ainda estiver verificando. Só inclua uma alternativa ou condição se já estiver confirmada.",
+          "prompt": "Mensagem do hóspede: [cole a mensagem].\nCheck-in da reserva: [horário normal].\nMinha decisão: [liberar a partir de um horário, manter o horário normal ou ainda verificar].\nRetorno, se eu ainda estiver verificando: [quando consigo dar notícias].\nAlternativa ou condição já confirmada (opcional): [o que posso oferecer e em que condições].\n\nEscreve uma única resposta curta e gentil, em português do Brasil, pro canal da reserva. Se eu ainda estiver verificando e o campo de retorno estiver vazio, pergunta quando posso dar notícias e espera antes de escrever. Se eu já tiver informado o prazo, mantém o horário normal por enquanto e diz que vou dar notícias no prazo, mesmo que a decisão continue em aberto. Só confirma um horário ou uma condição que eu já aprovei. Deixa de fora o campo opcional em branco. Se faltar informação necessária, me pergunta antes.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        },
+        {
+          "number": 5,
+          "slug": "check-out-mais-tarde",
+          "title": "Check-out mais tarde",
+          "when": "Quando o hóspede pede pra ficar depois do horário de check-out da reserva.\n\nAntes de decidir, confira o horário combinado, até quando a pessoa quer ficar, a limpeza e a próxima chegada.",
+          "fields": "Mensagem do hóspede, horário combinado e sua decisão.\n\nSe puder estender, informe até que horas e a taxa ou escreva “sem cobrança”. Se ainda estiver verificando, deixe a taxa em branco e diga quando consegue dar notícias. Se mantiver o horário, deixe taxa e prazo em branco.",
+          "prompt": "Mensagem do hóspede: [cole a mensagem].\nCheck-out da reserva: [horário normal].\nMinha decisão: [escreva disponível até X, manter horário normal ou em verificação].\nTaxa (preenche se estiver disponível): [valor em R$ e condição, ou sem cobrança].\nPrazo de retorno (preenche se estiver em verificação): [quando consigo dar notícias].\n\nEscreve uma única resposta curta e natural, em português do Brasil, pro canal da reserva. Segue a decisão que escrevi:\n• Disponível: informa o horário e a condição. Com taxa, pede o aceite ao hóspede antes de confirmar a mudança. Com o campo de taxa em branco, pergunta a mim se há cobrança e espera antes de escrever ao hóspede.\n• Manter horário normal: informa o horário da reserva.\n• Em verificação: mantém o horário da reserva por enquanto e diz quando vou dar notícias, mesmo se a decisão continuar em aberto. Se eu já informei o prazo, usa esse prazo. Se estiver em branco, pergunta a mim e espera antes de escrever ao hóspede.\n\nTaxa e prazo de retorno só são necessários nos casos indicados. Usa só as condições que passei. Se faltar o horário da reserva ou a decisão, me pergunta antes.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        },
+        {
+          "number": 6,
+          "slug": "pedido-para-levar-pet",
+          "title": "Pedido para levar pet",
+          "when": "Quando perguntam se podem levar um animal pra hospedagem.",
+          "fields": "Cole a mensagem e informe a regra da unidade. Se aceita pets, diga quanto e quando cobra, ou escreva “sem taxa”. Se não aceita, deixe a taxa em branco. Inclua o que já sabe do pet, se houver. Se faltar um dado que define se o pet pode ficar, peça esse dado antes de confirmar.",
+          "prompt": "Mensagem do hóspede: [cole a mensagem].\nRegra da unidade: [diga se aceita pets e quais são os limites e condições].\nTaxa, se aceitar pets: [valor em R$ e quando cobra, ou sem taxa].\nO que já sei sobre o pet (opcional): [detalhes que o hóspede já contou].\n\nEscreve uma única resposta curta, em português do Brasil, pro canal da reserva. Se faltar a regra da unidade ou a informação de taxa que se aplica, pergunta a mim e espera antes de escrever ao hóspede. Com a regra em mãos, se faltar um dado do pet que determine se ele pode ficar, escreve uma mensagem perguntando só esse dado ao hóspede. Confirma a hospedagem do pet só quando a regra e os dados permitirem.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        },
+        {
+          "number": 7,
+          "slug": "reclamacao-de-barulho",
+          "title": "Reclamação de barulho",
+          "when": "Quando a pessoa avisa que o barulho está atrapalhando a estadia.",
+          "fields": "Cole a mensagem e diga o que consegue fazer agora. Se já confirmou algum fato, inclua só o que pode mencionar. Só preencha um prazo se conseguir dar notícias até lá, mesmo sem resolver o problema.",
+          "prompt": "Mensagem do hóspede: [cole a mensagem].\nO que já confirmei (opcional): [fatos que posso mencionar].\nO que consigo fazer agora: [ação que posso cumprir].\nQuando consigo dar notícias (opcional): [prazo de atualização que consigo cumprir].\n\nEscreve uma única resposta curta e acolhedora, em português do Brasil, pro canal da reserva. Reconhece o incômodo e explica o próximo passo. Se eu informar um prazo, trata como prazo pra dar notícias. Se deixar o prazo em branco, fala só da ação que confirmei, sem acrescentar promessa de retorno. Deixa de fora os campos opcionais em branco. Usa só os fatos e compromissos que passei, sem adivinhar a causa, garantir silêncio ou oferecer compensação. Se eu não tiver informado uma ação, me pergunta o que consigo fazer agora e espera antes de escrever ao hóspede.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        }
+      ]
+    },
+    {
+      "title": "Na saída",
+      "items": [
+        {
+          "number": 8,
+          "slug": "lembrete-de-check-out",
+          "title": "Lembrete de check-out",
+          "when": "Quando for lembrar a pessoa do horário de saída e do que precisa fazer.",
+          "fields": "Informe o dia e o horário limite. Inclua as tarefas e a entrega da chave só se fizerem parte da saída dessa unidade. O primeiro nome é opcional.",
+          "prompt": "Saída: [hoje, amanhã ou data e horário limite].\nO que precisa fazer antes de sair (opcional): [ações necessárias].\nEntrega da chave (opcional): [onde deixar ou como devolver].\nPrimeiro nome (opcional): [nome].\n\nEscreve uma única mensagem breve e gentil, em português do Brasil, pro canal da reserva. Se eu passar o nome, usa na saudação. Em seguida, diz em uma frase completa quando termina o check-out do hóspede. Escreve do meu ponto de vista, de quem hospeda, com palavras do dia a dia. Evita “deverá ser realizado” e “por gentileza”. Se houver várias ações, usa uma lista curta. Deixa de fora os campos opcionais em branco. Se faltar a data ou o horário, me pergunta antes.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        },
+        {
+          "number": 9,
+          "slug": "pedido-de-avaliacao",
+          "title": "Pedido de avaliação",
+          "when": "Quando a estadia já terminou e a pessoa já pode avaliar.",
+          "fields": "Diga onde a opção de avaliar aparece. Primeiro nome, link e detalhe da estadia são opcionais. Inclua só o que quiser usar.",
+          "prompt": "A estadia já terminou. A pessoa pode avaliar [onde a avaliação fica disponível].\nPrimeiro nome, link e detalhe da estadia (opcionais): [inclua só o que quiser usar].\n\nEscreve uma única mensagem curta, em português do Brasil, pro canal da reserva. Em até duas frases, agradece pela estadia e convida a deixar uma avaliação sincera. Mantém o convite leve, sem dizer que a avaliação é importante pra mim nem pedir uma nota específica. Usa apenas o link ou o detalhe que eu passar. Pode seguir com os campos opcionais em branco. Se eu não disser onde a pessoa pode avaliar, me pergunta antes.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        }
+      ]
+    },
+    {
+      "title": "Depois da avaliação",
+      "items": [
+        {
+          "number": 10,
+          "slug": "avaliacao-5-estrelas",
+          "title": "Responder a uma avaliação de 5 estrelas",
+          "when": "Quando for agradecer em público por uma avaliação de 5 estrelas.",
+          "fields": "Cole o comentário sem dados da reserva. Se a pessoa não escreveu nada, preencha com “só deu a nota”.",
+          "prompt": "Recebi 5 estrelas. Comentário: [cole o texto ou escreva só deu a nota].\n\nEscreve uma única resposta pública de uma frase, em português do Brasil, com jeito de conversa. Se só veio a nota, agradece pela estadia e pela avaliação com um só “obrigado” ou “agradeço”, sem acrescentar elogio, despedida ou outro agradecimento. Se veio um elogio, agradece e cita só um detalhe que a pessoa escreveu, tudo na mesma frase. Entrega exatamente uma frase nos dois casos. Usa linguagem neutra, sem repetir a nota, sem convite pra voltar e sem incluir dados da reserva. Se eu deixar o campo de comentário sem preencher, me pergunta se veio só a nota.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        },
+        {
+          "number": 11,
+          "slug": "avaliacao-4-estrelas",
+          "title": "Responder a uma avaliação de 4 estrelas",
+          "when": "Quando for responder em público a uma avaliação de 4 estrelas, com ou sem comentário.",
+          "fields": "Cole o comentário sem dados da reserva ou escreva “só deu a nota”. Só preencha o campo do ajuste se a mudança já aconteceu e pode ser mencionada em público.",
+          "prompt": "Recebi 4 estrelas. Comentário: [cole o texto ou escreva só deu a nota].\nAjuste que já fiz e posso contar em público (opcional): [descreva o que aconteceu].\n\nEscreve uma única resposta pública em português do Brasil. Usa linguagem neutra e deixa os dados da reserva fora da resposta.\n• Se eu escrevi “só deu a nota”, responde exatamente “Obrigado pela avaliação!” e termina ali.\n• Se veio comentário, escreve até três frases curtas, com jeito de conversa. Na primeira, agradece. Se houver mais de um elogio, escolhe só um pra incluir nessa frase e ignora os demais. Em seguida, reconhece a crítica com palavras simples, como “sinto muito”. Menciona um ajuste numa frase curta só se eu tiver informado o que já fiz. Evita “mas” depois da crítica, “informamos que” e convites pra voltar.\n• Se deixei o comentário em branco, pergunta se veio só a nota e espera antes de escrever uma resposta pública.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        },
+        {
+          "number": 12,
+          "slug": "avaliacao-negativa",
+          "title": "Responder a uma avaliação negativa",
+          "when": "Quando for responder em público a uma avaliação negativa.",
+          "fields": "Cole a avaliação sem dados pessoais. Diga qual ação já confirmou ou escreva “ainda estou verificando”. Só inclua fatos que pode confirmar em público. Informe o canal privado apenas se a conversa puder continuar por lá; se não, deixe em branco.",
+          "prompt": "Avaliação: [cole o texto sem dados pessoais].\nO que posso confirmar em público (opcional): [fatos verificados].\nPróximo passo: [ação confirmada ou ainda estou verificando].\nCanal privado autorizado (opcional): [canal da reserva onde posso continuar a conversa].\n\nEscreve uma única resposta pública de até três frases curtas, em português do Brasil, com jeito de conversa. Reconhece o problema relatado e diz o que já posso fazer. Se eu ainda estiver verificando, deixa isso claro. Se eu informar um canal privado, convida a continuar a conversa por lá. Se o campo estiver em branco, deixa o contato de fora. Deixa de fora dados pessoais e da reserva. Usa apenas os fatos, prazos e ações confirmados, sem prometer solução ou compensação. Se faltar o relato ou o próximo passo, me pergunta antes.\n\nUsa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco."
+        }
+      ]
+    }
+  ]
+}

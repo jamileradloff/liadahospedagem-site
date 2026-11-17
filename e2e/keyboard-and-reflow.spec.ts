@@ -94,7 +94,7 @@ test.describe('keyboard', () => {
 test.describe('zoom and reflow', () => {
   test.skip(({ isMobile }) => isMobile, 'Zoom is emulated with the desktop viewport')
 
-  for (const path of ['/', '/mensagens', '/obrigado']) {
+  for (const path of ['/', '/mensagens', '/obrigado', '/guia-pede-assim']) {
     // 200% and 400% browser zoom on a 1280px-wide window leave 640 and 320 CSS pixels (WCAG 1.4.10 uses 320).
     for (const [zoom, width] of [['200%', 640], ['400%', 320]] as const) {
       test(`${path} at ${zoom} zoom (${width} CSS px) reflows without horizontal scrolling`, async ({ page }) => {
@@ -108,6 +108,11 @@ test.describe('zoom and reflow', () => {
       await page.setViewportSize({ width: 320, height: 640 })
       await gotoSettled(page, path)
       await page.addStyleTag({ content: 'html { font-size: 200% !important; }' })
+      if (path === '/guia-pede-assim') {
+        await page.getByText('Ver o pedido pra IA dessa situação').click()
+        const faqs = page.locator('.sales-faq summary')
+        for (let i = 0; i < (await faqs.count()); i++) await faqs.nth(i).click()
+      }
       await expectNoHorizontalOverflow(page)
       const clipped = await page.evaluate(() =>
         [...document.querySelectorAll<HTMLElement>('h1, h2, p, a, button, summary, li')]

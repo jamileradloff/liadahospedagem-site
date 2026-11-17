@@ -130,6 +130,12 @@ body:has(.sales) {
   align-items: center;
 }
 
+.sales-hero-grid > *,
+.sales-hero-price > *,
+.sales-hero-actions > * {
+  min-width: 0;
+}
+
 .sales-hero h1 {
   color: var(--white);
   font-size: clamp(2.3rem, 1.7rem + 2.6vw, 2.9rem);
@@ -254,6 +260,10 @@ body:has(.sales) {
   align-items: start;
 }
 
+.sales-chat > * {
+  min-width: 0;
+}
+
 .sales-bubble {
   border-radius: 16px;
   padding: 1.25rem 1.4rem;
@@ -316,6 +326,7 @@ body:has(.sales) {
   border: 1px solid var(--line-soft);
   border-radius: 12px;
   background: var(--white);
+  min-width: 0;
 }
 
 .sales-disclosure summary {
@@ -430,11 +441,15 @@ body:has(.sales) {
   background: var(--white);
   border-radius: 12px;
   padding: 1rem 1.25rem;
+  min-width: 0;
+}
+
+.sales-inside-list li > span:last-child {
+  min-width: 0;
 }
 
 .sales-inside-list b {
   color: var(--teal);
-  white-space: nowrap;
 }
 
 /* Small terracotta text: the darker shade, as for the kickers. */
@@ -453,6 +468,14 @@ body:has(.sales) {
   margin-top: 1.5rem;
   padding: 0;
   list-style: none;
+}
+
+.sales-benefits > *,
+.sales-modules > *,
+.sales-steps > *,
+.sales-about > *,
+.sales-closing-grid > * {
+  min-width: 0;
 }
 
 .sales-module {
@@ -524,6 +547,10 @@ body:has(.sales) {
   margin-inline: auto;
   display: grid;
   gap: 0.75rem;
+}
+
+.sales-faq > * {
+  min-width: 0;
 }
 
 .sales-faq details {
@@ -677,6 +704,12 @@ body:has(.sales) {
 .sales-footer a,
 .sales-disclose {
   color: var(--line);
+}
+
+.sales-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
 }
 
 /* Teal would barely show on the night-blue footer. */

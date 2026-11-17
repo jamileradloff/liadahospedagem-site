@@ -60,8 +60,14 @@ body:has(.sales) {
   outline-offset: 3px;
 }
 
-.sales-hero :focus-visible {
+.sales-hero :focus-visible,
+.sales-closing :focus-visible {
   outline-color: var(--coral);
+}
+
+/* The purchase card is white, so it keeps the teal ring even though the section behind it is teal. */
+.sales-card :focus-visible {
+  outline-color: var(--teal);
 }
 
 /* Headings only receive focus programmatically, when the router lands on them. */

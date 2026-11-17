@@ -1,7 +1,8 @@
 import { expect, test, type Page } from '@playwright/test'
 import { blockClipboard, expectNoHorizontalOverflow, gotoSettled } from './support'
 
-const FOCUSABLE = ':is(a[href], button, summary):not([tabindex="-1"])'
+// Disabled buttons are not tab stops. The pending buy button is one, and its note is tied with aria-describedby.
+const FOCUSABLE = ':is(a[href], button:not([disabled]), summary):not([tabindex="-1"])'
 
 /** True when the focused element has a visible outline or box-shadow ring. */
 function focusedElementHasIndicator(page: Page) {
@@ -17,7 +18,7 @@ function focusedElementHasIndicator(page: Page) {
 test.describe('keyboard', () => {
   test.skip(({ isMobile }) => isMobile, 'Keyboard navigation is a desktop concern')
 
-  for (const path of ['/', '/mensagens']) {
+  for (const path of ['/', '/mensagens', '/guia-pede-assim']) {
     test(`${path}: every control is reachable with Tab, in page order, with a visible focus indicator`, async ({ page }) => {
       await gotoSettled(page, path)
       const expected = await page.locator(FOCUSABLE).evaluateAll((els) =>
@@ -74,6 +75,35 @@ test.describe('keyboard', () => {
     await expect(page.getByRole('link', { name: 'Baixar o Caderninho em PDF' })).toBeFocused()
     await page.keyboard.press('Tab')
     await expect(page.getByRole('link', { name: 'Voltar para as mensagens' })).toBeFocused()
+  })
+
+  test('/guia-pede-assim: the focus ring is coral on the teal hero and the closing gradient, and teal on white, grey and the purchase card', async ({ page }) => {
+    await gotoSettled(page, '/guia-pede-assim')
+
+    const ring = async (locator: ReturnType<Page['locator']>) => {
+      await locator.focus()
+      return locator.evaluate((el) => getComputedStyle(el).outlineColor)
+    }
+
+    expect(await ring(page.getByRole('link', { name: 'Ver um exemplo ↓' }))).toBe('rgb(229, 147, 116)')
+    expect(await ring(page.getByText('Ver o pedido pra IA dessa situação'))).toBe('rgb(31, 78, 95)')
+    expect(await ring(page.locator('.sales-faq summary').first())).toBe('rgb(31, 78, 95)')
+    expect(await ring(page.getByRole('link', { name: 'Quero receber novidades do Kit' }))).toBe('rgb(31, 78, 95)')
+    await expect(page.getByRole('button', { name: 'Quero meu PDF por R$10' })).toBeDisabled()
+
+    const onGradient = await page.locator('#compra').evaluate((heading: HTMLElement) => {
+      heading.tabIndex = 0
+      heading.focus({ focusVisible: true })
+      return getComputedStyle(heading).outlineColor
+    })
+    expect(onGradient).toBe('rgb(229, 147, 116)')
+
+    const onCard = await page.locator('.sales-card button').evaluate((button: HTMLButtonElement) => {
+      button.disabled = false
+      button.focus({ focusVisible: true })
+      return getComputedStyle(button).outlineColor
+    })
+    expect(onCard).toBe('rgb(31, 78, 95)')
   })
 
   test('FAQ items open and close with Enter and Space', async ({ page }) => {
@@ -188,6 +218,35 @@ test.describe('reduced motion', () => {
     return page.evaluate(() => [...new Set((window as unknown as { seen: number[] }).seen)])
   }
 
+  async function salesJumpPositions(page: Page) {
+    await page.setViewportSize({ width: 1280, height: 500 })
+    await gotoSettled(page, '/guia-pede-assim')
+    await page.evaluate(() => {
+      const w = window as unknown as { seen: number[] }
+      w.seen = []
+      const tick = () => {
+        w.seen.push(Math.round(window.scrollY))
+        requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    })
+    await page.getByRole('link', { name: 'Ver um exemplo ↓' }).click()
+    await expect(page.locator('#exemplo')).toBeFocused()
+    await page.waitForTimeout(1000)
+    return page.evaluate(() => [...new Set((window as unknown as { seen: number[] }).seen)])
+  }
+
+  async function pillShiftOnHover(page: Page) {
+    await gotoSettled(page, '/guia-pede-assim')
+    const pill = page.getByRole('link', { name: 'Ver um exemplo ↓' })
+    const before = await pill.boundingBox()
+    await pill.hover()
+    // The lift takes 0.15s. Reading at once still sees the resting position.
+    await page.waitForTimeout(200)
+    const after = await pill.boundingBox()
+    return (after?.y ?? 0) - (before?.y ?? 0)
+  }
+
   test.describe('reduce', () => {
     test.use({ reducedMotion: 'reduce' })
 
@@ -197,6 +256,12 @@ test.describe('reduced motion', () => {
       const duration = await page.locator('article#checkout').evaluate((el) => getComputedStyle(el).transitionDuration)
       expect(duration).toBe('0s')
     })
+
+    test('the sales page jumps to the example without animating, and the pill stays still on hover', async ({ page }) => {
+      const positions = await salesJumpPositions(page)
+      expect(positions, 'scroll went through intermediate positions').toHaveLength(2)
+      expect(await pillShiftOnHover(page)).toBe(0)
+    })
   })
 
   test.describe('no preference', () => {
@@ -205,6 +270,10 @@ test.describe('reduced motion', () => {
     test('animates jumps between messages', async ({ page }) => {
       const positions = await scrollPositionsAfterJump(page)
       expect(positions.length, 'scroll should pass through intermediate positions').toBeGreaterThan(3)
+    })
+
+    test('the sales pill lifts on hover', async ({ page }) => {
+      expect(await pillShiftOnHover(page)).toBeLessThan(0)
     })
   })
 })

@@ -65,3 +65,57 @@ test('the thank-you page has no WCAG AA violations', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: /Pronto! Seu Caderninho está aqui/ })).toBeFocused()
   await expectNoViolations(page)
 })
+
+test('the sales page has no WCAG AA violations', async ({ page }) => {
+  await gotoSettled(page, '/guia-pede-assim')
+  await expect(page.getByRole('heading', { level: 1, name: 'É sempre a mesma pergunta. Pede assim pra\u00a0IA.' })).toBeVisible()
+  await expectNoViolations(page)
+})
+
+test('the sales page has no WCAG AA violations with the example and the FAQs open', async ({ page }) => {
+  await gotoSettled(page, '/guia-pede-assim')
+  await page.getByText('Ver o pedido pra IA dessa situação').click()
+  const faqs = page.locator('.sales-faq summary')
+  for (let i = 0; i < (await faqs.count()); i++) await faqs.nth(i).click()
+  await expect(page.locator('.sales-faq details[open]')).toHaveCount(6)
+  await expectNoViolations(page)
+})
+
+test('the sales page has one main, the v2 heading outline, and ordered lists for the situations and the steps', async ({ page }) => {
+  await gotoSettled(page, '/guia-pede-assim')
+
+  await expect(page.getByRole('main')).toHaveCount(1)
+  await expect(page.locator('.sales > footer')).toHaveCount(1)
+
+  const headings = await page.locator('h1, h2, h3, h4, h5, h6').evaluateAll((els) =>
+    els.map((el) => ({
+      level: Number(el.tagName.slice(1)),
+      text: (el.textContent ?? '').replace(/\s+/g, ' ').trim(),
+    })),
+  )
+  expect(headings.filter((heading) => heading.level === 1).map((heading) => heading.text)).toEqual([
+    'É sempre a mesma pergunta. Pede assim pra IA.',
+  ])
+  expect(headings.filter((heading) => heading.level === 2).map((heading) => heading.text)).toEqual([
+    '“Posso chegar mais cedo?”',
+    'Abre na situação que você precisa resolver.',
+    'As 12 situações',
+    'Copia, preenche, confere e manda.',
+    'Antes de comprar',
+    'Hospitalidade primeiro. IA pra ajudar.',
+    'Na próxima pergunta repetida, já tem o pedido.',
+  ])
+
+  // v2 goes h2 → h4 under “As 12 situações”. Every other step in the outline stays within one level.
+  let previous = 0
+  const skips = headings.flatMap((heading) => {
+    const skipped = previous > 0 && heading.level > previous + 1 ? [`h${previous} → h${heading.level}: ${heading.text}`] : []
+    previous = heading.level
+    return skipped
+  })
+  expect(skips).toEqual(['h2 → h4: 01Pedido de desconto'])
+
+  const situations = page.locator('ol.sales-modules')
+  await expect(situations.getByRole('listitem')).toHaveCount(12)
+  await expect(page.locator('ol.sales-steps').getByRole('listitem')).toHaveCount(3)
+})

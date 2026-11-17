@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
+import '@fontsource-variable/outfit'
 import { INSTAGRAM_URL } from '../content'
 import { landOn, type Location } from '../router'
-import { FOOTER, HERO_TITLE, PAGE_DESCRIPTION, PAGE_TITLE } from './content'
+import { CHECKOUT_LIVE, FOOTER, PAGE_DESCRIPTION, PAGE_TITLE } from './content'
+import { Hero } from './sections/Hero'
+import './sales.css'
 
 /** Sets the page's meta description, and puts back whatever was there before on leaving. */
 function useDescription(content: string) {
@@ -20,7 +23,7 @@ function useDescription(content: string) {
 }
 
 /** The paid guide's sales page: its own layout, without the free page's header, footer or waitlist. */
-export function SalesScreen({ location }: { location: Location }) {
+export function SalesScreen({ location, checkoutLive = CHECKOUT_LIVE }: { location: Location; checkoutLive?: boolean }) {
   useDescription(PAGE_DESCRIPTION)
 
   useEffect(() => {
@@ -38,12 +41,7 @@ export function SalesScreen({ location }: { location: Location }) {
   return (
     <div className="sales">
       <main id="conteudo">
-        <header className="sales-hero">
-          <h1>
-            {HERO_TITLE.lead}
-            <em>{HERO_TITLE.highlight}</em>
-          </h1>
-        </header>
+        <Hero checkoutLive={checkoutLive} />
       </main>
       <footer className="sales-footer">
         <p>

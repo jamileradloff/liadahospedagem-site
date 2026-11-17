@@ -1,0 +1,226 @@
+/* The approved v2 look of the "Pede assim pra IA" sales page (Nov 17), in the colors of its Hotmart page.
+   Everything is scoped under .sales so it can't touch the free page, and loads with the lazy screen only. */
+body:has(.sales) {
+  background: #ffffff;
+}
+
+.sales {
+  /* The Hotmart page's colors. */
+  --teal: #1f4e5f; /* hero background, headings */
+  --teal-deep: #143541; /* end of the closing gradient */
+  --terracotta: #c0643f; /* buttons */
+  --coral: #e59374; /* highlighted words in the hero title */
+  --ink: #1e293b; /* body text */
+  --muted: #64748b; /* secondary text */
+  --faint: #94a3b8;
+  --line: #cbd5e1;
+  --line-soft: #e2e8f0; /* benefit-card border */
+  --grey: #f4f6f8; /* light grey section background */
+  --cream: #fcfbf9; /* benefit cards */
+  --white: #ffffff;
+  --night: #0f172a; /* footer */
+
+  /* Small text where the Hotmart color misses WCAG AA (4.5:1). Ratios are against the surfaces named. */
+  --terracotta-text: #a9532f; /* 5.3 white, 4.9 grey */
+  --coral-text: #f0b094; /* 4.9 teal */
+  --muted-on-grey: #5b6b80; /* 5.0 grey */
+
+  --font: 'Outfit Variable', Outfit, 'DM Sans', Arial, sans-serif;
+
+  --wrap: 64rem;
+  --gutter: clamp(1rem, 4vw, 1.5rem);
+  --section: clamp(3.5rem, 8vw, 6rem);
+  --pill: 50px;
+
+  background: var(--white);
+  color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--font);
+  overflow-wrap: break-word;
+}
+
+/* Undo the free page's element styles (styles.css). :where() keeps these at one class, so the section
+   rules below win by coming later. */
+.sales :where(h1, h2, h3, h4, p, ul, ol, figure, blockquote) {
+  margin: 0;
+}
+
+.sales :where(h1, h2, h3, h4) {
+  font-family: var(--font);
+  text-wrap: wrap;
+}
+
+.sales :where(a) {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+/* Teal ring on the light sections (9.1 on white); coral on the teal ones (3.8). */
+.sales :focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.sales-hero :focus-visible {
+  outline-color: var(--coral);
+}
+
+.sales-wrap {
+  width: min(100%, var(--wrap));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- Hero ---------- */
+.sales-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--teal);
+  color: var(--white);
+  padding: clamp(3.5rem, 9vw, 6rem) 0 clamp(3.5rem, 8vw, 5rem);
+}
+
+.sales-hero::before {
+  content: '';
+  position: absolute;
+  inset: -30% -20% auto auto;
+  width: 60%;
+  aspect-ratio: 1;
+  background: radial-gradient(closest-side, rgba(229, 147, 116, 0.16), transparent);
+  pointer-events: none;
+}
+
+.sales-hero-grid {
+  position: relative;
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+
+.sales-hero h1 {
+  color: var(--white);
+  font-size: clamp(2.3rem, 1.7rem + 2.6vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+.sales-hero h1 em {
+  font-style: normal;
+  color: var(--coral);
+}
+
+.sales-hero-sub {
+  margin-top: 1.25rem;
+  max-width: 34rem;
+  color: var(--line);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.sales-hero-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-top: 1.5rem;
+  color: var(--line);
+  font-size: 0.95rem;
+}
+
+.sales-hero-price strong {
+  color: var(--white);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.sales-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-top: 1.75rem;
+}
+
+.sales-hero-link {
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* v2 used --faint here (3.5 on teal); --line reads at 6.1. */
+.sales-hero-note {
+  margin-top: 1rem;
+  color: var(--line);
+  font-size: 0.9rem;
+}
+
+.sales-cover {
+  justify-self: center;
+  width: min(100%, 18rem);
+}
+
+.sales-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transform: rotate(2deg);
+}
+
+/* ---------- Buttons: pills ---------- */
+/* White on terracotta is 4.1:1, so the label is set as large text (19px bold, 3:1). */
+.sales-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  max-width: 100%;
+  padding: 1rem 2rem;
+  border: 0;
+  border-radius: var(--pill);
+  background: var(--terracotta);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 10px 25px -5px rgba(192, 100, 63, 0.4);
+  cursor: pointer;
+}
+
+.sales-btn:hover {
+  box-shadow: 0 14px 28px -6px rgba(192, 100, 63, 0.5);
+}
+
+.sales-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sales-btn {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .sales-btn:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 56em) {
+  .sales-hero-grid {
+    grid-template-columns: 1.5fr 1fr;
+    gap: 3rem;
+  }
+
+  .sales-cover {
+    width: min(100%, 24rem);
+  }
+}

@@ -19,7 +19,9 @@ One single-page app with these screens:
   printed in sold PDFs, are `noindex`, and an unknown slug there shows the companion index. The sales page is a
   public page and can be indexed. Both buy buttons open `https://pay.hotmart.com/T108525255F`. Set
   `VITE_CHECKOUT_LIVE=false` to build the pending state, where the hero links to the example and the closing
-  button stays disabled.
+  button stays disabled. Instagram and WhatsApp read the HTML before JavaScript runs, so a Pages Function
+  rewrites this route's preview to the sales title, description and cover (`public/og-pede-assim.png`). The
+  other routes keep the free page preview.
 
 The `/mensagens` and `/obrigado` paths and the anchors stay in Portuguese on purpose: they are user-facing, they are
 baked into the PDF links and the Tally redirect, and the anchors match the WhatsApp shortcuts the host saves.
@@ -55,7 +57,8 @@ src/
 e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility, keyboard, zoom, motion
 validation/           repeatable validation scripts (see FRONTEND_VALIDATION.md); screenshots are generated, not committed
 pdf/                  source of the free PDF (see pdf/README.md)
-public/               the generated PDF, the social preview image, and the Cloudflare _redirects and _headers
+public/               the generated PDF, the social preview images, and the Cloudflare _redirects and _headers
+functions/            Pages Function that gives /guia-pede-assim its own link preview
 ```
 
 ## Run locally

@@ -10,19 +10,22 @@ import { ThanksScreen } from './screens/ThanksScreen'
 const PedeAssimScreen = lazy(() =>
   import('./pedeAssim/PedeAssimScreen').then((module) => ({ default: module.PedeAssimScreen })),
 )
+// Loaded on its own too, so the sales page doesn't grow the free page's bundle.
+const SalesScreen = lazy(() => import('./sales/SalesScreen').then((module) => ({ default: module.SalesScreen })))
 
 export function App() {
   const location = useLocation()
+  const lazyScreen = location.screen === 'pede-assim' || location.screen === 'sales'
 
   useEffect(() => {
-    // The lazy Pede assim screen lands by itself once it has rendered.
-    if (location.screen !== 'pede-assim') landOn(location)
-  }, [location])
+    // The lazy screens land by themselves once they have rendered.
+    if (!lazyScreen) landOn(location)
+  }, [location, lazyScreen])
 
-  if (location.screen === 'pede-assim') {
+  if (lazyScreen) {
     return (
       <Suspense fallback={null}>
-        <PedeAssimScreen location={location} />
+        {location.screen === 'sales' ? <SalesScreen location={location} /> : <PedeAssimScreen location={location} />}
       </Suspense>
     )
   }

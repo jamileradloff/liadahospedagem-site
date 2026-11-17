@@ -10,6 +10,8 @@ export const MESSAGES_PATH = '/mensagens'
 export const THANKS_PATH = '/obrigado'
 /** The paid guide's companion. Every `/pede-assim/<slug>` is printed in sold PDFs, so these paths can never change. */
 export const PEDE_ASSIM_PATH = '/pede-assim'
+/** The paid guide's sales page. Outside `/pede-assim/`, whose paths and `noindex` belong to the companion. */
+export const PEDE_ASSIM_SALES_PATH = '/guia-pede-assim'
 
 export type Location = {
   screen: Page
@@ -30,6 +32,7 @@ export function parse(target: string): Pick<Location, 'screen' | 'anchor' | 'ins
   const url = new URL(target, window.location.origin)
   const path = url.pathname.replace(/\/+$/, '')
   const anchor = decodeURIComponent(url.hash.slice(1))
+  if (path === PEDE_ASSIM_SALES_PATH) return { screen: 'sales', anchor, instruction: '' }
   if (path === PEDE_ASSIM_PATH || path.startsWith(`${PEDE_ASSIM_PATH}/`)) {
     // Unknown slugs are left to the Pede assim screen, so the router doesn't pull the guide into the main bundle.
     return { screen: 'pede-assim', anchor, instruction: path.slice(PEDE_ASSIM_PATH.length + 1) }

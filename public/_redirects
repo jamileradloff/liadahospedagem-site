@@ -5,3 +5,4 @@
 /fb-grupo  /?utm_source=facebook&utm_medium=group&utm_campaign=caderninho&utm_content=checkin  302
 /pede-assim    /  200
 /pede-assim/*  /  200
+/guia-pede-assim  /  200

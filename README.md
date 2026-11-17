@@ -186,7 +186,7 @@ conversions happen in the same tab. Duplicate it, with a global filter on `utm_m
 
 | Insight | Filter | What it answers |
 |---|---|---|
-| Bio | `utm_medium` = `bio` | Visitors from `/ig` (and the TikTok bio, `utm_source=tiktok`) |
+| Bio | `utm_medium` = `bio` | TikTok bio (`/tiktok`). `/ig` lands on the sales page with the same medium, so exclude `$pathname` = `/guia-pede-assim`. |
 | DM | `utm_medium` = `dm` | Visitors from `/dm` |
 
 Steps:
@@ -244,11 +244,13 @@ https://liadahospedagem.pages.dev/?utm_source=instagram&utm_medium=dm&utm_conten
 
 | Link | Use | Redirects to |
 |---|---|---|
-| `https://liadahospedagem.pages.dev/ig` | Instagram bio | `/?utm_source=instagram&utm_medium=bio` |
+| `https://liadahospedagem.pages.dev/ig` | Instagram bio for the paid guide | `/guia-pede-assim?utm_source=instagram&utm_medium=bio` |
 | `https://liadahospedagem.pages.dev/story` | Story link stickers | `/?utm_source=instagram&utm_medium=story` |
 | `https://liadahospedagem.pages.dev/tiktok` | TikTok bio | `/?utm_source=tiktok&utm_medium=bio` |
 | `https://liadahospedagem.pages.dev/dm` | ManyChat keyword DM (CADERNINHO, KIT) | `/mensagens?utm_source=instagram&utm_medium=dm&utm_content=ig-comment` |
 | `https://liadahospedagem.pages.dev/fb-grupo` | Facebook group post for the Caderninho check-in campaign | `/?utm_source=facebook&utm_medium=group&utm_campaign=caderninho&utm_content=checkin` |
+
+`/ig` is the Instagram bio for the paid guide. `/story` still opens the free page.
 
 `/dm` lands straight on the messages page. Reel-specific DM buttons can still use full UTM links with their own
 `utm_content`. Published Story stickers keep pointing at `/story`, so fix that rule rather than removing it.

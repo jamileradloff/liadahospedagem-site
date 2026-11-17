@@ -350,10 +350,187 @@ body:has(.sales) {
   font-size: 0.95rem;
 }
 
+/* ---------- Section titles ---------- */
+.sales-grey {
+  background: var(--grey);
+}
+
+.sales-section-title {
+  text-align: center;
+  max-width: 40rem;
+  margin: 0 auto 3rem;
+}
+
+.sales-section-title p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+/* --muted is 4.4 on grey. */
+.sales-grey .sales-section-title p {
+  color: var(--muted-on-grey);
+}
+
+/* ---------- What's in the PDF ---------- */
+.sales-benefits {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.sales-benefit {
+  background: var(--cream);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 2.25rem 1.75rem;
+}
+
+.sales-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.25rem;
+  border-radius: 10px;
+  background: rgba(31, 78, 95, 0.1);
+  color: var(--teal);
+}
+
+.sales-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.sales-benefit p {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+.sales-inside {
+  margin-top: 3.5rem;
+}
+
+.sales-inside h3 {
+  text-align: center;
+}
+
+.sales-inside-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-inside-list li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  background: var(--white);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.sales-inside-list b {
+  color: var(--teal);
+  white-space: nowrap;
+}
+
+/* Small terracotta text: the darker shade, as for the kickers. */
+.sales-tick {
+  color: var(--terracotta-text);
+  font-weight: 700;
+}
+
+.sales-situations-title {
+  margin-top: 4rem;
+}
+
+.sales-modules {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-module {
+  background: var(--white);
+  border-left: 4px solid var(--teal);
+  border-radius: 12px;
+  padding: 1.4rem 1.6rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.sales-module h4 {
+  color: var(--teal);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* 17.6px bold is just under large text, so the darker shade. */
+.sales-module h4 span {
+  color: var(--terracotta-text);
+  margin-right: 0.35rem;
+}
+
+.sales-module p {
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* ---------- How to use ---------- */
+.sales-steps {
+  display: grid;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-step {
+  border-top: 3px solid var(--teal);
+  padding-top: 1.25rem;
+}
+
+/* 2rem bold is large text, where brand terracotta's 4.1 is enough. */
+.sales-step-num {
+  display: block;
+  color: var(--terracotta);
+  font: 700 2rem/1 var(--font);
+  margin-bottom: 0.6rem;
+}
+
+.sales-step p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
+.sales-prereq {
+  margin-top: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--grey);
+  border-radius: 12px;
+  color: var(--muted-on-grey);
+  font-size: 0.98rem;
+}
+
 @media (min-width: 40em) {
   .sales-chat {
     grid-template-columns: 0.85fr 1.15fr;
     gap: 1.25rem;
+  }
+
+  .sales-modules {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .sales-inside-list {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -377,5 +554,15 @@ body:has(.sales) {
 
   .sales-cover {
     width: min(100%, 24rem);
+  }
+
+  .sales-benefits {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .sales-steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
   }
 }

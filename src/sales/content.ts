@@ -57,6 +57,72 @@ Usa só as informações que eu passei. Se faltar um dado necessário que depend
     'Nesse exemplo, os [colchetes] foram preenchidos assim: check-in às 14h, decisão “ainda verificar”, retorno até as 10h30, sem alternativa.',
 }
 
+export const PDF_CONTENTS = {
+  kicker: 'O que vem no PDF',
+  title: 'Abre na situação que você precisa resolver.',
+  intro: 'Um pedido pra IA por situação. Você preenche com os dados da sua reserva e a IA escreve um rascunho.',
+  benefits: [
+    {
+      icon: 'phone',
+      title: 'Feito pro celular',
+      text: 'Um PDF de 15 páginas pra abrir no celular, direto na situação. Cada pedido tem um botão pra copiar.',
+    },
+    {
+      icon: 'check',
+      title: 'Testado no ChatGPT grátis',
+      text: 'As 12 instruções foram testadas na versão gratuita do ChatGPT. Não precisa pagar outra ferramenta.',
+    },
+    {
+      icon: 'search',
+      title: 'Você confere antes de mandar',
+      text: 'A IA escreve o rascunho. Você confere os fatos, ajusta o que quiser e manda do seu jeito.',
+    },
+  ],
+  insideTitle: 'Em cada situação',
+  inside: [
+    { lead: 'O que chegou:', text: ' um exemplo da mensagem do hóspede' },
+    { lead: 'Pede assim pra IA:', text: ' o pedido, com o que preencher entre [colchetes]' },
+    { lead: 'Ficou assim:', text: ' um exemplo do que a IA respondeu' },
+    { lead: 'Confere antes de mandar:', text: ' o que olhar antes de enviar' },
+  ],
+  situationsTitle: 'As 12 situações',
+  situationsIntro: 'Da primeira pergunta antes da reserva à resposta da avaliação.',
+} as const
+
+/** The PDF's order; titles 10–12 are shortened from the PDF's “Responder a uma avaliação…”. */
+export const SITUATIONS = [
+  ['Pedido de desconto', 'Quando a pessoa pede um valor menor antes de reservar.'],
+  ['Como chegar', 'Quando perguntam como chegar ou onde estacionar.'],
+  ['Boas-vindas e chegada', 'As primeiras orientações antes da chegada, sem mandar o código real da porta.'],
+  ['Check-in mais cedo', 'Quando a pessoa pede pra entrar antes do horário.'],
+  ['Check-out mais tarde', 'Quando o hóspede pede pra ficar depois do horário de saída.'],
+  ['Pedido para levar pet', 'Quando perguntam se podem levar um animal.'],
+  ['Reclamação de barulho', 'Quando a pessoa avisa que o barulho tá atrapalhando a estadia.'],
+  ['Lembrete de check-out', 'O horário de saída e o que fazer antes de ir.'],
+  ['Pedido de avaliação', 'Depois da estadia, um convite leve pra uma avaliação sincera, sem pedir nota.'],
+  ['Avaliação de 5 estrelas', 'Pra agradecer em público.'],
+  ['Avaliação de 4 estrelas', 'Pra responder em público, com ou sem comentário.'],
+  ['Avaliação negativa', 'Pra responder em público só com o que você pode confirmar.'],
+] as const
+
+export const HOW_TO_USE = {
+  kicker: 'Como usar',
+  title: 'Copia, preenche, confere e manda.',
+  steps: [
+    [
+      'Copia o pedido',
+      'Escolhe a situação e copia o bloco “Pede assim pra IA”. O primeiro, do desconto, vem preenchido pra você ver como fica.',
+    ],
+    [
+      'Coloca os dados da reserva',
+      'Troca o que está entre [colchetes] e cola no ChatGPT. Se a IA te fizer uma pergunta, responde ali primeiro.',
+    ],
+    ['Confere antes de mandar', 'Revisa os fatos, ajusta o tom e manda pelo mesmo canal da reserva.'],
+  ],
+  prerequisites:
+    'Você precisa abrir o PDF, acessar o ChatGPT e copiar e colar textos. Não precisa conectar Airbnb, Booking ou WhatsApp. Antes de colar a mensagem do hóspede, tira sobrenome, telefone, número da reserva e código de acesso.',
+} as const
+
 export const FOOTER = {
   credit: 'Lia da Hospedagem · criado por Jamile Radloff · ',
   instagram: '@liadahospedagem',

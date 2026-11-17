@@ -5,6 +5,8 @@ import { landOn, type Location } from '../router'
 import { CHECKOUT_LIVE, FOOTER, PAGE_DESCRIPTION, PAGE_TITLE } from './content'
 import { Example } from './sections/Example'
 import { Hero } from './sections/Hero'
+import { HowToUse } from './sections/HowToUse'
+import { PdfContents } from './sections/PdfContents'
 import './sales.css'
 
 /** Sets the page's meta description, and puts back whatever was there before on leaving. */
@@ -44,6 +46,8 @@ export function SalesScreen({ location, checkoutLive = CHECKOUT_LIVE }: { locati
       <main id="conteudo">
         <Hero checkoutLive={checkoutLive} />
         <Example />
+        <PdfContents />
+        <HowToUse />
       </main>
       <footer className="sales-footer">
         <p>

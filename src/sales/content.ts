@@ -28,6 +28,35 @@ export const PENDING_NOTE = { lead: 'Checkout pendente.', rest: ' A compra ainda
 
 export const COVER_ALT = 'Capa do PDF Pede assim pra IA: mensagens pra hóspedes, da Lia da Hospedagem'
 
+/** Situation 4 of the PDF. The instruction must equal its `prompt` in instructions.json (content.test.ts). */
+export const EXAMPLE = {
+  kicker: 'Exemplo · Situação 4',
+  title: '“Posso chegar mais cedo?”',
+  intro: 'Você quer responder com carinho. Mas ainda não sabe se a limpeza vai terminar a tempo.',
+  guestKicker: 'O que chegou',
+  guestMessage: '“Oi! Nosso ônibus chega às 10h. Dá pra entrar no quarto às 11h?”',
+  guestNote: 'O check-in é às 14h. Você ainda vai ver se a limpeza libera o quarto antes.',
+  draftKicker: 'Ficou assim · rascunho da IA',
+  draft:
+    '“Oi! Tudo bem? 😊 Nosso horário normal de check-in é às 14h, mas vou verificar se conseguimos liberar o quarto antes, às 11h. Te dou um retorno até as 10h30, combinado?”',
+  checkLead: 'Confere antes de mandar:',
+  check:
+    ' o horário da reserva tá certo? A limpeza consegue liberar o quarto? Se ainda estiver verificando, dá um prazo que você consegue cumprir.',
+  caption: 'Exemplo com dados fictícios. A resposta da IA pode variar: você confere os fatos e decide o que mandar.',
+  disclosure: 'Ver o pedido pra IA dessa situação',
+  instruction: `Mensagem do hóspede: [cole a mensagem].
+Check-in da reserva: [horário normal].
+Minha decisão: [liberar a partir de um horário, manter o horário normal ou ainda verificar].
+Retorno, se eu ainda estiver verificando: [quando consigo dar notícias].
+Alternativa ou condição já confirmada (opcional): [o que posso oferecer e em que condições].
+
+Escreve uma única resposta curta e gentil, em português do Brasil, pro canal da reserva. Se eu ainda estiver verificando e o campo de retorno estiver vazio, pergunta quando posso dar notícias e espera antes de escrever. Se eu já tiver informado o prazo, mantém o horário normal por enquanto e diz que vou dar notícias no prazo, mesmo que a decisão continue em aberto. Só confirma um horário ou uma condição que eu já aprovei. Deixa de fora o campo opcional em branco. Se faltar informação necessária, me pergunta antes.
+
+Usa só as informações que eu passei. Se faltar um dado necessário que depende de mim, me pergunta e espera minha resposta antes de escrever a mensagem. Pode deixar de fora os campos opcionais que estiverem em branco.`,
+  fields:
+    'Nesse exemplo, os [colchetes] foram preenchidos assim: check-in às 14h, decisão “ainda verificar”, retorno até as 10h30, sem alternativa.',
+}
+
 export const FOOTER = {
   credit: 'Lia da Hospedagem · criado por Jamile Radloff · ',
   instagram: '@liadahospedagem',

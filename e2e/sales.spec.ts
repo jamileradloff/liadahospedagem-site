@@ -35,6 +35,55 @@ test('the cover and the Outfit font load on the page', async ({ page }) => {
   expect(outfit.headingFamily).toMatch(/^"?Outfit Variable"?,/)
 })
 
+test.describe('early check-in example', () => {
+  test.use({ reducedMotion: 'reduce' })
+
+  test('“Ver um exemplo ↓” moves focus and scroll to the example heading', async ({ page }) => {
+    await page.goto(SALES_PATH)
+    await page.evaluate(() => document.fonts.ready.then(() => undefined))
+    const button = page.getByRole('link', { name: 'Ver um exemplo ↓' })
+    await button.focus()
+    await page.keyboard.press('Enter')
+
+    const heading = page.getByRole('heading', { level: 2, name: '“Posso chegar mais cedo?”' })
+    await expect(heading).toBeFocused()
+    await expect(heading).toBeInViewport()
+    await expect(page).toHaveURL(/#exemplo$/)
+  })
+
+  test('the instruction disclosure opens and closes with Enter and Space, and its text can be selected', async ({ page }) => {
+    await page.goto(SALES_PATH)
+    const summary = page.locator('summary', { hasText: 'Ver o pedido pra IA dessa situação' })
+    const details = page.locator('details', { has: summary })
+    const isOpen = () => details.evaluate((el: HTMLDetailsElement) => el.open)
+
+    await summary.focus()
+    expect(await isOpen()).toBe(false)
+    await page.keyboard.press('Enter')
+    expect(await isOpen()).toBe(true)
+    await page.keyboard.press('Enter')
+    expect(await isOpen()).toBe(false)
+    await page.keyboard.press('Space')
+    expect(await isOpen()).toBe(true)
+
+    const instruction = details.locator('pre')
+    await expect(instruction).toBeVisible()
+    const selected = await instruction.evaluate((pre) => {
+      const range = document.createRange()
+      range.selectNodeContents(pre)
+      const selection = window.getSelection() as Selection
+      selection.removeAllRanges()
+      selection.addRange(range)
+      return { text: selection.toString(), userSelect: getComputedStyle(pre).userSelect }
+    })
+    expect(selected.userSelect).not.toBe('none')
+    expect(selected.text).toContain('Mensagem do hóspede: [cole a mensagem].')
+
+    await page.keyboard.press('Space')
+    expect(await isOpen()).toBe(false)
+  })
+})
+
 test('Back returns to the previous page with its own title', async ({ page }) => {
   await page.goto('/mensagens')
   await expect(page.getByRole('heading', { level: 1, name: 'Suas 3 mensagens' })).toBeVisible()

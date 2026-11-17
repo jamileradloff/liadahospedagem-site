@@ -3,6 +3,7 @@ import '@fontsource-variable/outfit'
 import { INSTAGRAM_URL } from '../content'
 import { landOn, type Location } from '../router'
 import { CHECKOUT_LIVE, FOOTER, PAGE_DESCRIPTION, PAGE_TITLE } from './content'
+import { Example } from './sections/Example'
 import { Hero } from './sections/Hero'
 import './sales.css'
 
@@ -42,6 +43,7 @@ export function SalesScreen({ location, checkoutLive = CHECKOUT_LIVE }: { locati
     <div className="sales">
       <main id="conteudo">
         <Hero checkoutLive={checkoutLive} />
+        <Example />
       </main>
       <footer className="sales-footer">
         <p>

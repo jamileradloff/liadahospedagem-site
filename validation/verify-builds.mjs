@@ -1,9 +1,10 @@
 // Verifies the three build variants end to end, without sending anything to the real PostHog or Tally:
-//   1. analytics build: a fake PostHog key and host, with every PostHog request intercepted and decoded
+//   1. analytics build: a fake PostHog key pointed at a local server that records and decodes every request
 //   2. no-key build: the default for local work and PR previews, which must make no analytics requests
 //   3. preview build (VITE_PREVIEW=1): in-memory routing; the thank-you PDF download is disabled
 //   node validation/verify-builds.mjs
 import { readFileSync, readdirSync } from 'node:fs'
+import { createServer } from 'node:http'
 import { join } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 import { build, preview } from 'vite'
@@ -48,13 +49,60 @@ function decodeCapture(buffer) {
   return Array.isArray(parsed) ? parsed : Array.isArray(parsed.batch) ? parsed.batch : [parsed]
 }
 
+// A real server, not context.route(): PostHog flushes its batch with navigator.sendBeacon when a page unloads,
+// and Playwright never sees those requests, so a route would lose every event sent just before a navigation.
+async function startFakePostHog() {
+  const events = []
+  const hostRequests = []
+  const server = createServer((request, response) => {
+    const chunks = []
+    request.on('data', (chunk) => chunks.push(chunk))
+    request.on('end', () => {
+      const path = new URL(request.url, FAKE_HOST).pathname
+      hostRequests.push(path)
+      const headers = {
+        'access-control-allow-origin': request.headers.origin ?? '*',
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-headers': request.headers['access-control-request-headers'] ?? '*',
+        'access-control-allow-methods': 'GET, POST, OPTIONS',
+      }
+      if (request.method === 'OPTIONS') {
+        response.writeHead(204, headers).end()
+        return
+      }
+      const body = Buffer.concat(chunks)
+      if (body.length && /\/(e|i\/v0\/e|batch)\/?$/.test(path)) {
+        try {
+          events.push(...decodeCapture(body))
+        } catch {
+          // not an event payload
+        }
+      }
+      if (path.endsWith('.js')) {
+        response.writeHead(200, { ...headers, 'content-type': 'application/javascript' }).end('')
+        return
+      }
+      // Minimal answers to the config and feature-flag calls that PostHog makes on start.
+      const json = path.endsWith('/config')
+        ? { token: 'phc_validation_key', supportedCompression: ['gzip-js'], hasFeatureFlags: false, analytics: { endpoint: '/i/v0/e/' }, siteApps: [] }
+        : path.startsWith('/flags')
+          ? { featureFlags: {}, featureFlagPayloads: {}, flags: {}, errorsWhileComputingFlags: false }
+          : {}
+      response.writeHead(200, { ...headers, 'content-type': 'application/json' }).end(JSON.stringify(json))
+    })
+  })
+  const { hostname, port } = new URL(FAKE_HOST)
+  await new Promise((resolve) => server.listen(Number(port), hostname, resolve))
+  return { events, hostRequests, close: () => new Promise((resolve) => server.close(resolve)) }
+}
+
 async function stubExternal(context) {
   await context.route(/^https:\/\/(tally\.so|www\.linkedin\.com)\//, (route) => route.fulfill({ status: 200, contentType: 'text/html', body: 'stub' }))
 }
 
 // ---------------------------------------------------------------- 1. analytics build
 async function verifyAnalytics(browser) {
-  console.log('\n# Analytics build (fake key, intercepted host)')
+  console.log('\n# Analytics build (fake key, local fake host)')
   await buildVariant('/tmp/lia-dist-analytics', { VITE_POSTHOG_KEY: 'phc_validation_key', VITE_POSTHOG_HOST: FAKE_HOST, VITE_PREVIEW: '' })
   const server = await serve('/tmp/lia-dist-analytics', 4174)
   // PostHog silently drops events from anything that looks like a bot: a "HeadlessChrome" user agent or brand,
@@ -68,31 +116,7 @@ async function verifyAnalytics(browser) {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await stubExternal(context)
 
-  const events = []
-  const hostRequests = []
-  await context.route(`${FAKE_HOST}/**`, async (route) => {
-    const request = route.request()
-    hostRequests.push(new URL(request.url()).pathname)
-    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' }
-    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
-    const body = request.postDataBuffer()
-    if (body && /\/(e|i\/v0\/e|batch)\/?$/.test(new URL(request.url()).pathname)) {
-      try {
-        events.push(...decodeCapture(body))
-      } catch {
-        // not an event payload
-      }
-    }
-    const path = new URL(request.url()).pathname
-    if (path.endsWith('.js')) return route.fulfill({ status: 200, headers, contentType: 'application/javascript', body: '' })
-    // Minimal answers to the config and feature-flag calls that PostHog makes on start.
-    const json = path.endsWith('/config')
-      ? { token: 'phc_validation_key', supportedCompression: ['gzip-js'], hasFeatureFlags: false, analytics: { endpoint: '/i/v0/e/' }, siteApps: [] }
-      : path.startsWith('/flags')
-        ? { featureFlags: {}, featureFlagPayloads: {}, flags: {}, errorsWhileComputingFlags: false }
-        : {}
-    return route.fulfill({ status: 200, headers, contentType: 'application/json', body: JSON.stringify(json) })
-  })
+  const { events, hostRequests, close: closeFakeHost } = await startFakePostHog()
 
   const page = await context.newPage()
   await page.goto(`http://localhost:4174/?utm_source=instagram&utm_medium=dm&utm_content=${REEL}`)
@@ -159,6 +183,7 @@ async function verifyAnalytics(browser) {
 
   await context.close()
   await server.close()
+  await closeFakeHost()
 }
 
 // The paid guide's text must only ship in the lazy Pede assim chunk, never in the free page's entry chunk.

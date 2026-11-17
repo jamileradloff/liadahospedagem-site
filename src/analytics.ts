@@ -12,8 +12,8 @@ const attribution: Record<string, string> = {}
 let loading: Promise<PostHog | null> = Promise.resolve(null)
 
 /** The screens; the same values name the screen in the router and the `page` in events. */
-export type Page = 'home' | 'messages' | 'thanks' | 'pede-assim'
-export type DeliveryPage = Exclude<Page, 'thanks' | 'pede-assim'>
+export type Page = 'home' | 'messages' | 'thanks' | 'pede-assim' | 'sales'
+export type DeliveryPage = Exclude<Page, 'thanks' | 'pede-assim' | 'sales'>
 
 export function initAnalytics() {
   // Remember where the visitor came from (e.g. which Reel), to attach to every event and to the Tally link.
@@ -42,8 +42,20 @@ export function initAnalytics() {
 
 export type FaqId = 'is-it-free' | 'regular-whatsapp' | 'single-apartment' | 'tech-skills' | 'who-is-behind-lia'
 
+/** FAQ questions on the sales page. */
+export type SalesFaqId =
+  | 'how-to-receive'
+  | 'why-buy'
+  | 'no-ai-skills'
+  | 'sounds-robotic'
+  | 'auto-reply'
+  | 'copy-and-send'
+
 /** Where a waitlist link sits on the page. */
 export type WaitlistPlacement = 'hero' | 'after-first-template' | 'section' | 'after-copy'
+
+/** Where a sales-page buy link sits. */
+export type CheckoutPlacement = 'hero' | 'closing'
 
 type NoProps = Record<string, never>
 
@@ -62,10 +74,14 @@ export type EventProps = {
   clicked_waitlist: { page: DeliveryPage; placement: WaitlistPlacement }
   /** the once-per-visit waitlist prompt appeared after a successful copy */
   viewed_copy_prompt: { message: MessageId; page: DeliveryPage }
-  opened_faq: { question: FaqId }
+  opened_faq: { question: FaqId | SalesFaqId }
   /** copied a Pede assim instruction; `instruction` is its slug */
   copied_instruction: { instruction: string }
   clicked_linkedin: NoProps
+  /** went to the Hotmart checkout. Only the live sales page can send it. */
+  clicked_checkout: { placement: CheckoutPlacement }
+  /** went to the Kit updates form from the sales page */
+  clicked_kit_updates: NoProps
 }
 
 export type AnalyticsEvent = keyof EventProps

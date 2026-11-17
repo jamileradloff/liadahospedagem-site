@@ -1,4 +1,4 @@
-// Captures full-page screenshots of both routes at the reference widths, against a running `vite preview`.
+// Captures full-page screenshots of the routes at the reference widths, against a running `vite preview`.
 //   npm run build && npx vite preview --port 4173 &
 //   node validation/capture-screenshots.mjs [outDir]
 // With --segments, also writes viewport-height slices (outDir/segments) for reviewing tall pages at readable size.
@@ -14,6 +14,7 @@ const ROUTES = [
   ['messages', '/mensagens'],
   ['pede-assim-index', '/pede-assim'],
   ['pede-assim-checkout', '/pede-assim/check-out-mais-tarde'],
+  ['sales', '/guia-pede-assim'],
 ]
 
 await mkdir(OUT, { recursive: true })

@@ -15,6 +15,13 @@ One single-page app with these screens:
 - `/pede-assim` index of the 12 situations of the paid guide “Pede assim pra IA”
 - `/pede-assim/<slug>` one situation, e.g. `/pede-assim/check-out-mais-tarde`: its instruction and a copy button.
   An unknown slug shows the index.
+- `/guia-pede-assim` the sales page for the paid guide. It does not live under `/pede-assim/`: those paths are
+  printed in sold PDFs, are `noindex`, and an unknown slug there shows the companion index. The sales page is a
+  public page and can be indexed. Both buy buttons open `https://pay.hotmart.com/T108525255F`. Set
+  `VITE_CHECKOUT_LIVE=false` to build the pending state, where the hero links to the example and the closing
+  button stays disabled. Instagram and WhatsApp read the HTML before JavaScript runs, so a Pages Function
+  rewrites this route's preview to the sales title, description and cover (`public/og-pede-assim.png`). The
+  other routes keep the free page preview.
 
 The `/mensagens` and `/obrigado` paths and the anchors stay in Portuguese on purpose: they are user-facing, they are
 baked into the PDF links and the Tally redirect, and the anchors match the WhatsApp shortcuts the host saves.
@@ -23,7 +30,8 @@ baked into the PDF links and the Tally redirect, and the anchors match the Whats
 PDF that has been sold can't be updated. Never rename or remove a slug; to change a title, keep its slug.
 
 The Pede assim pages are the guide's companion, not part of the free page. They load as a separate chunk, so the
-12 instructions are not in the free page's JavaScript (`verify-builds.mjs` checks this), and they ask search engines
+12 instructions are not in the free page's JavaScript (`verify-builds.mjs` checks this). The sales page is its own
+chunk and may carry situation 4, the example on that page, and none of the other instructions. The companion pages ask search engines
 not to index them (`<meta name="robots" content="noindex">` and an `X-Robots-Tag: noindex` header from
 `public/_headers`). Anyone with a link can still open them. The instructions in `src/pedeAssim/instructions.json`
 are generated from the guide's manuscript, which is not in this repo; don't edit them by hand.
@@ -44,11 +52,13 @@ src/
   components/         Header, Footer, MessageBubble, MessageCard, PdfButton, WaitlistSection
   screens/            HomeScreen, MessagesScreen, ThanksScreen
   pedeAssim/          the /pede-assim screens (loaded lazily), their styles, fonts and the instructions data
+  sales/              the /guia-pede-assim sales page (loaded lazily), its copy, styles and cover
   **/*.test.ts(x)     unit and component tests (Vitest + Testing Library, jsdom)
 e2e/                  browser tests (Playwright): navigation, copy, layout, accessibility, keyboard, zoom, motion
 validation/           repeatable validation scripts (see FRONTEND_VALIDATION.md); screenshots are generated, not committed
 pdf/                  source of the free PDF (see pdf/README.md)
-public/               the generated PDF, the social preview image, and the Cloudflare _redirects and _headers
+public/               the generated PDF, the social preview images, and the Cloudflare _redirects and _headers
+functions/            Pages Function that gives /guia-pede-assim its own link preview
 ```
 
 ## Run locally
@@ -94,14 +104,19 @@ PLAYWRIGHT_BASE_URL=https://<host> npx playwright test e2e/pede-assim
 The accessibility tests run axe against WCAG 2.2 AA rules. They don't replace checking with the keyboard and a
 screen reader.
 
-Two scripts in `validation/` go beyond the test suite (they build the site themselves, so run them from a clean tree):
+Scripts in `validation/` go beyond the test suite (they build the site themselves, so run them from a clean tree):
 
 - `node validation/verify-builds.mjs` builds the analytics, no-key and preview variants and checks them: every event
   and its properties (against a fake PostHog host, nothing is sent), the Tally link attribution, no cookies or
   storage, the PDF being served, the preview's in-memory routing, and that the 12 Pede assim instructions are in
-  one lazy chunk and not in the entry chunk.
-- `node validation/capture-screenshots.mjs` takes full-page screenshots of both routes at 320, 390, 768, 1024 and
-  1440 px (needs `npx vite preview --port 4173` running).
+  the companion chunk and not in the entry chunk. The sales chunk may hold situation 4 only.
+- `node validation/compare-sales-copy.mjs <path to v2>` compares the visible text of `/guia-pede-assim` with the
+  v2 preview, for the pending checkout and the live one. It ignores footer bits v2 still has and the page
+  does not: “ · @liadahospedagem”, “Suporte, reembolso e termos de compra: a confirmar.”, and v2’s “criado por
+  Jamile Radloff”, which the page corrects to “criada”. Local only, because v2 is not in this repo, so CI does
+  not run it.
+- `node validation/capture-screenshots.mjs` takes full-page screenshots of the routes, including
+  `/guia-pede-assim`, at 320, 390, 768, 1024 and 1440 px (needs `npx vite preview --port 4173` running).
 
 PostHog drops events from browsers that look automated, so analytics tests must hide `navigator.webdriver` and the
 headless user agent, as `verify-builds.mjs` does.
@@ -150,9 +165,11 @@ Events:
 | `downloaded_pdf` | downloaded the PDF file on the thank-you screen | `page` (`thanks`) |
 | `clicked_waitlist` | went to the Tally form | `page`, `placement` (`hero`, `after-first-template`, `section`, `after-copy`) |
 | `viewed_copy_prompt` | the once-per-visit waitlist prompt appeared after a successful copy | `message`, `page` |
-| `opened_faq` | opened an FAQ item | `question` (`is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`) |
+| `opened_faq` | opened an FAQ item | `question` (home: `is-it-free`, `regular-whatsapp`, `single-apartment`, `tech-skills`, `who-is-behind-lia`; sales: `how-to-receive`, `why-buy`, `no-ai-skills`, `sounds-robotic`, `auto-reply`, `copy-and-send`) |
 | `clicked_linkedin` | clicked Jamile's LinkedIn | |
 | `copied_instruction` | copied an instruction on a Pede assim page (the paid guide's companion) | `instruction` (the situation's slug, e.g. `check-out-mais-tarde`) |
+| `clicked_checkout` | went to the Hotmart checkout from the sales page. Only the live page can send it | `placement` (`hero`, `closing`) |
+| `clicked_kit_updates` | went to the Kit updates form from the sales page | |
 
 The properties are typed in `EventProps` (`src/analytics.ts`): a call with a missing, extra or misspelled property
 does not compile.

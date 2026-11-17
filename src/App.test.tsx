@@ -168,6 +168,57 @@ describe('navigation', () => {
     expect(card('checkout')).toHaveClass('message-card--highlight')
   })
 
+  describe('sales page', () => {
+    const FREE_TITLE = '3 mensagens prontas · Lia da Hospedagem'
+    const FREE_DESCRIPTION = 'Boas-vindas, chegada mais cedo e lembrete de check-out.'
+    const description = () => document.head.querySelector('meta[name="description"]')
+
+    beforeEach(() => {
+      document.title = FREE_TITLE
+      const meta = document.createElement('meta')
+      meta.name = 'description'
+      meta.content = FREE_DESCRIPTION
+      document.head.append(meta)
+    })
+
+    afterEach(() => {
+      document.head.querySelectorAll('meta[name="description"]').forEach((meta) => meta.remove())
+    })
+
+    it('renders its own layout, without the free page header, footer or waitlist', async () => {
+      await renderAt('/guia-pede-assim?utm_source=instagram&utm_medium=bio')
+
+      const title = await screen.findByRole('heading', { level: 1 })
+      expect(title.textContent).toBe('É sempre a mesma pergunta. Pede assim pra\u00a0IA.')
+      expect(title.querySelector('em')?.textContent).toBe('Pede assim pra\u00a0IA.')
+      expect(screen.getAllByRole('main')).toHaveLength(1)
+      expect(screen.getByRole('main')).toHaveAttribute('id', 'conteudo')
+      expect(document.querySelector('.site-header')).toBeNull()
+      expect(document.querySelector('.site-footer')).toBeNull()
+      expect(document.querySelector('.waitlist')).toBeNull()
+      expect(screen.queryByText(/lista de lançamento/)).not.toBeInTheDocument()
+    })
+
+    it('sets its title and description, stays indexable, and restores both on leaving', async () => {
+      await renderAt('/guia-pede-assim')
+      await screen.findByRole('heading', { level: 1 })
+      const { navigate } = await import('./router')
+
+      expect(document.title).toBe('Pede assim pra IA | Lia da Hospedagem')
+      expect(description()).toHaveAttribute(
+        'content',
+        '12 instruções testadas no ChatGPT grátis pra pedir à IA um rascunho de mensagem pro hóspede. PDF de 15 páginas por R$10.',
+      )
+      expect(document.head.querySelector('meta[name="robots"]')).toBeNull()
+
+      act(() => navigate('/'))
+
+      expect(document.title).toBe(FREE_TITLE)
+      expect(description()).toHaveAttribute('content', FREE_DESCRIPTION)
+      expect(document.head.querySelectorAll('meta[name="description"]')).toHaveLength(1)
+    })
+  })
+
   it('navigates in memory in preview mode without changing the URL', async () => {
     vi.stubEnv('VITE_PREVIEW', '1')
     await renderAt('/')

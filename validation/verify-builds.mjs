@@ -1,9 +1,10 @@
 // Verifies the three build variants end to end, without sending anything to the real PostHog or Tally:
-//   1. analytics build: a fake PostHog key and host, with every PostHog request intercepted and decoded
+//   1. analytics build: a fake PostHog key pointed at a local server that records and decodes every request
 //   2. no-key build: the default for local work and PR previews, which must make no analytics requests
 //   3. preview build (VITE_PREVIEW=1): in-memory routing; the thank-you PDF download is disabled
 //   node validation/verify-builds.mjs
 import { readFileSync, readdirSync } from 'node:fs'
+import { createServer } from 'node:http'
 import { join } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 import { build, preview } from 'vite'
@@ -48,14 +49,62 @@ function decodeCapture(buffer) {
   return Array.isArray(parsed) ? parsed : Array.isArray(parsed.batch) ? parsed.batch : [parsed]
 }
 
+// A real server, not context.route(): PostHog flushes its batch with navigator.sendBeacon when a page unloads,
+// and Playwright never sees those requests, so a route would lose every event sent just before a navigation.
+async function startFakePostHog() {
+  const events = []
+  const hostRequests = []
+  const server = createServer((request, response) => {
+    const chunks = []
+    request.on('data', (chunk) => chunks.push(chunk))
+    request.on('end', () => {
+      const path = new URL(request.url, FAKE_HOST).pathname
+      hostRequests.push(path)
+      const headers = {
+        'access-control-allow-origin': request.headers.origin ?? '*',
+        'access-control-allow-credentials': 'true',
+        'access-control-allow-headers': request.headers['access-control-request-headers'] ?? '*',
+        'access-control-allow-methods': 'GET, POST, OPTIONS',
+      }
+      if (request.method === 'OPTIONS') {
+        response.writeHead(204, headers).end()
+        return
+      }
+      const body = Buffer.concat(chunks)
+      if (body.length && /\/(e|i\/v0\/e|batch)\/?$/.test(path)) {
+        try {
+          events.push(...decodeCapture(body))
+        } catch {
+          // not an event payload
+        }
+      }
+      if (path.endsWith('.js')) {
+        response.writeHead(200, { ...headers, 'content-type': 'application/javascript' }).end('')
+        return
+      }
+      // Minimal answers to the config and feature-flag calls that PostHog makes on start.
+      const json = path.endsWith('/config')
+        ? { token: 'phc_validation_key', supportedCompression: ['gzip-js'], hasFeatureFlags: false, analytics: { endpoint: '/i/v0/e/' }, siteApps: [] }
+        : path.startsWith('/flags')
+          ? { featureFlags: {}, featureFlagPayloads: {}, flags: {}, errorsWhileComputingFlags: false }
+          : {}
+      response.writeHead(200, { ...headers, 'content-type': 'application/json' }).end(JSON.stringify(json))
+    })
+  })
+  const { hostname, port } = new URL(FAKE_HOST)
+  await new Promise((resolve) => server.listen(Number(port), hostname, resolve))
+  return { events, hostRequests, close: () => new Promise((resolve) => server.close(resolve)) }
+}
+
 async function stubExternal(context) {
-  await context.route(/^https:\/\/(tally\.so|www\.linkedin\.com)\//, (route) => route.fulfill({ status: 200, contentType: 'text/html', body: 'stub' }))
+  await context.route(/^https:\/\/(tally\.so|www\.linkedin\.com|pay\.hotmart\.com)\//, (route) => route.fulfill({ status: 200, contentType: 'text/html', body: 'stub' }))
 }
 
 // ---------------------------------------------------------------- 1. analytics build
 async function verifyAnalytics(browser) {
-  console.log('\n# Analytics build (fake key, intercepted host)')
-  await buildVariant('/tmp/lia-dist-analytics', { VITE_POSTHOG_KEY: 'phc_validation_key', VITE_POSTHOG_HOST: FAKE_HOST, VITE_PREVIEW: '' })
+  console.log('\n# Analytics build (fake key, local fake host)')
+  // Live checkout only in this build, so clicked_checkout can fire. The no-key and preview builds stay pending.
+  await buildVariant('/tmp/lia-dist-analytics', { VITE_POSTHOG_KEY: 'phc_validation_key', VITE_POSTHOG_HOST: FAKE_HOST, VITE_PREVIEW: '', VITE_CHECKOUT_LIVE: 'true' })
   const server = await serve('/tmp/lia-dist-analytics', 4174)
   // PostHog silently drops events from anything that looks like a bot: a "HeadlessChrome" user agent or brand,
   // or navigator.webdriver. Hide those signals so the events this test wants to inspect are actually sent.
@@ -68,31 +117,7 @@ async function verifyAnalytics(browser) {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await stubExternal(context)
 
-  const events = []
-  const hostRequests = []
-  await context.route(`${FAKE_HOST}/**`, async (route) => {
-    const request = route.request()
-    hostRequests.push(new URL(request.url()).pathname)
-    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' }
-    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
-    const body = request.postDataBuffer()
-    if (body && /\/(e|i\/v0\/e|batch)\/?$/.test(new URL(request.url()).pathname)) {
-      try {
-        events.push(...decodeCapture(body))
-      } catch {
-        // not an event payload
-      }
-    }
-    const path = new URL(request.url()).pathname
-    if (path.endsWith('.js')) return route.fulfill({ status: 200, headers, contentType: 'application/javascript', body: '' })
-    // Minimal answers to the config and feature-flag calls that PostHog makes on start.
-    const json = path.endsWith('/config')
-      ? { token: 'phc_validation_key', supportedCompression: ['gzip-js'], hasFeatureFlags: false, analytics: { endpoint: '/i/v0/e/' }, siteApps: [] }
-      : path.startsWith('/flags')
-        ? { featureFlags: {}, featureFlagPayloads: {}, flags: {}, errorsWhileComputingFlags: false }
-        : {}
-    return route.fulfill({ status: 200, headers, contentType: 'application/json', body: JSON.stringify(json) })
-  })
+  const { events, hostRequests, close: closeFakeHost } = await startFakePostHog()
 
   const page = await context.newPage()
   await page.goto(`http://localhost:4174/?utm_source=instagram&utm_medium=dm&utm_content=${REEL}`)
@@ -126,7 +151,39 @@ async function verifyAnalytics(browser) {
   const [pdfFile] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Baixar o Caderninho em PDF' }).click()])
   await pdfFile.close()
 
-  const wanted = ['$pageview', 'opened_faq', 'copied_message', 'requested_pdf', 'downloaded_pdf', 'clicked_waitlist', 'clicked_linkedin', 'opened_messages', 'viewed_copy_prompt']
+  const salesUrl = `http://localhost:4174/guia-pede-assim?utm_source=instagram&utm_medium=dm&utm_content=${REEL}`
+  const HOTMART = 'https://pay.hotmart.com/T108525255F'
+  const KIT = 'https://tally.so/r/xVDy9G?origin=pede-assim'
+  await page.goto(salesUrl)
+  await page.getByRole('heading', { level: 1, name: /Pede assim pra IA/ }).waitFor()
+  for (const question of [
+    'Como recebo o PDF?',
+    'O ChatGPT é grátis. Por que comprar o PDF?',
+    'Não sei usar IA. Vou conseguir?',
+    'Vai parecer robô?',
+    'Isso responde sozinho aos hóspedes?',
+    'Então são mensagens pra copiar e mandar?',
+  ]) {
+    await page.getByText(question).click()
+  }
+  const heroBuy = page.getByRole('link', { name: 'Quero meu PDF por R$10' }).first()
+  const closingBuy = page.locator('#comprar').getByRole('link', { name: 'Quero meu PDF por R$10' })
+  const kit = page.getByRole('link', { name: 'Quero receber novidades do Kit' })
+  check('hero checkout link is the exact Hotmart URL', (await heroBuy.getAttribute('href')) === HOTMART, (await heroBuy.getAttribute('href')) ?? '')
+  check('closing checkout link is the exact Hotmart URL', (await closingBuy.getAttribute('href')) === HOTMART, (await closingBuy.getAttribute('href')) ?? '')
+  check('kit link is the exact Tally URL', (await kit.getAttribute('href')) === KIT, (await kit.getAttribute('href')) ?? '')
+  // Same-tab Hotmart jumps. The click is sent with the page unload, which the local server still records.
+  await Promise.all([page.waitForURL(/pay\.hotmart\.com/), heroBuy.click()])
+  await page.goto(salesUrl)
+  await page.getByRole('heading', { level: 1, name: /Pede assim pra IA/ }).waitFor()
+  await Promise.all([page.waitForURL(/pay\.hotmart\.com/), page.locator('#comprar').getByRole('link', { name: 'Quero meu PDF por R$10' }).click()])
+  await page.goto(salesUrl)
+  await page.getByRole('heading', { level: 1, name: /Pede assim pra IA/ }).waitFor()
+  const [kitPopup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Quero receber novidades do Kit' }).click()])
+  check('kit link opens in a new tab', kitPopup.url().startsWith(KIT), kitPopup.url())
+  await kitPopup.close()
+
+  const wanted = ['$pageview', 'opened_faq', 'copied_message', 'requested_pdf', 'downloaded_pdf', 'clicked_waitlist', 'clicked_linkedin', 'opened_messages', 'viewed_copy_prompt', 'clicked_checkout', 'clicked_kit_updates']
   for (let i = 0; i < 40 && !wanted.every((name) => events.some((e) => e.event === name)); i++) await page.waitForTimeout(250)
   await page.waitForTimeout(500)
 
@@ -136,9 +193,12 @@ async function verifyAnalytics(browser) {
   const props = (e) => Object.fromEntries(Object.entries(e.properties ?? {}).filter(([key]) => !key.startsWith('$') && !key.startsWith('utm_') && !POSTHOG_CAMPAIGN_FIELDS.has(key) && key !== 'token' && key !== 'distinct_id' && key !== 'origin' && key !== 'reel'))
   const sameProps = (event, expected) => JSON.stringify(props(event)) === JSON.stringify(expected)
 
-  check('$pageview was sent for home, messages and thanks', named('$pageview').length === 3, `${named('$pageview').length} sent`)
+  check('$pageview was sent for home, messages, thanks and three sales visits', named('$pageview').length === 6, `${named('$pageview').length} sent`)
   check('opened_faq { question: is-it-free }', named('opened_faq').some((e) => sameProps(e, { question: 'is-it-free' })), JSON.stringify(named('opened_faq').map(props)))
   check('opened_faq { question: who-is-behind-lia }', named('opened_faq').some((e) => sameProps(e, { question: 'who-is-behind-lia' })))
+  for (const question of ['how-to-receive', 'why-buy', 'no-ai-skills', 'sounds-robotic', 'auto-reply', 'copy-and-send']) {
+    check(`opened_faq { question: ${question} }`, named('opened_faq').some((e) => sameProps(e, { question })))
+  }
   check('copied_message { message: welcome, page: home }', named('copied_message').some((e) => sameProps(e, { message: 'welcome', page: 'home' })), JSON.stringify(named('copied_message').map(props)))
   check('copied_message { message: early-checkin, page: messages }', named('copied_message').some((e) => sameProps(e, { message: 'early-checkin', page: 'messages' })))
   check('requested_pdf { page: home }', named('requested_pdf').some((e) => sameProps(e, { page: 'home' })), JSON.stringify(named('requested_pdf').map(props)))
@@ -147,6 +207,9 @@ async function verifyAnalytics(browser) {
   check('viewed_copy_prompt { message: welcome, page: home }', named('viewed_copy_prompt').some((e) => sameProps(e, { message: 'welcome', page: 'home' })), JSON.stringify(named('viewed_copy_prompt').map(props)))
   check('the copy prompt is recorded once per visit', named('viewed_copy_prompt').length === 1, `${named('viewed_copy_prompt').length} sent`)
   check('clicked_linkedin has no properties', named('clicked_linkedin').some((e) => sameProps(e, {})))
+  check('clicked_checkout { placement: hero }', named('clicked_checkout').some((e) => sameProps(e, { placement: 'hero' })), JSON.stringify(named('clicked_checkout').map(props)))
+  check('clicked_checkout { placement: closing }', named('clicked_checkout').some((e) => sameProps(e, { placement: 'closing' })))
+  check('clicked_kit_updates has no properties', named('clicked_kit_updates').some((e) => sameProps(e, {})))
   check('opened_messages { from: home, message: null }', named('opened_messages').some((e) => sameProps(e, { from: 'home', message: null })), JSON.stringify(named('opened_messages').map(props)))
   check('every event carries the Reel (utm_content or reel)', events.length > 0 && events.every((e) => e.properties?.utm_content === REEL || e.properties?.reel === REEL), `${events.length} events`)
   check('no cookies were set', (await context.cookies()).length === 0)
@@ -159,26 +222,48 @@ async function verifyAnalytics(browser) {
 
   await context.close()
   await server.close()
+  await closeFakeHost()
 }
 
-// The paid guide's text must only ship in the lazy Pede assim chunk, never in the free page's entry chunk.
+// The paid guide's 12 instructions ship in the lazy companion chunk, never in the free page's entry chunk.
+// The sales page may carry situation 4 (its example) and none of the other instructions.
 function verifyPedeAssimIsolation(outDir) {
   const { groups } = JSON.parse(readFileSync(new URL('../src/pedeAssim/instructions.json', import.meta.url), 'utf8'))
-  const markers = groups.flatMap((group) => group.items).map((item) => item.prompt.split('\n').reduce((a, b) => (b.length > a.length ? b : a)))
+  const items = groups.flatMap((group) => group.items)
+  const markerOf = (item) => item.prompt.split('\n').reduce((a, b) => (b.length > a.length ? b : a))
+  const markers = items.map(markerOf)
+  const situation4 = markerOf(items.find((item) => item.slug === 'check-in-mais-cedo'))
+  // HERO.subtitle in src/sales/content.ts. A sales-page marker that is not one of the 12 instructions.
+  const salesCopy =
+    '12 instruções testadas no ChatGPT grátis, uma pra cada situação com hóspede. Você preenche com os dados da sua reserva, a IA escreve um rascunho e você confere antes de mandar.'
   const entry = readFileSync(join(outDir, 'index.html'), 'utf8').match(/<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"/)?.[1]
   const chunks = readdirSync(join(outDir, 'assets')).filter((name) => name.endsWith('.js')).map((name) => ({ name: `assets/${name}`, text: readFileSync(join(outDir, 'assets', name), 'utf8') }))
-  const entryText = chunks.find((chunk) => chunk.name === entry)?.text ?? ''
+  const entryChunk = chunks.find((chunk) => chunk.name === entry)
+  const entryText = entryChunk?.text ?? ''
   const leaked = markers.filter((marker) => entryText.includes(marker))
   check('the entry chunk holds none of the 12 Pede assim instructions', entryText !== '' && leaked.length === 0, `${entry}, ${leaked.length} found`)
+  check('the entry chunk holds none of the sales page copy', entryText !== '' && !entryText.includes(salesCopy))
   const holders = chunks.filter((chunk) => markers.every((marker) => chunk.text.includes(marker)))
-  const partial = chunks.filter((chunk) => !holders.includes(chunk) && markers.some((marker) => chunk.text.includes(marker)))
-  check('exactly one lazy chunk holds all 12 instructions', markers.length === 12 && holders.length === 1 && holders[0].name !== entry && partial.length === 0, holders.map((chunk) => chunk.name).join(', ') || 'none')
+  const companion = holders.find((chunk) => chunk.name !== entry)
+  check(
+    'exactly one lazy chunk holds all 12 instructions',
+    markers.length === 12 && holders.length === 1 && companion !== undefined && !companion.text.includes(salesCopy),
+    holders.map((chunk) => chunk.name).join(', ') || 'none',
+  )
+  const partial = chunks.filter((chunk) => chunk !== companion && chunk !== entryChunk && markers.some((marker) => chunk.text.includes(marker)))
+  const others = markers.filter((marker) => marker !== situation4)
+  const salesOnly =
+    partial.length === 1 &&
+    partial[0].text.includes(situation4) &&
+    partial[0].text.includes(salesCopy) &&
+    others.every((marker) => !partial[0].text.includes(marker))
+  check('the sales chunk holds situation 4 and no other instruction', salesOnly, partial.map((chunk) => chunk.name).join(', ') || 'none')
 }
 
 // ---------------------------------------------------------------- 2. build without a key + PDF
 async function verifyNoKeyBuild(browser) {
   console.log('\n# Production build without a PostHog key')
-  await buildVariant('/tmp/lia-dist-nokey', { VITE_POSTHOG_KEY: '', VITE_PREVIEW: '' })
+  await buildVariant('/tmp/lia-dist-nokey', { VITE_POSTHOG_KEY: '', VITE_PREVIEW: '', VITE_CHECKOUT_LIVE: '' })
   verifyPedeAssimIsolation('/tmp/lia-dist-nokey')
   const server = await serve('/tmp/lia-dist-nokey', 4175)
   const context = await browser.newContext()
@@ -213,7 +298,7 @@ async function verifyNoKeyBuild(browser) {
 // ---------------------------------------------------------------- 3. preview build
 async function verifyPreviewBuild(browser) {
   console.log('\n# Preview build (VITE_PREVIEW=1)')
-  await buildVariant('/tmp/lia-dist-preview', { VITE_POSTHOG_KEY: '', VITE_PREVIEW: '1' })
+  await buildVariant('/tmp/lia-dist-preview', { VITE_POSTHOG_KEY: '', VITE_PREVIEW: '1', VITE_CHECKOUT_LIVE: '' })
   const server = await serve('/tmp/lia-dist-preview', 4176)
   const context = await browser.newContext()
   const page = await context.newPage()

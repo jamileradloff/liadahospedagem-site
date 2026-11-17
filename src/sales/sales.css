@@ -1,0 +1,814 @@
+/* The approved v2 look of the "Pede assim pra IA" sales page (Nov 17), in the colors of its Hotmart page.
+   Everything is scoped under .sales so it can't touch the free page, and loads with the lazy screen only. */
+body:has(.sales) {
+  background: #ffffff;
+}
+
+.sales {
+  /* The Hotmart page's colors. */
+  --teal: #1f4e5f; /* hero background, headings */
+  --teal-deep: #143541; /* end of the closing gradient */
+  --terracotta: #c0643f; /* buttons */
+  --coral: #e59374; /* highlighted words in the hero title */
+  --ink: #1e293b; /* body text */
+  --muted: #64748b; /* secondary text */
+  --faint: #94a3b8;
+  --line: #cbd5e1;
+  --line-soft: #e2e8f0; /* benefit-card border */
+  --grey: #f4f6f8; /* light grey section background */
+  --cream: #fcfbf9; /* benefit cards */
+  --white: #ffffff;
+  --night: #0f172a; /* footer */
+
+  /* Small text where the Hotmart color misses WCAG AA (4.5:1). Ratios are against the surfaces named. */
+  --terracotta-text: #a9532f; /* 5.3 white, 4.9 grey */
+  --coral-text: #f0b094; /* 4.9 teal */
+  --muted-on-grey: #5b6b80; /* 5.0 grey */
+
+  --font: 'Outfit Variable', Outfit, 'DM Sans', Arial, sans-serif;
+
+  --wrap: 64rem;
+  --gutter: clamp(1rem, 4vw, 1.5rem);
+  --section: clamp(3.5rem, 8vw, 6rem);
+  --pill: 50px;
+
+  background: var(--white);
+  color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--font);
+  overflow-wrap: break-word;
+}
+
+/* Undo the free page's element styles (styles.css). :where() keeps these at one class, so the section
+   rules below win by coming later. */
+.sales :where(h1, h2, h3, h4, p, ul, ol, figure, blockquote) {
+  margin: 0;
+}
+
+.sales :where(h1, h2, h3, h4) {
+  font-family: var(--font);
+  text-wrap: wrap;
+}
+
+.sales :where(a) {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+/* Teal ring on the light sections (9.1 on white); coral on the teal ones (3.8). */
+.sales :focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.sales-hero :focus-visible,
+.sales-closing :focus-visible {
+  outline-color: var(--coral);
+}
+
+/* The purchase card is white, so it keeps the teal ring even though the section behind it is teal. */
+.sales-card :focus-visible {
+  outline-color: var(--teal);
+}
+
+/* Headings only receive focus programmatically, when the router lands on them. */
+.sales h2[tabindex='-1']:focus {
+  outline: none;
+}
+
+.sales-wrap {
+  width: min(100%, var(--wrap));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sales-section {
+  padding-block: var(--section);
+}
+
+.sales :where(h2) {
+  color: var(--teal);
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.sales :where(h3) {
+  color: var(--teal);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Brand terracotta is 4.1 on white and 3.8 on grey; small text uses the darker shade. */
+.sales-kicker {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: var(--terracotta-text);
+  font: 700 0.8rem/1.3 var(--font);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- Hero ---------- */
+.sales-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--teal);
+  color: var(--white);
+  padding: clamp(3.5rem, 9vw, 6rem) 0 clamp(3.5rem, 8vw, 5rem);
+}
+
+.sales-hero::before {
+  content: '';
+  position: absolute;
+  inset: -30% -20% auto auto;
+  width: 60%;
+  aspect-ratio: 1;
+  background: radial-gradient(closest-side, rgba(229, 147, 116, 0.16), transparent);
+  pointer-events: none;
+}
+
+.sales-hero-grid {
+  position: relative;
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+
+.sales-hero-grid > *,
+.sales-hero-price > *,
+.sales-hero-actions > * {
+  min-width: 0;
+}
+
+.sales-hero h1 {
+  color: var(--white);
+  font-size: clamp(2.3rem, 1.7rem + 2.6vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+.sales-hero h1 em {
+  font-style: normal;
+  color: var(--coral);
+}
+
+.sales-hero-sub {
+  margin-top: 1.25rem;
+  max-width: 34rem;
+  color: var(--line);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.sales-hero-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-top: 1.5rem;
+  color: var(--line);
+  font-size: 0.95rem;
+}
+
+.sales-hero-price strong {
+  color: var(--white);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.sales-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-top: 1.75rem;
+}
+
+.sales-hero-link {
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* v2 used --faint here (3.5 on teal); --line reads at 6.1. */
+.sales-hero-note {
+  margin-top: 1rem;
+  color: var(--line);
+  font-size: 0.9rem;
+}
+
+.sales-cover {
+  justify-self: center;
+  width: min(100%, 18rem);
+}
+
+.sales-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transform: rotate(2deg);
+}
+
+/* ---------- Buttons: pills ---------- */
+/* White on terracotta is 4.1:1, so the label is set as large text (19px bold, 3:1). */
+.sales-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  max-width: 100%;
+  padding: 1rem 2rem;
+  border: 0;
+  border-radius: var(--pill);
+  background: var(--terracotta);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 10px 25px -5px rgba(192, 100, 63, 0.4);
+  cursor: pointer;
+}
+
+.sales-btn:hover {
+  box-shadow: 0 14px 28px -6px rgba(192, 100, 63, 0.5);
+}
+
+.sales-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+
+/* ---------- Example ---------- */
+.sales-demo-head {
+  max-width: 40rem;
+}
+
+.sales-demo-head p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.sales-chat {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+  align-items: start;
+}
+
+.sales-chat > * {
+  min-width: 0;
+}
+
+.sales-bubble {
+  border-radius: 16px;
+  padding: 1.25rem 1.4rem;
+}
+
+.sales-bubble .sales-kicker {
+  margin-bottom: 0.45rem;
+}
+
+.sales-bubble blockquote {
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+
+.sales-guest {
+  background: var(--grey);
+  border: 1px solid var(--line-soft);
+  border-bottom-left-radius: 4px;
+}
+
+/* --muted is 4.4 on the grey bubble. */
+.sales-guest-note {
+  margin-top: 0.75rem;
+  color: var(--muted-on-grey);
+  font-size: 0.95rem;
+}
+
+.sales-draft {
+  background: var(--teal);
+  color: var(--white);
+  border-bottom-right-radius: 4px;
+}
+
+/* --coral is 3.8 on teal. */
+.sales-draft .sales-kicker {
+  color: var(--coral-text);
+}
+
+.sales-check {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--cream);
+  border: 1px solid var(--line-soft);
+  border-left: 4px solid var(--terracotta);
+  border-radius: 12px;
+}
+
+.sales-check strong {
+  color: var(--teal);
+}
+
+.sales-fineprint {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.sales-disclosure {
+  margin-top: 1.5rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: var(--white);
+  min-width: 0;
+}
+
+.sales-disclosure summary {
+  min-height: 3rem;
+  padding: 0.9rem 1.25rem;
+  color: var(--teal);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sales-disclosure summary:hover {
+  text-decoration: underline;
+}
+
+.sales-disclosure-body {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.sales-disclosure pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font: 400 0.95rem/1.65 var(--font);
+  color: var(--ink);
+  background: var(--grey);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.sales-fields {
+  margin-top: 0.9rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ---------- Section titles ---------- */
+.sales-grey {
+  background: var(--grey);
+}
+
+.sales-section-title {
+  text-align: center;
+  max-width: 40rem;
+  margin: 0 auto 3rem;
+}
+
+.sales-section-title p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+/* --muted is 4.4 on grey. */
+.sales-grey .sales-section-title p {
+  color: var(--muted-on-grey);
+}
+
+/* ---------- What's in the PDF ---------- */
+.sales-benefits {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.sales-benefit {
+  background: var(--cream);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 2.25rem 1.75rem;
+}
+
+.sales-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.25rem;
+  border-radius: 10px;
+  background: rgba(31, 78, 95, 0.1);
+  color: var(--teal);
+}
+
+.sales-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.sales-benefit p {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+.sales-inside {
+  margin-top: 3.5rem;
+}
+
+.sales-inside h3 {
+  text-align: center;
+}
+
+.sales-inside-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-inside-list li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  background: var(--white);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  min-width: 0;
+}
+
+.sales-inside-list li > span:last-child {
+  min-width: 0;
+}
+
+.sales-inside-list b {
+  color: var(--teal);
+}
+
+/* Small terracotta text: the darker shade, as for the kickers. */
+.sales-tick {
+  color: var(--terracotta-text);
+  font-weight: 700;
+}
+
+.sales-situations-title {
+  margin-top: 4rem;
+}
+
+.sales-modules {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-benefits > *,
+.sales-modules > *,
+.sales-steps > *,
+.sales-about > *,
+.sales-closing-grid > * {
+  min-width: 0;
+}
+
+.sales-module {
+  background: var(--white);
+  border-left: 4px solid var(--teal);
+  border-radius: 12px;
+  padding: 1.4rem 1.6rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.sales-module h4 {
+  color: var(--teal);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* 17.6px bold is just under large text, so the darker shade. */
+.sales-module h4 span {
+  color: var(--terracotta-text);
+  margin-right: 0.35rem;
+}
+
+.sales-module p {
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* ---------- How to use ---------- */
+.sales-steps {
+  display: grid;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-step {
+  border-top: 3px solid var(--teal);
+  padding-top: 1.25rem;
+}
+
+/* 2rem bold is large text, where brand terracotta's 4.1 is enough. */
+.sales-step-num {
+  display: block;
+  color: var(--terracotta);
+  font: 700 2rem/1 var(--font);
+  margin-bottom: 0.6rem;
+}
+
+.sales-step p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
+.sales-prereq {
+  margin-top: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--grey);
+  border-radius: 12px;
+  color: var(--muted-on-grey);
+  font-size: 0.98rem;
+}
+
+/* ---------- FAQ ---------- */
+.sales-faq {
+  max-width: 46rem;
+  margin-inline: auto;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.sales-faq > * {
+  min-width: 0;
+}
+
+.sales-faq details {
+  background: var(--white);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+}
+
+.sales-faq summary {
+  min-height: 3.25rem;
+  padding: 1rem 1.25rem;
+  color: var(--teal);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sales-faq summary:hover {
+  text-decoration: underline;
+}
+
+.sales-faq details p {
+  padding: 0 1.25rem 1.25rem;
+  color: var(--muted);
+}
+
+/* ---------- About ---------- */
+.sales-about {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  max-width: 52rem;
+  margin-inline: auto;
+}
+
+.sales-avatar {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: var(--grey);
+  display: grid;
+  place-items: center;
+}
+
+.sales-avatar svg {
+  width: 4.5rem;
+  height: auto;
+}
+
+.sales-about p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+}
+
+.sales-text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-top: 0.5rem;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ---------- Closing CTA + purchase card ---------- */
+.sales-closing {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%);
+  color: var(--white);
+  padding-block: clamp(4rem, 10vw, 7rem);
+}
+
+.sales-closing-grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.sales-closing h2 {
+  color: var(--white);
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 2.6rem);
+}
+
+.sales-closing-copy p {
+  margin-top: 1rem;
+  color: var(--line);
+  font-size: 1.15rem;
+  max-width: 32rem;
+}
+
+.sales-card {
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 20px;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+}
+
+.sales-card h3 {
+  font-size: 1.35rem;
+}
+
+.sales-card-price {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--teal);
+  font: 700 3.25rem/1 var(--font);
+}
+
+.sales-card-meta {
+  margin-top: 0.4rem;
+  color: var(--muted);
+}
+
+.sales-card ul {
+  margin: 1.25rem 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.sales-card li {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.sales-card-note {
+  margin-top: 0.9rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.sales-btn-wide {
+  width: 100%;
+}
+
+/* ---------- Footer ---------- */
+.sales-footer {
+  background: var(--night);
+  color: var(--faint);
+  padding-block: 2.5rem;
+  font-size: 0.9rem;
+}
+
+.sales-footer-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.sales-footer a,
+.sales-disclose {
+  color: var(--line);
+}
+
+.sales-footer-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.sales-social {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.sales-footer a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.25rem;
+}
+
+.sales-social svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+/* Teal would barely show on the night-blue footer. */
+.sales-footer :focus-visible {
+  outline-color: var(--coral);
+}
+
+@media (min-width: 40em) {
+  .sales-about {
+    grid-template-columns: auto 1fr;
+  }
+
+  .sales-chat {
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 1.25rem;
+  }
+
+  .sales-modules {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .sales-inside-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sales-btn {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .sales-btn:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 56em) {
+  .sales-hero-grid {
+    grid-template-columns: 1.5fr 1fr;
+    gap: 3rem;
+  }
+
+  .sales-cover {
+    width: min(100%, 24rem);
+  }
+
+  .sales-benefits {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .sales-steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .sales-closing-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 4rem;
+  }
+}
+
+/* Last, so the disabled button keeps still and flat over the hover rules above. Disabled text is exempt
+   from contrast minimums. */
+.sales-btn-disabled,
+.sales-btn-disabled:hover {
+  background: var(--line-soft);
+  color: var(--muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}

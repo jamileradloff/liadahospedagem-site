@@ -45,6 +45,18 @@ const ROUTES: { path: string; controls: (page: Page) => Locator[] }[] = [
       page.getByRole('link', { name: '@liadahospedagem no Instagram' }),
     ],
   },
+  {
+    path: '/guia-pede-assim',
+    controls: (page) => [
+      page.getByRole('link', { name: 'Quero meu PDF por R$10' }).first(),
+      page.getByText('Ver o pedido pra IA dessa situação'),
+      page.getByText('Como recebo o PDF?'),
+      page.getByRole('link', { name: 'Quero receber novidades do Kit' }),
+      page.getByRole('link', { name: '@liadahospedagem no Instagram' }),
+      page.getByRole('link', { name: '@liadahospedagem no TikTok' }),
+      page.getByRole('link', { name: 'Lia da Hospedagem no Facebook' }),
+    ],
+  },
 ]
 
 async function expectControlsReachable(page: Page, controls: Locator[]) {
@@ -60,6 +72,53 @@ async function expectControlsReachable(page: Page, controls: Locator[]) {
     expect(box.height, `${control.toString()} is too small to tap`).toBeGreaterThanOrEqual(24)
   }
 }
+
+test('the sales page keeps tall tap targets, and the cover moves beside the text from 56em', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'The sales layout sweep runs once, in desktop Chromium')
+
+  await page.setViewportSize({ width: 390, height: 900 })
+  await gotoSettled(page, '/guia-pede-assim')
+
+  const tall = [
+    page.getByRole('link', { name: 'Quero meu PDF por R$10' }).first(),
+    page.locator('#comprar').getByRole('link', { name: 'Quero meu PDF por R$10' }),
+    page.getByText('Ver o pedido pra IA dessa situação'),
+    ...[0, 1, 2, 3, 4, 5].map((i) => page.locator('.sales-faq summary').nth(i)),
+  ]
+  for (const control of tall) {
+    const box = await control.boundingBox()
+    expect(box, `${control.toString()} has no box`).not.toBeNull()
+    expect(box!.height, `${control.toString()} is under 48px`).toBeGreaterThanOrEqual(48)
+  }
+
+  const stack = [
+    page.getByRole('heading', { level: 1 }),
+    page.locator('.sales-hero-sub'),
+    page.locator('.sales-hero-price'),
+    page.locator('.sales-hero .sales-btn'),
+    page.getByRole('link', { name: 'Antes, quero ver um exemplo ↓' }),
+    page.locator('.sales-hero-note'),
+    page.locator('.sales-cover'),
+    page.locator('#exemplo'),
+  ]
+  let previous = -1
+  for (const part of stack) {
+    const box = await part.boundingBox()
+    expect(box, `${part.toString()} has no box`).not.toBeNull()
+    expect(box!.y, `${part.toString()} is out of order`).toBeGreaterThan(previous)
+    previous = box!.y
+  }
+  const text = await page.locator('.sales-hero-grid > div').first().boundingBox()
+  const cover = await page.locator('.sales-cover').boundingBox()
+  expect(cover!.y).toBeGreaterThanOrEqual(text!.y + text!.height - 1)
+
+  // 56em is 896px at the default root size. The cover sits in the second column from there up.
+  await page.setViewportSize({ width: 1024, height: 900 })
+  await gotoSettled(page, '/guia-pede-assim')
+  const wideText = await page.locator('.sales-hero-grid > div').first().boundingBox()
+  const wideCover = await page.locator('.sales-cover').boundingBox()
+  expect(wideCover!.x).toBeGreaterThanOrEqual(wideText!.x + wideText!.width - 1)
+})
 
 for (const route of ROUTES) {
   test(`${route.path} fits the device viewport`, async ({ page }) => {

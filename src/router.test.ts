@@ -30,6 +30,16 @@ describe('parse', () => {
     expect(parse('/pede-assim/nao-existe')).toEqual({ screen: 'pede-assim', anchor: '', instruction: 'nao-existe' })
   })
 
+  it('reads the sales page, with or without a trailing slash or campaign parameters', async () => {
+    const { parse } = await loadRouterAt('/')
+    const expected = { screen: 'sales', anchor: '', instruction: '' }
+    expect(parse('/guia-pede-assim')).toEqual(expected)
+    expect(parse('/guia-pede-assim/')).toEqual(expected)
+    expect(parse('/guia-pede-assim?utm_source=instagram&utm_medium=bio')).toEqual(expected)
+    expect(parse('/pede-assim')).toEqual({ screen: 'pede-assim', anchor: '', instruction: '' })
+    expect(parse('/pede-assim/check-in-mais-cedo')).toEqual({ screen: 'pede-assim', anchor: '', instruction: 'check-in-mais-cedo' })
+  })
+
   it('leaves the other screens unchanged', async () => {
     const { parse } = await loadRouterAt('/')
     expect(parse('/')).toEqual({ screen: 'home', anchor: '', instruction: '' })

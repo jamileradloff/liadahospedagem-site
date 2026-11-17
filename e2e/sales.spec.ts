@@ -84,6 +84,35 @@ test.describe('early check-in example', () => {
   })
 })
 
+test('each FAQ item opens and closes with Enter and Space', async ({ page }) => {
+  await page.goto(SALES_PATH)
+  const items = page.getByRole('region', { name: 'Antes de comprar' }).locator('details')
+  await expect(items).toHaveCount(6)
+
+  for (const item of await items.all()) {
+    const isOpen = () => item.evaluate((el: HTMLDetailsElement) => el.open)
+    await item.locator('summary').focus()
+    await page.keyboard.press('Enter')
+    expect(await isOpen()).toBe(true)
+    await page.keyboard.press('Enter')
+    expect(await isOpen()).toBe(false)
+    await page.keyboard.press('Space')
+    expect(await isOpen()).toBe(true)
+    await page.keyboard.press('Space')
+    expect(await isOpen()).toBe(false)
+  }
+})
+
+test('while the checkout is pending, Tab skips the disabled buy button', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Keyboard navigation is a desktop concern')
+  await page.goto(SALES_PATH)
+  await expect(page.getByRole('button', { name: 'Quero meu PDF por R$10' })).toBeDisabled()
+
+  await page.getByRole('link', { name: 'Quero receber novidades do Kit' }).focus()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('contentinfo').getByRole('link', { name: '@liadahospedagem' })).toBeFocused()
+})
+
 test('Back returns to the previous page with its own title', async ({ page }) => {
   await page.goto('/mensagens')
   await expect(page.getByRole('heading', { level: 1, name: 'Suas 3 mensagens' })).toBeVisible()

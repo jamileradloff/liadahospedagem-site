@@ -123,6 +123,70 @@ export const HOW_TO_USE = {
     'Você precisa abrir o PDF, acessar o ChatGPT e copiar e colar textos. Não precisa conectar Airbnb, Booking ou WhatsApp. Antes de colar a mensagem do hóspede, tira sobrenome, telefone, número da reserva e código de acesso.',
 } as const
 
+export const FAQ = {
+  kicker: 'Dúvidas',
+  title: 'Antes de comprar',
+  items: [
+    [
+      'Como recebo o PDF?',
+      'Pela Hotmart, depois da confirmação do pagamento. Confere o e-mail que você informar na compra: é por ele que chega o acesso.',
+    ],
+    [
+      'O ChatGPT é grátis. Por que comprar o PDF?',
+      'Você paga pelos 12 pedidos já organizados, pelos exemplos e pelo que conferir em cada situação. O PDF te mostra o que informar pra IA e como pedir um rascunho.',
+    ],
+    [
+      'Não sei usar IA. Vou conseguir?',
+      'O primeiro pedido, o do desconto, já vem preenchido pra você ver exatamente o que colar. Você só precisa acessar o ChatGPT, trocar o que está entre [colchetes] e copiar e colar. Não precisa programar.',
+    ],
+    [
+      'Vai parecer robô?',
+      'Os pedidos já dizem pra IA escrever uma mensagem curta, em português do Brasil. Mesmo assim, o rascunho pode precisar de ajuste: você muda o que quiser antes de mandar.',
+    ],
+    [
+      'Isso responde sozinho aos hóspedes?',
+      'Não. A IA escreve um rascunho, você confere e manda. O PDF não se conecta às reservas nem guarda as informações da sua hospedagem.',
+    ],
+    [
+      'Então são mensagens pra copiar e mandar?',
+      'Não. São pedidos pra IA, um por situação. Os exemplos mostram como a resposta pode ficar. Descontos, horários e permissões continuam sendo decisão sua.',
+    ],
+  ],
+} as const
+
+export const KIT_UPDATES_URL = 'https://tally.so/r/xVDy9G?origin=pede-assim'
+
+export const ABOUT = {
+  kicker: 'Quem fez',
+  title: 'Hospitalidade primeiro. IA pra ajudar.',
+  audience:
+    'Pensado pra quem cuida de 1 a 5 imóveis. Também pode ajudar em pequenas pousadas, chalés e hotéis independentes.',
+  author:
+    'A Lia é uma personagem criada com IA. Por trás dela está Jamile Radloff: mestrado em gestão da hospitalidade, experiência em reservas e aluguel por temporada, além de experiência como engenheira de software.',
+  kit: {
+    before: 'O ',
+    name: 'Kit Recepção Inteligente',
+    after:
+      ' está em desenvolvimento. A ideia é guardar as informações da sua hospedagem pra criar mensagens personalizadas sem precisar explicar tudo de novo.',
+  },
+  kitLink: 'Quero receber novidades do Kit',
+}
+
+export const CLOSING = {
+  title: 'Na próxima pergunta repetida, já tem o pedido.',
+  text: 'Escolhe a situação, preenche os detalhes e pede um rascunho. O jeito de receber continua sendo seu.',
+  product: 'Pede assim pra IA: mensagens pra hóspedes',
+  price: 'R$10',
+  meta: 'PDF digital · pagamento único',
+  includes: [
+    '12 instruções testadas no ChatGPT grátis',
+    '15 páginas, feitas pro celular',
+    'Exemplo e o que conferir em cada situação',
+  ],
+  buy: 'Quero meu PDF por R$10',
+  liveNote: 'Compra pela Hotmart. O acesso chega por e-mail depois da confirmação do pagamento.',
+} as const
+
 export const FOOTER = {
   credit: 'Lia da Hospedagem · criado por Jamile Radloff · ',
   instagram: '@liadahospedagem',

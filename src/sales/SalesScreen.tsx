@@ -1,9 +1,12 @@
 import { useEffect } from 'react'
 import '@fontsource-variable/outfit'
-import { INSTAGRAM_URL } from '../content'
 import { landOn, type Location } from '../router'
-import { CHECKOUT_LIVE, FOOTER, PAGE_DESCRIPTION, PAGE_TITLE } from './content'
+import { CHECKOUT_LIVE, PAGE_DESCRIPTION, PAGE_TITLE } from './content'
+import { About } from './sections/About'
+import { Closing } from './sections/Closing'
 import { Example } from './sections/Example'
+import { Faq } from './sections/Faq'
+import { Footer } from './sections/Footer'
 import { Hero } from './sections/Hero'
 import { HowToUse } from './sections/HowToUse'
 import { PdfContents } from './sections/PdfContents'
@@ -48,15 +51,11 @@ export function SalesScreen({ location, checkoutLive = CHECKOUT_LIVE }: { locati
         <Example />
         <PdfContents />
         <HowToUse />
+        <Faq />
+        <About />
+        <Closing checkoutLive={checkoutLive} />
       </main>
-      <footer className="sales-footer">
-        <p>
-          {FOOTER.credit}
-          <a href={INSTAGRAM_URL}>{FOOTER.instagram}</a>
-        </p>
-        <p>{FOOTER.disclosure}</p>
-        <p>{FOOTER.terms}</p>
-      </footer>
+      <Footer />
     </div>
   )
 }

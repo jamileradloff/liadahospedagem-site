@@ -518,7 +518,177 @@ body:has(.sales) {
   font-size: 0.98rem;
 }
 
+/* ---------- FAQ ---------- */
+.sales-faq {
+  max-width: 46rem;
+  margin-inline: auto;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.sales-faq details {
+  background: var(--white);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+}
+
+.sales-faq summary {
+  min-height: 3.25rem;
+  padding: 1rem 1.25rem;
+  color: var(--teal);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sales-faq summary:hover {
+  text-decoration: underline;
+}
+
+.sales-faq details p {
+  padding: 0 1.25rem 1.25rem;
+  color: var(--muted);
+}
+
+/* ---------- About ---------- */
+.sales-about {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  max-width: 52rem;
+  margin-inline: auto;
+}
+
+.sales-avatar {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: var(--grey);
+  display: grid;
+  place-items: center;
+}
+
+.sales-avatar svg {
+  width: 4.5rem;
+  height: auto;
+}
+
+.sales-about p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+}
+
+.sales-text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-top: 0.5rem;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ---------- Closing CTA + purchase card ---------- */
+.sales-closing {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%);
+  color: var(--white);
+  padding-block: clamp(4rem, 10vw, 7rem);
+}
+
+.sales-closing-grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.sales-closing h2 {
+  color: var(--white);
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 2.6rem);
+}
+
+.sales-closing-copy p {
+  margin-top: 1rem;
+  color: var(--line);
+  font-size: 1.15rem;
+  max-width: 32rem;
+}
+
+.sales-card {
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 20px;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+}
+
+.sales-card h3 {
+  font-size: 1.35rem;
+}
+
+.sales-card-price {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--teal);
+  font: 700 3.25rem/1 var(--font);
+}
+
+.sales-card-meta {
+  margin-top: 0.4rem;
+  color: var(--muted);
+}
+
+.sales-card ul {
+  margin: 1.25rem 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.sales-card li {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.sales-card-note {
+  margin-top: 0.9rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.sales-btn-wide {
+  width: 100%;
+}
+
+/* ---------- Footer ---------- */
+.sales-footer {
+  background: var(--night);
+  color: var(--faint);
+  padding-block: 2.5rem;
+  font-size: 0.9rem;
+}
+
+.sales-footer-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  justify-content: space-between;
+}
+
+.sales-footer a,
+.sales-disclose {
+  color: var(--line);
+}
+
+/* Teal would barely show on the night-blue footer. */
+.sales-footer :focus-visible {
+  outline-color: var(--coral);
+}
+
 @media (min-width: 40em) {
+  .sales-about {
+    grid-template-columns: auto 1fr;
+  }
+
   .sales-chat {
     grid-template-columns: 0.85fr 1.15fr;
     gap: 1.25rem;
@@ -565,4 +735,20 @@ body:has(.sales) {
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
   }
+
+  .sales-closing-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 4rem;
+  }
+}
+
+/* Last, so the disabled button keeps still and flat over the hover rules above. Disabled text is exempt
+   from contrast minimums. */
+.sales-btn-disabled,
+.sales-btn-disabled:hover {
+  background: var(--line-soft);
+  color: var(--muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
 }

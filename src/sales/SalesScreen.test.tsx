@@ -54,6 +54,16 @@ describe('hero, live checkout', () => {
   })
 })
 
+describe('layout', () => {
+  it('ends with the purchase card inside main, and the footer outside it', () => {
+    render(<SalesScreen location={location} />)
+
+    const main = screen.getByRole('main')
+    expect(main.lastElementChild).toHaveAttribute('id', 'comprar')
+    expect(main.contains(screen.getByRole('contentinfo'))).toBe(false)
+  })
+})
+
 describe('cover', () => {
   it('describes the cover, reserves its size and loads it right away', () => {
     render(<SalesScreen location={location} />)

@@ -93,14 +93,15 @@ test.describe('keyboard', () => {
 
     const onGradient = await page.locator('#compra').evaluate((heading: HTMLElement) => {
       heading.tabIndex = 0
-      heading.focus({ focusVisible: true })
+      // The DOM lib in CI does not know focusVisible yet. The property is still passed through.
+      heading.focus({ focusVisible: true } as FocusOptions)
       return getComputedStyle(heading).outlineColor
     })
     expect(onGradient).toBe('rgb(229, 147, 116)')
 
     const onCard = await page.locator('.sales-card button').evaluate((button: HTMLButtonElement) => {
       button.disabled = false
-      button.focus({ focusVisible: true })
+      button.focus({ focusVisible: true } as FocusOptions)
       return getComputedStyle(button).outlineColor
     })
     expect(onCard).toBe('rgb(31, 78, 95)')

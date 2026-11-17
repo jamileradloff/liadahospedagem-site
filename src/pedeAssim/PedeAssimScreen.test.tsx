@@ -38,7 +38,7 @@ describe('Pede assim index', () => {
     for (const item of INSTRUCTIONS) {
       expect(screen.getByRole('link', { name: item.title })).toHaveAttribute('href', `/pede-assim/${item.slug}`)
     }
-    expect(document.title).toBe('Pede assim pra IA · Índice')
+    await waitFor(() => expect(document.title).toBe('Pede assim pra IA · Índice'))
   })
 
   it('shows the index for a slug that does not exist', async () => {
@@ -76,7 +76,7 @@ describe('Pede assim situation', () => {
       expect(screen.queryByText(other.title)).not.toBeInTheDocument()
       expect(document.body.textContent).not.toContain(other.prompt)
     }
-    expect(document.title).toBe('Check-out mais tarde · Pede assim pra IA')
+    await waitFor(() => expect(document.title).toBe('Check-out mais tarde · Pede assim pra IA'))
   })
 
   it('starts each situation without the previous copy message', async () => {
@@ -109,7 +109,7 @@ describe('Pede assim layout', () => {
   it('asks search engines not to index these pages, and only these', async () => {
     const { navigate } = await renderAt('/pede-assim')
     await screen.findByRole('heading', { level: 2, name: 'Índice de situações' })
-    expect(robots()).toHaveAttribute('content', 'noindex')
+    await waitFor(() => expect(robots()).toHaveAttribute('content', 'noindex'))
 
     act(() => navigate('/'))
 

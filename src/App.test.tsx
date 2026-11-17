@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -204,11 +204,14 @@ describe('navigation', () => {
       await screen.findByRole('heading', { level: 1 })
       const { navigate } = await import('./router')
 
-      expect(document.title).toBe('Pede assim pra IA | Lia da Hospedagem')
-      expect(description()).toHaveAttribute(
-        'content',
-        '12 instruções testadas no ChatGPT grátis pra pedir à IA um rascunho de mensagem pro hóspede. PDF de 15 páginas por R$10.',
-      )
+      // The lazy screen sets these in an effect, after the heading is already painted.
+      await waitFor(() => {
+        expect(document.title).toBe('Pede assim pra IA | Lia da Hospedagem')
+        expect(description()).toHaveAttribute(
+          'content',
+          '12 instruções testadas no ChatGPT grátis pra pedir à IA um rascunho de mensagem pro hóspede. PDF de 15 páginas por R$10.',
+        )
+      })
       expect(document.head.querySelector('meta[name="robots"]')).toBeNull()
 
       act(() => navigate('/'))

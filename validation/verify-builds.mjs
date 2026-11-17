@@ -223,18 +223,39 @@ async function verifyAnalytics(browser) {
   await closeFakeHost()
 }
 
-// The paid guide's text must only ship in the lazy Pede assim chunk, never in the free page's entry chunk.
+// The paid guide's 12 instructions ship in the lazy companion chunk, never in the free page's entry chunk.
+// The sales page may carry situation 4 (its example) and none of the other instructions.
 function verifyPedeAssimIsolation(outDir) {
   const { groups } = JSON.parse(readFileSync(new URL('../src/pedeAssim/instructions.json', import.meta.url), 'utf8'))
-  const markers = groups.flatMap((group) => group.items).map((item) => item.prompt.split('\n').reduce((a, b) => (b.length > a.length ? b : a)))
+  const items = groups.flatMap((group) => group.items)
+  const markerOf = (item) => item.prompt.split('\n').reduce((a, b) => (b.length > a.length ? b : a))
+  const markers = items.map(markerOf)
+  const situation4 = markerOf(items.find((item) => item.slug === 'check-in-mais-cedo'))
+  // HERO.subtitle in src/sales/content.ts. A sales-page marker that is not one of the 12 instructions.
+  const salesCopy =
+    '12 instruções testadas no ChatGPT grátis, uma pra cada situação com hóspede. Você preenche com os dados da sua reserva, a IA escreve um rascunho e você confere antes de mandar.'
   const entry = readFileSync(join(outDir, 'index.html'), 'utf8').match(/<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"/)?.[1]
   const chunks = readdirSync(join(outDir, 'assets')).filter((name) => name.endsWith('.js')).map((name) => ({ name: `assets/${name}`, text: readFileSync(join(outDir, 'assets', name), 'utf8') }))
-  const entryText = chunks.find((chunk) => chunk.name === entry)?.text ?? ''
+  const entryChunk = chunks.find((chunk) => chunk.name === entry)
+  const entryText = entryChunk?.text ?? ''
   const leaked = markers.filter((marker) => entryText.includes(marker))
   check('the entry chunk holds none of the 12 Pede assim instructions', entryText !== '' && leaked.length === 0, `${entry}, ${leaked.length} found`)
+  check('the entry chunk holds none of the sales page copy', entryText !== '' && !entryText.includes(salesCopy))
   const holders = chunks.filter((chunk) => markers.every((marker) => chunk.text.includes(marker)))
-  const partial = chunks.filter((chunk) => !holders.includes(chunk) && markers.some((marker) => chunk.text.includes(marker)))
-  check('exactly one lazy chunk holds all 12 instructions', markers.length === 12 && holders.length === 1 && holders[0].name !== entry && partial.length === 0, holders.map((chunk) => chunk.name).join(', ') || 'none')
+  const companion = holders.find((chunk) => chunk.name !== entry)
+  check(
+    'exactly one lazy chunk holds all 12 instructions',
+    markers.length === 12 && holders.length === 1 && companion !== undefined && !companion.text.includes(salesCopy),
+    holders.map((chunk) => chunk.name).join(', ') || 'none',
+  )
+  const partial = chunks.filter((chunk) => chunk !== companion && chunk !== entryChunk && markers.some((marker) => chunk.text.includes(marker)))
+  const others = markers.filter((marker) => marker !== situation4)
+  const salesOnly =
+    partial.length === 1 &&
+    partial[0].text.includes(situation4) &&
+    partial[0].text.includes(salesCopy) &&
+    others.every((marker) => !partial[0].text.includes(marker))
+  check('the sales chunk holds situation 4 and no other instruction', salesOnly, partial.map((chunk) => chunk.name).join(', ') || 'none')
 }
 
 // ---------------------------------------------------------------- 2. build without a key + PDF

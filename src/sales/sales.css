@@ -702,9 +702,10 @@ body:has(.sales) {
 
 .sales-footer-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 2rem;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
 }
 
 .sales-footer a,
@@ -712,10 +713,30 @@ body:has(.sales) {
   color: var(--line);
 }
 
+.sales-footer-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.sales-social {
+  display: flex;
+  gap: 0.35rem;
+}
+
 .sales-footer a {
   display: inline-flex;
   align-items: center;
-  min-height: 1.5rem;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.25rem;
+}
+
+.sales-social svg {
+  width: 1.35rem;
+  height: 1.35rem;
 }
 
 /* Teal would barely show on the night-blue footer. */

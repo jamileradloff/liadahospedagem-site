@@ -11,8 +11,8 @@ describe('example instruction', () => {
 })
 
 describe('checkout', () => {
-  it('stays pending until Hotmart approves the product', () => {
-    expect(CHECKOUT_LIVE).toBe(false)
+  it('is open, so the buy buttons go to Hotmart', () => {
+    expect(CHECKOUT_LIVE).toBe(true)
   })
 
   it('points at the exact Hotmart checkout link, without parameters', () => {

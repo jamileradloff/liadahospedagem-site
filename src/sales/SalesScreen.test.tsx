@@ -12,7 +12,7 @@ const paragraph = (text: string) => [...document.querySelectorAll('p')].find((p)
 
 describe('hero, pending checkout', () => {
   it('shows the offer and sends the visitor to the example', () => {
-    render(<SalesScreen location={location} />)
+    render(<SalesScreen location={location} checkoutLive={false} />)
 
     expect(
       within(hero()).getByText(
@@ -30,7 +30,7 @@ describe('hero, pending checkout', () => {
   })
 
   it('says delivery is by Hotmart and that the checkout is pending, with no Hotmart link anywhere', () => {
-    render(<SalesScreen location={location} />)
+    render(<SalesScreen location={location} checkoutLive={false} />)
 
     expect(paragraph('Entrega pela Hotmart após a confirmação do pagamento.')).toBeVisible()
     expect(paragraph('Checkout pendente. A compra ainda não está disponível.')).toBeVisible()
@@ -40,7 +40,7 @@ describe('hero, pending checkout', () => {
 
 describe('hero, live checkout', () => {
   it('links the main button to the Hotmart checkout in the same tab, and keeps a link to the example', () => {
-    render(<SalesScreen location={location} checkoutLive />)
+    render(<SalesScreen location={location} />)
 
     const buy = within(hero()).getByRole('link', { name: 'Quero meu PDF por R$10' })
     expect(buy).toHaveAttribute('href', HOTMART)
@@ -51,6 +51,7 @@ describe('hero, live checkout', () => {
 
     expect(paragraph('Entrega pela Hotmart após a confirmação do pagamento.')).toBeVisible()
     expect(paragraph('Checkout pendente. A compra ainda não está disponível.')).toBeUndefined()
+    expect(document.querySelector('#comprar a.sales-btn')).toHaveAttribute('href', HOTMART)
   })
 })
 

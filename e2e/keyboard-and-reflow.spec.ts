@@ -85,11 +85,10 @@ test.describe('keyboard', () => {
       return locator.evaluate((el) => getComputedStyle(el).outlineColor)
     }
 
-    expect(await ring(page.getByRole('link', { name: 'Ver um exemplo ↓' }))).toBe('rgb(229, 147, 116)')
+    expect(await ring(page.locator('.sales-hero .sales-btn'))).toBe('rgb(229, 147, 116)')
     expect(await ring(page.getByText('Ver o pedido pra IA dessa situação'))).toBe('rgb(31, 78, 95)')
     expect(await ring(page.locator('.sales-faq summary').first())).toBe('rgb(31, 78, 95)')
     expect(await ring(page.getByRole('link', { name: 'Quero receber novidades do Kit' }))).toBe('rgb(31, 78, 95)')
-    await expect(page.getByRole('button', { name: 'Quero meu PDF por R$10' })).toBeDisabled()
 
     const onGradient = await page.locator('#compra').evaluate((heading: HTMLElement) => {
       heading.tabIndex = 0
@@ -99,10 +98,9 @@ test.describe('keyboard', () => {
     })
     expect(onGradient).toBe('rgb(229, 147, 116)')
 
-    const onCard = await page.locator('.sales-card button').evaluate((button: HTMLButtonElement) => {
-      button.disabled = false
-      button.focus({ focusVisible: true } as FocusOptions)
-      return getComputedStyle(button).outlineColor
+    const onCard = await page.locator('.sales-card .sales-btn').evaluate((link: HTMLAnchorElement) => {
+      link.focus({ focusVisible: true } as FocusOptions)
+      return getComputedStyle(link).outlineColor
     })
     expect(onCard).toBe('rgb(31, 78, 95)')
   })
@@ -231,7 +229,7 @@ test.describe('reduced motion', () => {
       }
       requestAnimationFrame(tick)
     })
-    await page.getByRole('link', { name: 'Ver um exemplo ↓' }).click()
+    await page.getByRole('link', { name: 'Antes, quero ver um exemplo ↓' }).click()
     await expect(page.locator('#exemplo')).toBeFocused()
     await page.waitForTimeout(1000)
     return page.evaluate(() => [...new Set((window as unknown as { seen: number[] }).seen)])
@@ -239,7 +237,7 @@ test.describe('reduced motion', () => {
 
   async function pillShiftOnHover(page: Page) {
     await gotoSettled(page, '/guia-pede-assim')
-    const pill = page.getByRole('link', { name: 'Ver um exemplo ↓' })
+    const pill = page.locator('.sales-hero .sales-btn')
     const before = await pill.boundingBox()
     await pill.hover()
     // The lift takes 0.15s. Reading at once still sees the resting position.

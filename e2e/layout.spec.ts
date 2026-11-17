@@ -48,11 +48,13 @@ const ROUTES: { path: string; controls: (page: Page) => Locator[] }[] = [
   {
     path: '/guia-pede-assim',
     controls: (page) => [
-      page.getByRole('link', { name: 'Ver um exemplo ↓' }),
+      page.getByRole('link', { name: 'Quero meu PDF por R$10' }).first(),
       page.getByText('Ver o pedido pra IA dessa situação'),
       page.getByText('Como recebo o PDF?'),
       page.getByRole('link', { name: 'Quero receber novidades do Kit' }),
-      page.getByRole('link', { name: '@liadahospedagem' }),
+      page.getByRole('link', { name: '@liadahospedagem no Instagram' }),
+      page.getByRole('link', { name: '@liadahospedagem no TikTok' }),
+      page.getByRole('link', { name: 'Lia da Hospedagem no Facebook' }),
     ],
   },
 ]
@@ -78,8 +80,8 @@ test('the sales page keeps tall tap targets, and the cover moves beside the text
   await gotoSettled(page, '/guia-pede-assim')
 
   const tall = [
-    page.getByRole('link', { name: 'Ver um exemplo ↓' }),
-    page.getByRole('button', { name: 'Quero meu PDF por R$10' }),
+    page.getByRole('link', { name: 'Quero meu PDF por R$10' }).first(),
+    page.locator('#comprar').getByRole('link', { name: 'Quero meu PDF por R$10' }),
     page.getByText('Ver o pedido pra IA dessa situação'),
     ...[0, 1, 2, 3, 4, 5].map((i) => page.locator('.sales-faq summary').nth(i)),
   ]
@@ -93,9 +95,9 @@ test('the sales page keeps tall tap targets, and the cover moves beside the text
     page.getByRole('heading', { level: 1 }),
     page.locator('.sales-hero-sub'),
     page.locator('.sales-hero-price'),
-    page.getByRole('link', { name: 'Ver um exemplo ↓' }),
-    page.locator('.sales-hero-note').first(),
-    page.locator('.sales-hero-note').last(),
+    page.locator('.sales-hero .sales-btn'),
+    page.getByRole('link', { name: 'Antes, quero ver um exemplo ↓' }),
+    page.locator('.sales-hero-note'),
     page.locator('.sales-cover'),
     page.locator('#exemplo'),
   ]

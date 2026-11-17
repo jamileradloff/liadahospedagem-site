@@ -172,14 +172,16 @@ async function verifyAnalytics(browser) {
   check('hero checkout link is the exact Hotmart URL', (await heroBuy.getAttribute('href')) === HOTMART, (await heroBuy.getAttribute('href')) ?? '')
   check('closing checkout link is the exact Hotmart URL', (await closingBuy.getAttribute('href')) === HOTMART, (await closingBuy.getAttribute('href')) ?? '')
   check('kit link is the exact Tally URL', (await kit.getAttribute('href')) === KIT, (await kit.getAttribute('href')) ?? '')
-  // Same-tab navigations. The click is sent with the page unload, which the local server still records.
+  // Same-tab Hotmart jumps. The click is sent with the page unload, which the local server still records.
   await Promise.all([page.waitForURL(/pay\.hotmart\.com/), heroBuy.click()])
   await page.goto(salesUrl)
   await page.getByRole('heading', { level: 1, name: /Pede assim pra IA/ }).waitFor()
   await Promise.all([page.waitForURL(/pay\.hotmart\.com/), page.locator('#comprar').getByRole('link', { name: 'Quero meu PDF por R$10' }).click()])
   await page.goto(salesUrl)
   await page.getByRole('heading', { level: 1, name: /Pede assim pra IA/ }).waitFor()
-  await Promise.all([page.waitForURL(/tally\.so/), page.getByRole('link', { name: 'Quero receber novidades do Kit' }).click()])
+  const [kitPopup] = await Promise.all([page.waitForEvent('popup'), page.getByRole('link', { name: 'Quero receber novidades do Kit' }).click()])
+  check('kit link opens in a new tab', kitPopup.url().startsWith(KIT), kitPopup.url())
+  await kitPopup.close()
 
   const wanted = ['$pageview', 'opened_faq', 'copied_message', 'requested_pdf', 'downloaded_pdf', 'clicked_waitlist', 'clicked_linkedin', 'opened_messages', 'viewed_copy_prompt', 'clicked_checkout', 'clicked_kit_updates']
   for (let i = 0; i < 40 && !wanted.every((name) => events.some((e) => e.event === name)); i++) await page.waitForTimeout(250)

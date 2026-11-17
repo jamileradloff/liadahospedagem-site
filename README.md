@@ -17,9 +17,9 @@ One single-page app with these screens:
   An unknown slug shows the index.
 - `/guia-pede-assim` the sales page for the paid guide. It does not live under `/pede-assim/`: those paths are
   printed in sold PDFs, are `noindex`, and an unknown slug there shows the companion index. The sales page is a
-  public page and can be indexed. `VITE_CHECKOUT_LIVE` controls its buy buttons: leave it unset (the default) and
-  the hero links to the example while the closing button stays disabled; set it to `true` and both buttons open
-  the Hotmart checkout. Production leaves it unset until that checkout is approved.
+  public page and can be indexed. Both buy buttons open `https://pay.hotmart.com/T108525255F`. Set
+  `VITE_CHECKOUT_LIVE=false` to build the pending state, where the hero links to the example and the closing
+  button stays disabled.
 
 The `/mensagens` and `/obrigado` paths and the anchors stay in Portuguese on purpose: they are user-facing, they are
 baked into the PDF links and the Tally redirect, and the anchors match the WhatsApp shortcuts the host saves.
@@ -108,7 +108,9 @@ Scripts in `validation/` go beyond the test suite (they build the site themselve
   storage, the PDF being served, the preview's in-memory routing, and that the 12 Pede assim instructions are in
   the companion chunk and not in the entry chunk. The sales chunk may hold situation 4 only.
 - `node validation/compare-sales-copy.mjs <path to v2>` compares the visible text of `/guia-pede-assim` with the
-  v2 preview, for the pending checkout and the live one. Local only, because v2 is not in this repo, so CI does
+  v2 preview, for the pending checkout and the live one. It ignores footer bits v2 still has and the page
+  does not: “ · @liadahospedagem”, “Suporte, reembolso e termos de compra: a confirmar.”, and v2’s “criado por
+  Jamile Radloff”, which the page corrects to “criada”. Local only, because v2 is not in this repo, so CI does
   not run it.
 - `node validation/capture-screenshots.mjs` takes full-page screenshots of the routes, including
   `/guia-pede-assim`, at 320, 390, 768, 1024 and 1440 px (needs `npx vite preview --port 4173` running).

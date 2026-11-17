@@ -31,10 +31,10 @@ describe('about', () => {
     expect(mark.closest('[aria-hidden="true"]')).not.toBeNull()
     expect(mark).toHaveAttribute('focusable', 'false')
 
-    expect(within(section).getByRole('link', { name: 'Quero receber novidades do Kit' })).toHaveAttribute(
-      'href',
-      'https://tally.so/r/xVDy9G?origin=pede-assim',
-    )
+    const kit = within(section).getByRole('link', { name: 'Quero receber novidades do Kit' })
+    expect(kit).toHaveAttribute('href', 'https://tally.so/r/xVDy9G?origin=pede-assim')
+    expect(kit).toHaveAttribute('target', '_blank')
+    expect(kit).toHaveAttribute('rel', 'noopener')
   })
 
   it('sends clicked_kit_updates with no properties', async () => {

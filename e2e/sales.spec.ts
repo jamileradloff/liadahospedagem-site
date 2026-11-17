@@ -38,10 +38,10 @@ test('the cover and the Outfit font load on the page', async ({ page }) => {
 test.describe('early check-in example', () => {
   test.use({ reducedMotion: 'reduce' })
 
-  test('“Ver um exemplo ↓” moves focus and scroll to the example heading', async ({ page }) => {
+  test('“Antes, quero ver um exemplo ↓” moves focus and scroll to the example heading', async ({ page }) => {
     await page.goto(SALES_PATH)
     await page.evaluate(() => document.fonts.ready.then(() => undefined))
-    const button = page.getByRole('link', { name: 'Ver um exemplo ↓' })
+    const button = page.getByRole('link', { name: 'Antes, quero ver um exemplo ↓' })
     await button.focus()
     await page.keyboard.press('Enter')
 
@@ -103,14 +103,20 @@ test('each FAQ item opens and closes with Enter and Space', async ({ page }) => 
   }
 })
 
-test('while the checkout is pending, Tab skips the disabled buy button', async ({ page, isMobile }) => {
+test('both buy links go to Hotmart, and Tab reaches the closing one', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Keyboard navigation is a desktop concern')
   await page.goto(SALES_PATH)
-  await expect(page.getByRole('button', { name: 'Quero meu PDF por R$10' })).toBeDisabled()
+  const hotmart = 'https://pay.hotmart.com/T108525255F'
+  const buy = page.getByRole('link', { name: 'Quero meu PDF por R$10' })
+  await expect(buy).toHaveCount(2)
+  await expect(buy.first()).toHaveAttribute('href', hotmart)
+  await expect(page.locator('#comprar').getByRole('link', { name: 'Quero meu PDF por R$10' })).toHaveAttribute('href', hotmart)
+  await expect(page.getByText('Checkout pendente')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Quero meu PDF por R$10' })).toHaveCount(0)
 
   await page.getByRole('link', { name: 'Quero receber novidades do Kit' }).focus()
   await page.keyboard.press('Tab')
-  await expect(page.getByRole('contentinfo').getByRole('link', { name: '@liadahospedagem' })).toBeFocused()
+  await expect(page.locator('#comprar').getByRole('link', { name: 'Quero meu PDF por R$10' })).toBeFocused()
 })
 
 test('Back returns to the previous page with its own title', async ({ page }) => {

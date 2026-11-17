@@ -6,9 +6,8 @@ export const PAGE_TITLE = 'Pede assim pra IA | Lia da Hospedagem'
 export const PAGE_DESCRIPTION =
   '12 instruções testadas no ChatGPT grátis pra pedir à IA um rascunho de mensagem pro hóspede. PDF de 15 páginas por R$10.'
 
-/** False until Hotmart approves product 8990830. The analytics build sets VITE_CHECKOUT_LIVE=true
- *  so verify-builds can record clicked_checkout; production and the other builds leave it unset. */
-export const CHECKOUT_LIVE = import.meta.env.VITE_CHECKOUT_LIVE === 'true'
+/** The buy buttons go to Hotmart. Set VITE_CHECKOUT_LIVE=false to build the pending state. */
+export const CHECKOUT_LIVE = import.meta.env.VITE_CHECKOUT_LIVE !== 'false'
 export const HOTMART_CHECKOUT_URL = 'https://pay.hotmart.com/T108525255F'
 
 export const HERO_TITLE = {
@@ -207,8 +206,9 @@ export const CLOSING = {
 } as const
 
 export const FOOTER = {
-  credit: 'Lia da Hospedagem · criado por Jamile Radloff · ',
-  instagram: '@liadahospedagem',
+  credit: 'Lia da Hospedagem · criada por Jamile Radloff',
   disclosure: '🤖 A Lia é uma personagem criada com IA.',
-  terms: 'Suporte, reembolso e termos de compra: a confirmar.',
 }
+
+export const TIKTOK_URL = 'https://www.tiktok.com/@liadahospedagem'
+export const FACEBOOK_URL = 'https://www.facebook.com/liadahospedagem'

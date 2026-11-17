@@ -26,6 +26,12 @@ async function visibleText(page) {
   return normalise(`${main}\n${footer}`)
 }
 
+/** Jamile removed these from the footer on 2026-11-17. v2 still has them; the page must not. */
+const REMOVED_FROM_V2 = ['Suporte, reembolso e termos de compra: a confirmar.', ' · @liadahospedagem']
+
+/** v2 says “criado”; the page says “criada”. */
+const V2_REPLACEMENTS = [['criado por Jamile Radloff', 'criada por Jamile Radloff']]
+
 function report(label, pageText, v2Text) {
   if (pageText === v2Text) {
     console.log(`PASS  ${label}`)
@@ -68,7 +74,7 @@ try {
   ]) {
     const port = live ? 4181 : 4180
     const outDir = live ? '/tmp/lia-sales-live' : '/tmp/lia-sales-pending'
-    await buildVariant(outDir, { VITE_POSTHOG_KEY: '', VITE_PREVIEW: '', VITE_CHECKOUT_LIVE: live ? 'true' : '' })
+    await buildVariant(outDir, { VITE_POSTHOG_KEY: '', VITE_PREVIEW: '', VITE_CHECKOUT_LIVE: live ? 'true' : 'false' })
     const server = await preview({ logLevel: 'error', build: { outDir }, preview: { port, strictPort: true } })
     const page = await browser.newPage()
     const v2 = await browser.newPage()
@@ -78,7 +84,19 @@ try {
       await v2.goto(pathToFileURL(resolve(v2Path)).href)
       await v2.locator('main').waitFor()
       if (live) await v2.locator('input[name="checkout"][value="live"]').check()
-      const ok = report(`${label} checkout`, await visibleText(page), await visibleText(v2))
+      const pageText = await visibleText(page)
+      const v2Text = normalise(
+        V2_REPLACEMENTS.reduce(
+          (text, [from, to]) => text.replace(from, to),
+          REMOVED_FROM_V2.reduce((text, removed) => text.replace(removed, ''), await visibleText(v2)),
+        ),
+      )
+      const stillThere = REMOVED_FROM_V2.find((removed) => pageText.includes(removed))
+      if (stillThere || pageText.includes('criado por Jamile Radloff')) {
+        console.log(`FAIL  ${label} checkout still shows removed footer text: ${stillThere ?? 'criado por Jamile Radloff'}`)
+        failed = true
+      }
+      const ok = report(`${label} checkout`, pageText, v2Text)
       failed ||= !ok
     } finally {
       await page.close()

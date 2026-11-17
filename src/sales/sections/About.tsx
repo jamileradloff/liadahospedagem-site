@@ -50,7 +50,13 @@ export function About() {
               <strong>{ABOUT.kit.name}</strong>
               {ABOUT.kit.after}
             </p>
-            <a className="sales-text-link" href={KIT_UPDATES_URL} onClick={() => track('clicked_kit_updates')}>
+            <a
+              className="sales-text-link"
+              href={KIT_UPDATES_URL}
+              target="_blank"
+              rel="noopener"
+              onClick={() => track('clicked_kit_updates')}
+            >
               {ABOUT.kitLink}
             </a>
           </div>

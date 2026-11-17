@@ -1,3 +1,4 @@
+import { track } from '../../analytics'
 import { COVER_ALT, HERO, HERO_TITLE, HOTMART_CHECKOUT_URL, PENDING_NOTE } from '../content'
 import cover from '../assets/pede-assim-capa-600.png'
 
@@ -18,7 +19,11 @@ export function Hero({ checkoutLive }: { checkoutLive: boolean }) {
           <div className="sales-hero-actions">
             {checkoutLive ? (
               <>
-                <a className="sales-btn" href={HOTMART_CHECKOUT_URL}>
+                <a
+                  className="sales-btn"
+                  href={HOTMART_CHECKOUT_URL}
+                  onClick={() => track('clicked_checkout', { placement: 'hero' })}
+                >
                   {HERO.buy}{' '}
                   <svg
                     aria-hidden="true"

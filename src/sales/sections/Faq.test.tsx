@@ -1,8 +1,29 @@
 import { render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Faq } from './Faq'
 
+const { track } = vi.hoisted(() => ({ track: vi.fn() }))
+
+vi.mock('../../analytics', async () => {
+  const actual = await vi.importActual<typeof import('../../analytics')>('../../analytics')
+  return { ...actual, track }
+})
+
+const FAQ_QUESTIONS = [
+  ['Como recebo o PDF?', 'how-to-receive'],
+  ['O ChatGPT é grátis. Por que comprar o PDF?', 'why-buy'],
+  ['Não sei usar IA. Vou conseguir?', 'no-ai-skills'],
+  ['Vai parecer robô?', 'sounds-robotic'],
+  ['Isso responde sozinho aos hóspedes?', 'auto-reply'],
+  ['Então são mensagens pra copiar e mandar?', 'copy-and-send'],
+] as const
+
 describe('FAQ', () => {
+  afterEach(() => {
+    track.mockReset()
+  })
+
   it('answers the six questions in native disclosures, all closed', () => {
     render(<Faq />)
 
@@ -36,5 +57,22 @@ describe('FAQ', () => {
       ],
     ])
     for (const item of items) expect(item.open).toBe(false)
+  })
+
+  it('sends opened_faq when an item opens, and nothing when it closes', async () => {
+    render(<Faq />)
+
+    for (const [question, id] of FAQ_QUESTIONS) {
+      const item = screen.getByText(question).closest('details') as HTMLDetailsElement
+      await userEvent.click(item.querySelector('summary') as HTMLElement)
+      expect(item.open).toBe(true)
+      expect(track).toHaveBeenCalledTimes(1)
+      expect(track).toHaveBeenCalledWith('opened_faq', { question: id })
+      track.mockClear()
+
+      await userEvent.click(item.querySelector('summary') as HTMLElement)
+      expect(item.open).toBe(false)
+      expect(track).not.toHaveBeenCalled()
+    }
   })
 })

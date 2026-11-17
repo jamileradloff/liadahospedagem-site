@@ -8,8 +8,12 @@ describe('analytics event types', () => {
     track('copied_message', { message: 'welcome', page: 'home' })
     track('opened_messages', { from: 'home', message: null })
     track('opened_faq', { question: 'is-it-free' })
+    track('opened_faq', { question: 'how-to-receive' })
     track('clicked_linkedin')
     track('clicked_waitlist', { page: 'home', placement: 'hero' })
+    track('clicked_checkout', { placement: 'hero' })
+    track('clicked_checkout', { placement: 'closing' })
+    track('clicked_kit_updates')
     track('viewed_copy_prompt', { message: 'welcome', page: 'home' })
     track('requested_pdf', { page: 'home' })
     track('downloaded_pdf', { page: 'thanks' })
@@ -34,6 +38,16 @@ describe('analytics event types', () => {
     track('clicked_linkedin', { page: 'home' })
     // @ts-expect-error unknown FAQ id
     track('opened_faq', { question: 'Quem é a Lia?' })
+    // @ts-expect-error unknown FAQ id
+    track('opened_faq', { question: 'how-to-recieve' })
+    // @ts-expect-error unknown placement
+    track('clicked_checkout', { placement: 'footer' })
+    // @ts-expect-error missing placement
+    track('clicked_checkout', {})
+    // @ts-expect-error extra property
+    track('clicked_checkout', { placement: 'hero', page: 'sales' })
+    // @ts-expect-error this event takes no props
+    track('clicked_kit_updates', { placement: 'hero' })
     // @ts-expect-error unknown event
     track('clicked_anything')
 

@@ -1,11 +1,14 @@
 // Copy for the "Pede assim pra IA" sales page, word for word from the approved v2 design (Nov 17).
 
+import type { SalesFaqId } from '../analytics'
+
 export const PAGE_TITLE = 'Pede assim pra IA | Lia da Hospedagem'
 export const PAGE_DESCRIPTION =
   '12 instruções testadas no ChatGPT grátis pra pedir à IA um rascunho de mensagem pro hóspede. PDF de 15 páginas por R$10.'
 
-/** Turn on only after Hotmart approves product 8990830; until then no buy link is shown anywhere. */
-export const CHECKOUT_LIVE = false
+/** False until Hotmart approves product 8990830. The analytics build sets VITE_CHECKOUT_LIVE=true
+ *  so verify-builds can record clicked_checkout; production and the other builds leave it unset. */
+export const CHECKOUT_LIVE = import.meta.env.VITE_CHECKOUT_LIVE === 'true'
 export const HOTMART_CHECKOUT_URL = 'https://pay.hotmart.com/T108525255F'
 
 export const HERO_TITLE = {
@@ -127,32 +130,48 @@ export const FAQ = {
   kicker: 'Dúvidas',
   title: 'Antes de comprar',
   items: [
-    [
-      'Como recebo o PDF?',
-      'Pela Hotmart, depois da confirmação do pagamento. Confere o e-mail que você informar na compra: é por ele que chega o acesso.',
-    ],
-    [
-      'O ChatGPT é grátis. Por que comprar o PDF?',
-      'Você paga pelos 12 pedidos já organizados, pelos exemplos e pelo que conferir em cada situação. O PDF te mostra o que informar pra IA e como pedir um rascunho.',
-    ],
-    [
-      'Não sei usar IA. Vou conseguir?',
-      'O primeiro pedido, o do desconto, já vem preenchido pra você ver exatamente o que colar. Você só precisa acessar o ChatGPT, trocar o que está entre [colchetes] e copiar e colar. Não precisa programar.',
-    ],
-    [
-      'Vai parecer robô?',
-      'Os pedidos já dizem pra IA escrever uma mensagem curta, em português do Brasil. Mesmo assim, o rascunho pode precisar de ajuste: você muda o que quiser antes de mandar.',
-    ],
-    [
-      'Isso responde sozinho aos hóspedes?',
-      'Não. A IA escreve um rascunho, você confere e manda. O PDF não se conecta às reservas nem guarda as informações da sua hospedagem.',
-    ],
-    [
-      'Então são mensagens pra copiar e mandar?',
-      'Não. São pedidos pra IA, um por situação. Os exemplos mostram como a resposta pode ficar. Descontos, horários e permissões continuam sendo decisão sua.',
-    ],
+    {
+      id: 'how-to-receive',
+      question: 'Como recebo o PDF?',
+      answer:
+        'Pela Hotmart, depois da confirmação do pagamento. Confere o e-mail que você informar na compra: é por ele que chega o acesso.',
+    },
+    {
+      id: 'why-buy',
+      question: 'O ChatGPT é grátis. Por que comprar o PDF?',
+      answer:
+        'Você paga pelos 12 pedidos já organizados, pelos exemplos e pelo que conferir em cada situação. O PDF te mostra o que informar pra IA e como pedir um rascunho.',
+    },
+    {
+      id: 'no-ai-skills',
+      question: 'Não sei usar IA. Vou conseguir?',
+      answer:
+        'O primeiro pedido, o do desconto, já vem preenchido pra você ver exatamente o que colar. Você só precisa acessar o ChatGPT, trocar o que está entre [colchetes] e copiar e colar. Não precisa programar.',
+    },
+    {
+      id: 'sounds-robotic',
+      question: 'Vai parecer robô?',
+      answer:
+        'Os pedidos já dizem pra IA escrever uma mensagem curta, em português do Brasil. Mesmo assim, o rascunho pode precisar de ajuste: você muda o que quiser antes de mandar.',
+    },
+    {
+      id: 'auto-reply',
+      question: 'Isso responde sozinho aos hóspedes?',
+      answer:
+        'Não. A IA escreve um rascunho, você confere e manda. O PDF não se conecta às reservas nem guarda as informações da sua hospedagem.',
+    },
+    {
+      id: 'copy-and-send',
+      question: 'Então são mensagens pra copiar e mandar?',
+      answer:
+        'Não. São pedidos pra IA, um por situação. Os exemplos mostram como a resposta pode ficar. Descontos, horários e permissões continuam sendo decisão sua.',
+    },
   ],
-} as const
+} as const satisfies {
+  kicker: string
+  title: string
+  items: readonly { id: SalesFaqId; question: string; answer: string }[]
+}
 
 export const KIT_UPDATES_URL = 'https://tally.so/r/xVDy9G?origin=pede-assim'
 

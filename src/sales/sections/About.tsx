@@ -1,3 +1,4 @@
+import { track } from '../../analytics'
 import { ABOUT, KIT_UPDATES_URL } from '../content'
 
 /** The Caderninho mark, as drawn in v2. “Lia” is set in Fraunces, which index.html already loads. */
@@ -49,7 +50,7 @@ export function About() {
               <strong>{ABOUT.kit.name}</strong>
               {ABOUT.kit.after}
             </p>
-            <a className="sales-text-link" href={KIT_UPDATES_URL}>
+            <a className="sales-text-link" href={KIT_UPDATES_URL} onClick={() => track('clicked_kit_updates')}>
               {ABOUT.kitLink}
             </a>
           </div>

@@ -1,12 +1,24 @@
 import { render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Closing } from './Closing'
+
+const { track } = vi.hoisted(() => ({ track: vi.fn() }))
+
+vi.mock('../../analytics', async () => {
+  const actual = await vi.importActual<typeof import('../../analytics')>('../../analytics')
+  return { ...actual, track }
+})
 
 const HOTMART = 'https://pay.hotmart.com/T108525255F'
 const section = () => screen.getByRole('region', { name: 'Na próxima pergunta repetida, já tem o pedido.' })
 const paragraph = (text: string) => [...section().querySelectorAll('p')].find((p) => p.textContent === text)
 
 describe('closing purchase card', () => {
+  afterEach(() => {
+    track.mockReset()
+  })
+
   it('sums up the offer', () => {
     render(<Closing checkoutLive={false} />)
 
@@ -47,5 +59,24 @@ describe('closing purchase card', () => {
     expect(within(section()).queryByRole('button')).not.toBeInTheDocument()
     expect(paragraph('Compra pela Hotmart. O acesso chega por e-mail depois da confirmação do pagamento.')).toBeDefined()
     expect(paragraph('Checkout pendente. A compra ainda não está disponível.')).toBeUndefined()
+  })
+
+  it('while pending, the disabled button sends no clicked_checkout', async () => {
+    render(<Closing checkoutLive={false} />)
+
+    const button = within(section()).getByRole('button', { name: 'Quero meu PDF por R$10' })
+    await userEvent.click(button)
+    expect(track).not.toHaveBeenCalled()
+  })
+
+  it('when live, the card link sends clicked_checkout from the closing card', async () => {
+    render(<Closing checkoutLive />)
+
+    const link = within(section()).getByRole('link', { name: 'Quero meu PDF por R$10' })
+    expect(link).toHaveAttribute('href', HOTMART)
+    link.addEventListener('click', (event) => event.preventDefault())
+    await userEvent.click(link)
+    expect(track).toHaveBeenCalledTimes(1)
+    expect(track).toHaveBeenCalledWith('clicked_checkout', { placement: 'closing' })
   })
 })

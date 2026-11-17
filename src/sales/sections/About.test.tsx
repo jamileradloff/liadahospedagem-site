@@ -1,8 +1,20 @@
 import { render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { About } from './About'
 
+const { track } = vi.hoisted(() => ({ track: vi.fn() }))
+
+vi.mock('../../analytics', async () => {
+  const actual = await vi.importActual<typeof import('../../analytics')>('../../analytics')
+  return { ...actual, track }
+})
+
 describe('about', () => {
+  afterEach(() => {
+    track.mockReset()
+  })
+
   it('says who made the guide, with a decorative Caderninho mark and the Kit link', () => {
     render(<About />)
 
@@ -23,5 +35,16 @@ describe('about', () => {
       'href',
       'https://tally.so/r/xVDy9G?origin=pede-assim',
     )
+  })
+
+  it('sends clicked_kit_updates with no properties', async () => {
+    render(<About />)
+
+    const link = screen.getByRole('link', { name: 'Quero receber novidades do Kit' })
+    expect(link).toHaveAttribute('href', 'https://tally.so/r/xVDy9G?origin=pede-assim')
+    link.addEventListener('click', (event) => event.preventDefault())
+    await userEvent.click(link)
+    expect(track).toHaveBeenCalledTimes(1)
+    expect(track).toHaveBeenCalledWith('clicked_kit_updates')
   })
 })

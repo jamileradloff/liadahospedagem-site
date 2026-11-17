@@ -1,4 +1,10 @@
+import type { SyntheticEvent } from 'react'
+import { track, type SalesFaqId } from '../../analytics'
 import { FAQ } from '../content'
+
+function trackFaqOpen(event: SyntheticEvent<HTMLDetailsElement>, question: SalesFaqId) {
+  if (event.currentTarget.open) track('opened_faq', { question })
+}
 
 export function Faq() {
   return (
@@ -9,10 +15,10 @@ export function Faq() {
           <h2 id="faq">{FAQ.title}</h2>
         </div>
         <div className="sales-faq">
-          {FAQ.items.map(([question, answer]) => (
-            <details key={question}>
-              <summary>{question}</summary>
-              <p>{answer}</p>
+          {FAQ.items.map((item) => (
+            <details key={item.id} onToggle={(event) => trackFaqOpen(event, item.id)}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
             </details>
           ))}
         </div>

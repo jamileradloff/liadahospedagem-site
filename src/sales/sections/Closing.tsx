@@ -1,3 +1,4 @@
+import { track } from '../../analytics'
 import { CLOSING, HOTMART_CHECKOUT_URL, PENDING_NOTE } from '../content'
 
 export function Closing({ checkoutLive }: { checkoutLive: boolean }) {
@@ -24,7 +25,11 @@ export function Closing({ checkoutLive }: { checkoutLive: boolean }) {
           </ul>
           {checkoutLive ? (
             <>
-              <a className="sales-btn sales-btn-wide" href={HOTMART_CHECKOUT_URL}>
+              <a
+                className="sales-btn sales-btn-wide"
+                href={HOTMART_CHECKOUT_URL}
+                onClick={() => track('clicked_checkout', { placement: 'closing' })}
+              >
                 {CLOSING.buy}{' '}
                 <svg
                   aria-hidden="true"
